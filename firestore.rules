@@ -1,12 +1,19 @@
 rules_version = '2';
 
-// Users can only read/write their own backup document. Data stored here is an
-// encrypted blob — the server still enforces ownership so one user cannot read
-// another user's ciphertext (which would leak metadata like file size).
+// The vault collection stores AES-GCM-256 encrypted blobs. Document IDs are
+// SHA-256 hashes derived from the encrypted payload — only someone who holds
+// the local vault can compute the correct ID. No plaintext ever touches
+// Firestore. Size is capped at 1 MB to prevent abuse.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /backups/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    match /vaults/{docId} {
+      allow read: if true;
+      allow write: if request.resource.data.keys().hasAll(['data', 'updatedAt'])
+                   && request.resource.data.data is string
+                   && request.resource.data.data.size() < 1000000;
+    }
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

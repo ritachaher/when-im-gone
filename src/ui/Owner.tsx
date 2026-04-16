@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './useTheme';
 import { ConfirmDialog } from './ConfirmDialog';
 import { LANGUAGES, changeLanguage } from '../i18n';
+import { pushBackup, pullBackup, getVaultDocId, isFirebaseConfigured, type BackupStatus } from '../storage/firebase';
 
 export function Owner({ onLock }: { onLock: () => void }) {
   const { t, i18n } = useTranslation();
@@ -56,6 +57,34 @@ export function Owner({ onLock }: { onLock: () => void }) {
   const [confirmAction, setConfirmAction] = useState<null | 'import' | 'wipe'>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const { theme, toggle: toggleTheme } = useTheme();
+  const [cloudStatus, setCloudStatus] = useState<BackupStatus>('idle');
+
+  async function onCloudPush() {
+    setCloudStatus('pushing');
+    try {
+      await pushBackup();
+      setCloudStatus('done');
+      setTimeout(() => setCloudStatus('idle'), 2500);
+    } catch (e) {
+      console.error('Cloud push failed:', e);
+      setCloudStatus('error');
+      setTimeout(() => setCloudStatus('idle'), 3000);
+    }
+  }
+
+  async function onCloudPull() {
+    setCloudStatus('pulling');
+    try {
+      const id = await getVaultDocId();
+      await pullBackup(id);
+      setCloudStatus('done');
+      setTimeout(() => { setCloudStatus('idle'); onLock(); }, 1500);
+    } catch (e) {
+      console.error('Cloud pull failed:', e);
+      setCloudStatus('error');
+      setTimeout(() => setCloudStatus('idle'), 3000);
+    }
+  }
 
   function startImport(file: File) {
     setPendingFile(file);
@@ -126,6 +155,18 @@ export function Owner({ onLock }: { onLock: () => void }) {
           </ul>
         </nav>
         <div className="nav-footer">
+          {isFirebaseConfigured() && (
+            <>
+              <button onClick={onCloudPush} disabled={cloudStatus === 'pushing' || cloudStatus === 'pulling'}>
+                {cloudStatus === 'pushing' ? t('cloud_pushing', 'Backing up…') : t('cloud_push_btn', 'Back up to cloud')}
+              </button>
+              <button onClick={onCloudPull} disabled={cloudStatus === 'pushing' || cloudStatus === 'pulling'}>
+                {cloudStatus === 'pulling' ? t('cloud_pulling', 'Restoring…') : t('cloud_pull_btn', 'Restore from cloud')}
+              </button>
+              {cloudStatus === 'done' && <div style={{ color: 'var(--ok)', fontSize: 12 }}>{t('cloud_done', '✓ Synced')}</div>}
+              {cloudStatus === 'error' && <div style={{ color: 'var(--danger)', fontSize: 12 }}>{t('cloud_error', 'Sync failed — try again')}</div>}
+            </>
+          )}
           <button onClick={onExport}>{t('export_btn')}</button>
           <button onClick={() => fileRef.current?.click()}>{t('import_btn')}</button>
           <button onClick={onLock}>{t('lock_journal')}</button>
