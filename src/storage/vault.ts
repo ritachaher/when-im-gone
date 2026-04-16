@@ -213,7 +213,25 @@ export async function exportEncryptedBlob(): Promise<Blob> {
   return new Blob([JSON.stringify(payload)], { type: 'application/octet-stream' });
 }
 
-export async function importEncryptedBlob(text: string): Promise<void> {
+/**
+ * Replaces the local journal on this device with the contents of an
+ * encrypted backup blob. This is destructive: anything the user has typed
+ * on this device since the backup was taken will be gone.
+ *
+ * The caller MUST pass { confirmedReplace: true } to prove the user has
+ * seen a two-step confirmation in the UI (see memory: two-step confirm
+ * before any deletion). Without the flag, this function refuses to run.
+ */
+export async function importEncryptedBlob(
+  text: string,
+  opts: { confirmedReplace: boolean },
+): Promise<void> {
+  if (!opts?.confirmedReplace) {
+    throw new Error(
+      'importEncryptedBlob: refused. This replaces all local journal data; ' +
+        'caller must pass { confirmedReplace: true } after user confirmation.',
+    );
+  }
   const payload = JSON.parse(text) as ExportPayload;
   if (payload.format !== 'wig/1') throw new Error('Unknown backup format.');
   await db.meta.put({

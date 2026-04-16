@@ -13,3 +13,6 @@ dist-ssr
 coverage
 *.timestamp-*
 tsconfig.tsbuildinfo
+# Stray JS emitted alongside TS sources (tsc accidental emit). Vite builds
+# from the .ts sources directly, so these are never needed.
+src/**/*.js

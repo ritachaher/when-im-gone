@@ -51,13 +51,22 @@ export async function pushBackup(): Promise<void> {
   });
 }
 
-/** Pull the encrypted vault from Firestore and import it locally. */
-export async function pullBackup(docId: string): Promise<void> {
+/**
+ * Pull the encrypted vault from Firestore and import it locally.
+ * DESTRUCTIVE: overwrites the local journal on this device.
+ *
+ * Caller must pass `{ confirmedReplace: true }` after showing a two-step
+ * confirmation dialog; otherwise the underlying import refuses to run.
+ */
+export async function pullBackup(
+  docId: string,
+  opts: { confirmedReplace: boolean },
+): Promise<void> {
   if (!db) throw new Error('Firebase not configured');
   const snap = await getDoc(doc(db, 'vaults', docId));
   if (!snap.exists()) throw new Error('No backup found');
   const json = snap.data().data as string;
-  await importEncryptedBlob(json);
+  await importEncryptedBlob(json, opts);
 }
 
 /** Get the doc ID for the current vault (so we know where to pull from). */
