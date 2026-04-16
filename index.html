@@ -1,13 +1,803 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f7f3ec" />
-    <title>When I'm gone</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#2C3E5D">
+<title>When I'm Gone — Everything your loved ones will need</title>
+<meta name="description" content="A private, encrypted journal that gathers the practical information your family will need when you're no longer here.">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #2A2E36; line-height: 1.6; }
+  h1, h2, h3 { font-family: Georgia, 'Times New Roman', serif; }
+
+  :root {
+    --navy: #2C3E5D;
+    --navy-dark: #1E2A3E;
+    --cream: #FAF6F0;
+    --paper: #FFFFFF;
+    --ink: #2A2E36;
+    --ink-soft: #6B7280;
+    --accent: #C97A5D;
+    --accent-hover: #B56A4E;
+    --border: #E8E4DE;
+  }
+
+  .topnav {
+    background: var(--navy);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .topnav-brand {
+    font-family: Georgia, serif;
+    font-size: 1.15rem;
+    color: #fff;
+  }
+  .topnav-right { display: flex; align-items: center; gap: 20px; }
+  .topnav-right a {
+    color: rgba(255,255,255,.75);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color .2s;
+  }
+  .topnav-right a:hover { color: #fff; }
+  .btn-login {
+    background: rgba(255,255,255,.12);
+    color: #fff !important;
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 14px;
+    border: 1px solid rgba(255,255,255,.2);
+    transition: all .2s;
+  }
+  .btn-login:hover { background: rgba(255,255,255,.2); }
+
+  .carousel-wrap {
+    max-width: 700px;
+    margin: 0 auto 36px;
+    overflow: hidden;
+    border-radius: 14px;
+    position: relative;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  .carousel-track {
+    display: flex;
+    transition: transform .5s ease;
+  }
+  .carousel-slide {
+    min-width: 100%;
+    background: #35496A;
+    border-radius: 14px;
+    padding: 32px 28px;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .carousel-slide .mock-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    opacity: .4;
+    margin-bottom: 16px;
+  }
+  .carousel-slide .mock-sidebar { display: flex; gap: 20px; }
+  .carousel-slide .mock-nav { width: 160px; flex-shrink: 0; }
+  .carousel-slide .mock-nav-item {
+    padding: 7px 10px;
+    font-size: 12px;
+    border-radius: 5px;
+    margin-bottom: 3px;
+    color: rgba(255,255,255,.55);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .carousel-slide .mock-nav-item.active {
+    background: rgba(255,255,255,.08);
+    color: #fff;
+  }
+  .carousel-slide .mock-nav-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.2);
+    flex-shrink: 0;
+  }
+  .carousel-slide .mock-nav-dot.done { background: #6BBF7A; }
+  .carousel-slide .mock-nav-dot.part { background: #E8B84B; }
+  .carousel-slide .mock-content { flex: 1; }
+  .carousel-slide .mock-field {
+    background: rgba(255,255,255,.1);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .carousel-slide .mock-field span { opacity: .45; }
+  .carousel-slide .mock-field strong { color: #fff; }
+  .carousel-slide .mock-section-title {
+    font-family: Georgia, serif;
+    font-size: 16px;
+    margin-bottom: 12px;
+  }
+  .carousel-slide .mock-chip {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 99px;
+    font-size: 11px;
+    margin-right: 6px;
+    margin-bottom: 6px;
+    background: rgba(255,255,255,.1);
+    color: rgba(255,255,255,.6);
+    border: 1px solid rgba(255,255,255,.15);
+  }
+  .carousel-slide .mock-chip.selected {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .carousel-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .carousel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.25);
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    transition: all .3s;
+  }
+  .carousel-dot.active { background: var(--accent); width: 24px; border-radius: 4px; }
+
+  .hero {
+    background: var(--navy);
+    color: #fff;
+    padding: 40px 24px 48px;
+    text-align: center;
+  }
+  .hero-inner { max-width: 720px; margin: 0 auto; }
+  .hero-badge {
+    display: inline-block;
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: .6;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .hero p {
+    font-size: 18px;
+    color: rgba(255,255,255,.82);
+    max-width: 580px;
+    margin: 0 auto 32px;
+  }
+  .btn-cta {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 600;
+    padding: 16px 36px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background .2s;
+  }
+  .btn-cta:hover { background: var(--accent-hover); }
+  .trust-row {
+    margin-top: 24px;
+    font-size: 13px;
+    color: rgba(255,255,255,.6);
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+  }
+  .trust-item { display: inline-flex; align-items: center; gap: 8px; }
+  .trust-icon {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .trust-icon svg { opacity: .7; }
+
+  .section { padding: 48px 24px; }
+  .section-inner { max-width: 960px; margin: 0 auto; }
+  .section.cream { background: var(--cream); }
+  .section.white { background: var(--paper); }
+  .section.navy { background: var(--navy); color: #fff; }
+  .section h2 {
+    font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+    margin-bottom: 16px;
+    text-align: center;
+    line-height: 1.25;
+  }
+  .section .subtitle {
+    text-align: center;
+    color: var(--ink-soft);
+    max-width: 600px;
+    margin: 0 auto 32px;
+    font-size: 16px;
+  }
+  .section.navy .subtitle { color: rgba(255,255,255,.7); }
+
+  .problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .problem-card {
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 28px 24px;
+    border: 1px solid var(--border);
+  }
+  .problem-card h3 { font-size: 1.15rem; margin-bottom: 8px; color: var(--navy); }
+  .problem-card p { font-size: 15px; color: var(--ink-soft); }
+
+  .steps { display: flex; flex-direction: column; gap: 36px; }
+  .step {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .step:nth-child(even) .step-text { order: 2; }
+  .step:nth-child(even) .step-visual { order: 1; }
+  .step-text h3 { font-size: 1.3rem; color: var(--navy); margin-bottom: 10px; }
+  .step-text .step-num {
+    font-size: 13px; font-weight: 700; color: var(--accent);
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;
+  }
+  .step-text p { color: var(--ink-soft); font-size: 15px; }
+  .step-visual {
+    background: var(--navy);
+    border-radius: 12px;
+    padding: 24px;
+    color: #fff;
+    font-size: 14px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .step-visual .mock-bar {
+    background: rgba(255,255,255,.1);
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .step-visual .mock-bar span { opacity: .6; }
+  .step-visual .mock-bar strong { color: #fff; }
+  .step-visual .mock-progress {
+    height: 6px;
+    background: rgba(255,255,255,.15);
+    border-radius: 99px;
+    margin-top: 8px;
+    overflow: hidden;
+  }
+  .step-visual .mock-progress div {
+    height: 100%; background: var(--accent); border-radius: 99px; width: 34%;
+  }
+  .mock-lock { text-align: center; }
+  .mock-lock svg { margin-bottom: 10px; }
+  .mock-lock .code-dots {
+    font-size: 22px; letter-spacing: 6px; opacity: .5; margin-top: 10px;
+  }
+
+  .inside-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .inside-item {
+    background: rgba(255,255,255,.08);
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: rgba(255,255,255,.85);
+    border: 1px solid rgba(255,255,255,.1);
+  }
+  .inside-callout {
+    text-align: center;
+    font-size: 15px;
+    color: rgba(255,255,255,.6);
+    font-style: italic;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+  .feature-card {
+    background: var(--paper);
+    border-radius: 12px;
+    padding: 28px 24px;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .feature-icon {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 12px;
+  }
+  .feature-icon svg { stroke: rgba(255,255,255,.85); }
+  .feature-card h3 { font-size: 1.05rem; margin-bottom: 8px; color: var(--navy); }
+  .feature-card p { font-size: 14px; color: var(--ink-soft); }
+
+  .pro-box {
+    background: var(--paper);
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 680px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .pro-box h3 { font-size: 1.3rem; color: var(--navy); margin-bottom: 12px; }
+  .pro-box p { color: var(--ink-soft); font-size: 15px; margin-bottom: 20px; }
+  .btn-outline {
+    display: inline-block;
+    border: 2px solid var(--navy);
+    color: var(--navy);
+    font-weight: 600;
+    padding: 12px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: all .2s;
+  }
+  .btn-outline:hover { background: var(--navy); color: #fff; }
+
+  .pricing-card {
+    background: var(--paper);
+    border: 2px solid var(--navy);
+    border-radius: 16px;
+    padding: 36px 32px;
+    max-width: 440px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .pricing-card .price {
+    font-size: 3rem; font-weight: 700; color: var(--navy);
+    font-family: Georgia, serif; margin-bottom: 4px;
+  }
+  .pricing-card .price-sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 28px; }
+  .pricing-card ul { list-style: none; text-align: left; margin-bottom: 32px; }
+  .pricing-card li {
+    padding: 8px 0; font-size: 15px; color: var(--ink);
+    border-bottom: 1px solid var(--border);
+  }
+  .pricing-card li::before { content: '\2713  '; color: var(--accent); font-weight: 700; }
+  .pricing-card li:last-child { border-bottom: 0; }
+  .pricing-card .btn-cta { width: 100%; text-align: center; }
+  .pricing-card .small { margin-top: 14px; font-size: 13px; color: var(--ink-soft); }
+
+  .footer {
+    background: var(--navy-dark);
+    color: rgba(255,255,255,.5);
+    text-align: center;
+    padding: 40px 24px;
+    font-size: 13px;
+  }
+  .footer a { color: rgba(255,255,255,.7); text-decoration: none; }
+  .footer a:hover { color: #fff; }
+  .footer-links { display: flex; justify-content: center; gap: 24px; margin-top: 10px; flex-wrap: wrap; }
+
+  html { scroll-behavior: smooth; }
+
+  @media (max-width: 768px) {
+    .topnav { padding: 12px 16px; }
+    .topnav-brand { font-size: 1rem; }
+    .topnav-right { gap: 12px; }
+    .topnav-right a { font-size: 13px; }
+    .btn-login { padding: 6px 14px; font-size: 13px; }
+    .hero { padding: 28px 16px 36px; }
+    .hero h1 { font-size: 1.7rem; margin-bottom: 16px; }
+    .hero p { font-size: 15px; margin-bottom: 24px; }
+    .btn-cta { font-size: 15px; padding: 14px 24px; }
+    .carousel-wrap { margin-bottom: 24px; border-radius: 10px; }
+    .carousel-slide { padding: 20px 16px; }
+    .carousel-slide .mock-sidebar { flex-direction: column; }
+    .carousel-slide .mock-nav { width: 100%; display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+    .carousel-slide .mock-nav-item { padding: 5px 8px; font-size: 11px; }
+    .carousel-slide .mock-section-title { font-size: 14px; }
+    .carousel-slide .mock-field { font-size: 12px; padding: 8px 10px; }
+    .carousel-slide div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    .trust-row { gap: 14px; flex-direction: column; align-items: center; }
+    .section { padding: 36px 16px; }
+    .section h2 { font-size: 1.35rem; }
+    .section .subtitle { font-size: 14px; margin-bottom: 24px; }
+    .problem-grid { grid-template-columns: 1fr; gap: 14px; }
+    .problem-card { padding: 20px 18px; }
+    .problem-card h3 { font-size: 1rem; }
+    .problem-card p { font-size: 14px; }
+    .step { grid-template-columns: 1fr; gap: 20px; }
+    .step:nth-child(even) .step-text { order: 1; }
+    .step:nth-child(even) .step-visual { order: 2; }
+    .step-text h3 { font-size: 1.1rem; }
+    .step-text p { font-size: 14px; }
+    .step-visual { padding: 18px; min-height: 140px; }
+    .inside-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .inside-item { padding: 10px 12px; font-size: 13px; }
+    .features-grid { grid-template-columns: 1fr; gap: 14px; }
+    .feature-card { padding: 22px 18px; }
+    .pro-box { padding: 24px 18px; }
+    .pro-box h3 { font-size: 1.1rem; }
+    .pro-box p { font-size: 14px; }
+    .btn-outline { padding: 10px 20px; font-size: 14px; }
+    .pricing-card { padding: 28px 20px; }
+    .pricing-card .price { font-size: 2.4rem; }
+    .pricing-card li { font-size: 14px; }
+    .pricing-card .btn-cta { padding: 14px; font-size: 15px; }
+    .footer { padding: 28px 16px; }
+  }
+
+  @media (max-width: 400px) {
+    .hero h1 { font-size: 1.45rem; }
+    .inside-grid { grid-template-columns: 1fr; }
+    .trust-row { font-size: 12px; }
+    .carousel-slide .mock-nav { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="topnav-brand">When I'm Gone</div>
+  <div class="topnav-right">
+    <a href="#pricing">Pricing</a>
+    <a href="/app.html" class="btn-login">Log in</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">End-of-life planning, made simple</div>
+    <h1>Everything your loved ones will need — in one safe place</h1>
+    <div class="carousel-wrap" id="carousel">
+      <div class="carousel-track" id="carouselTrack">
+
+        <div class="carousel-slide">
+          <div class="mock-label">Owner view — fill in at your own pace</div>
+          <div class="mock-sidebar">
+            <div class="mock-nav">
+              <div class="mock-nav-item active"><span class="mock-nav-dot part"></span> All about me</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Key contacts</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot"></span> Medical info</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Financial</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot"></span> Funeral wishes</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot part"></span> Digital assets</div>
+            </div>
+            <div class="mock-content">
+              <div class="mock-section-title">All about me</div>
+              <div class="mock-field"><span>Title</span> <strong>Mrs</strong></div>
+              <div class="mock-field"><span>First name</span> <strong>Margaret</strong></div>
+              <div class="mock-field"><span>Surname</span> <strong>Thompson</strong></div>
+              <div class="mock-field"><span>Date of birth</span> <strong>14/03/1952</strong></div>
+              <div class="mock-field"><span>Home phone</span> <strong>020 7946 0123</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-slide">
+          <div class="mock-label">Guided questions — no detail is missed</div>
+          <div class="mock-sidebar">
+            <div class="mock-nav">
+              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> All about me</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Key contacts</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot"></span> Medical info</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Financial</div>
+              <div class="mock-nav-item active"><span class="mock-nav-dot part"></span> Funeral wishes</div>
+              <div class="mock-nav-item"><span class="mock-nav-dot part"></span> Digital assets</div>
+            </div>
+            <div class="mock-content">
+              <div class="mock-section-title">Funeral wishes</div>
+              <div style="font-size:12px; opacity:.5; margin-bottom:10px;">Preference</div>
+              <div style="margin-bottom:14px;">
+                <span class="mock-chip">Cemetery burial</span>
+                <span class="mock-chip selected">Cremation</span>
+                <span class="mock-chip">Natural woodland</span>
+              </div>
+              <div class="mock-field"><span>Crematorium</span> <strong>Golders Green</strong></div>
+              <div class="mock-field"><span>Ashes</span> <strong>Scattered at Hampstead Heath</strong></div>
+              <div class="mock-field"><span>Music</span> <strong>Somewhere Over the Rainbow</strong></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="carousel-slide">
+          <div class="mock-label">Survivor view — clear, calm, read-only</div>
+          <div class="mock-content" style="text-align:center; padding: 16px 0;">
+            <div style="font-family:Georgia,serif; font-size:18px; margin-bottom:6px;">Margaret's journal</div>
+            <div style="font-size:12px; opacity:.5; margin-bottom:20px;">Last updated 12 April 2026 · Read-only view</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:left;">
+              <div style="background:rgba(255,255,255,.1); border-radius:8px; padding:14px;">
+                <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:6px;">First few hours</div>
+                <div style="font-size:14px; font-family:Georgia,serif; margin-bottom:6px;">People to tell</div>
+                <div style="font-size:11px; opacity:.5;">Family, close friends<br>Employer, key contacts<br>Funeral director</div>
+              </div>
+              <div style="background:rgba(255,255,255,.1); border-radius:8px; padding:14px;">
+                <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:6px;">First week</div>
+                <div style="font-size:14px; font-family:Georgia,serif; margin-bottom:6px;">Funeral wishes</div>
+                <div style="font-size:11px; opacity:.5;">Cremation at Golders Green<br>Music choices<br>No dress code</div>
+              </div>
+              <div style="background:rgba(255,255,255,.1); border-radius:8px; padding:14px;">
+                <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:6px;">First month</div>
+                <div style="font-size:14px; font-family:Georgia,serif; margin-bottom:6px;">Money &amp; paperwork</div>
+                <div style="font-size:11px; opacity:.5;">Will with Hartley &amp; Co<br>Barclays current account<br>Aviva life insurance</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="carousel-dots">
+        <button class="carousel-dot active" data-slide="0"></button>
+        <button class="carousel-dot" data-slide="1"></button>
+        <button class="carousel-dot" data-slide="2"></button>
+      </div>
+    </div>
+
+    <p>When I'm Gone is a private, encrypted journal that gathers the practical information your family will need when you're no longer here. No searching through drawers. No guessing.</p>
+    <a href="/app.html" class="btn-cta">Complete your journal for only £7.95</a>
+    <div class="trust-row">
+      <span class="trust-item">
+        <span class="trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
+        Stays on your device
+      </span>
+      <span class="trust-item">
+        <span class="trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+        Encrypted with your password
+      </span>
+      <span class="trust-item">
+        <span class="trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
+        Only loved ones you choose
+      </span>
+    </div>
+  </div>
+</section>
+
+<section class="section cream">
+  <div class="section-inner">
+    <h2>When someone dies, as hard as the grief — is not knowing where anything is</h2>
+    <p class="subtitle">Most families spend weeks piecing together paperwork. It doesn't have to be that&nbsp;way.</p>
+    <div class="problem-grid">
+      <div class="problem-card">
+        <h3>"Where's the will?"</h3>
+        <p>Your family shouldn't have to hunt for a solicitor's name during the worst week of their lives.</p>
+      </div>
+      <div class="problem-card">
+        <h3>"Which accounts exist?"</h3>
+        <p>Bank accounts, pensions, insurance policies — most families miss at least one. Some never find them.</p>
+      </div>
+      <div class="problem-card">
+        <h3>"What did they want?"</h3>
+        <p>Burial or cremation? Which music? Who to call first? Don't leave them guessing when it matters most.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section white">
+  <div class="section-inner">
+    <h2>How it works</h2>
+    <p class="subtitle">Three simple steps. No tech skills needed.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-text">
+          <div class="step-num">Step 1</div>
+          <h3>Answer simple questions, section by section</h3>
+          <p>18 guided sections cover everything — from your GP's name to your funeral wishes. Fill in what you can, skip what you like, come back any time.</p>
+        </div>
+        <div class="step-visual">
+          <div style="font-size:12px; opacity:.5; margin-bottom:8px;">When I'm gone</div>
+          <div style="font-size:11px; opacity:.4; margin-bottom:12px;">MARGARET'S JOURNAL</div>
+          <div class="mock-bar"><span>Title: </span><strong>Mrs</strong></div>
+          <div class="mock-bar"><span>First name: </span><strong>Margaret</strong></div>
+          <div class="mock-bar"><span>Surname: </span><strong>Thompson</strong></div>
+          <div class="mock-bar"><span>Date of birth: </span><strong>14/03/1952</strong></div>
+          <div style="font-size:11px; opacity:.5; margin-top:12px;">34% complete</div>
+          <div class="mock-progress"><div></div></div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-text">
+          <div class="step-num">Step 2</div>
+          <h3>Everything is encrypted on your device</h3>
+          <p>256-bit encryption — the same standard banks use. Your data never leaves your device unencrypted. Not even we can read it.</p>
+        </div>
+        <div class="step-visual mock-lock">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <div style="font-size:15px; margin-top:8px;">Your journal is locked</div>
+          <div style="font-size:13px; opacity:.5; margin-top:4px;">Enter your password to continue</div>
+          <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; margin-top:16px; letter-spacing:4px; font-size:14px; opacity:.4;">••••••••••</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-text">
+          <div class="step-num">Step 3</div>
+          <h3>Your loved one unlocks it with a recovery code</h3>
+          <p>You'll get a one-time code when you set up. Leave it in a sealed envelope with your will, or give it to someone you trust. That's all they need.</p>
+        </div>
+        <div class="step-visual mock-lock">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+          <div style="font-size:15px; margin-top:8px;">Welcome</div>
+          <div style="font-size:13px; opacity:.5; margin-top:4px;">Enter the code from the sealed envelope</div>
+          <div class="code-dots">XXXX - XXXX - XXXX</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section navy">
+  <div class="section-inner">
+    <h2>What's inside</h2>
+    <p class="subtitle">18 guided sections cover everything your family might need.</p>
+    <div class="inside-grid">
+      <div class="inside-item">All about me</div>
+      <div class="inside-item">Important documents</div>
+      <div class="inside-item">Medical information</div>
+      <div class="inside-item">Key contacts</div>
+      <div class="inside-item">My dependants</div>
+      <div class="inside-item">Pets</div>
+      <div class="inside-item">Financial pointers</div>
+      <div class="inside-item">Insurances</div>
+      <div class="inside-item">Business details</div>
+      <div class="inside-item">Personal property</div>
+      <div class="inside-item">Bills &amp; subscriptions</div>
+      <div class="inside-item">Access &amp; keys</div>
+      <div class="inside-item">Digital assets</div>
+      <div class="inside-item">Funeral wishes</div>
+      <div class="inside-item">At the time of passing</div>
+      <div class="inside-item">Beneficiaries</div>
+      <div class="inside-item">Recommendations</div>
+      <div class="inside-item">A letter of gratitude</div>
+    </div>
+    <p class="inside-callout">No question is mandatory. Skip what you like, come back any time.</p>
+  </div>
+</section>
+
+<section class="section cream">
+  <div class="section-inner">
+    <h2>Built for people, not tech experts</h2>
+    <p class="subtitle">Simple enough for anyone. Secure enough for everyone.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></div>
+        <h3>Large, clear text</h3>
+        <p>Designed for readers of all ages. No tiny fonts, no confusing menus, no jargon.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>11 languages</h3>
+        <p>English, Spanish, French, German, Italian, Portuguese, Dutch, Polish, Arabic, Chinese, Hindi.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
+        <h3>Light &amp; dark mode</h3>
+        <p>Easy on the eyes, day or night. Switches automatically or with one tap.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section white">
+  <div class="section-inner">
+    <div class="pro-box">
+      <h3>For funeral directors, solicitors &amp; advisers</h3>
+      <p>Give your clients something practical. When I'm Gone replaces the paper booklets that get lost in a drawer — and it's encrypted, so their information stays private.</p>
+      <a href="mailto:hello@whenimgone.com" class="btn-outline">Get in touch for bulk pricing</a>
+    </div>
+  </div>
+</section>
+
+<section class="section cream" id="pricing">
+  <div class="section-inner">
+    <h2>Simple pricing</h2>
+    <p class="subtitle">One-off payment. Use forever. No subscription, ever.</p>
+    <div class="pricing-card">
+      <div class="price">£7.95</div>
+      <div class="price-sub">One-off payment · approx $9.95 USD · no subscription</div>
+      <ul>
+        <li>18 guided sections</li>
+        <li>256-bit encryption</li>
+        <li>Cloud backup included</li>
+        <li>Works on any device with a browser</li>
+        <li>11 languages</li>
+        <li>Read-only view for your loved ones</li>
+        <li>Free updates for life</li>
+        <li>No subscription, no hidden fees</li>
+      </ul>
+      <a href="/app.html" class="btn-cta">Complete your journal for only £7.95</a>
+      <p class="small">Try free with local-only storage. Pay to unlock cloud backup and sharing.</p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div>&copy; 2026 When I'm Gone</div>
+  <div class="footer-links">
+    <a href="#">Privacy policy</a>
+    <a href="#">Terms of use</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var track = document.getElementById('carouselTrack');
+  var dots = document.querySelectorAll('.carousel-dot');
+  var wrap = document.getElementById('carousel');
+  var current = 0;
+  var total = 3;
+  var autoTimer;
+
+  function goTo(i) {
+    current = ((i % total) + total) % total;
+    track.style.transform = 'translateX(-' + (current * 100) + '%)';
+    dots.forEach(function (d, idx) { d.classList.toggle('active', idx === current); });
+  }
+
+  function startAuto() { autoTimer = setInterval(function () { goTo(current + 1); }, 4000); }
+  function stopAuto() { clearInterval(autoTimer); }
+
+  dots.forEach(function (d) {
+    d.addEventListener('click', function () {
+      stopAuto();
+      goTo(parseInt(d.dataset.slide));
+      startAuto();
+    });
+  });
+
+  var startX = 0;
+  var dragging = false;
+  wrap.addEventListener('pointerdown', function (e) { startX = e.clientX; dragging = true; wrap.style.cursor = 'grabbing'; });
+  wrap.addEventListener('pointerup', function (e) {
+    if (!dragging) return;
+    dragging = false;
+    wrap.style.cursor = 'grab';
+    var diff = e.clientX - startX;
+    if (Math.abs(diff) > 40) { stopAuto(); goTo(current + (diff < 0 ? 1 : -1)); startAuto(); }
+  });
+  wrap.addEventListener('pointerleave', function () { dragging = false; wrap.style.cursor = 'grab'; });
+
+  startAuto();
+})();
+</script>
+</body>
 </html>
