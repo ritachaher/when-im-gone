@@ -1,15 +1,33 @@
 // Firebase init + Firestore cloud backup helpers.
-// The encrypted blob (already AES-GCM-256 encrypted locally) is stored as a
-// single Firestore document keyed by a hash derived from the export payload.
-// No plaintext ever leaves the device.
+//
+// Cloud backup stores one document per authenticated user, keyed by the
+// user's anonymous Firebase Auth UID. The document body is the encrypted
+// .wig export (AES-GCM-256, already unreadable without the user's
+// password or recovery code) — Firestore never sees plaintext.
+//
+// Requirement: Anonymous sign-in must be enabled for the Firebase
+// project (Firebase Console → Authentication → Sign-in method →
+// Anonymous → Enable). Without it, signInAnonymously() will fail.
+//
+// Scope: This protects one device's backup. Anonymous UIDs are tied to
+// the browser/device that created them — restoring onto a fresh
+// install uses the exported .wig file, not this cloud path.
 
-import { initializeApp } from 'firebase/app';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
 import {
-  getFirestore,
+  getAuth,
+  onAuthStateChanged,
+  signInAnonymously,
+  type Auth,
+  type User,
+} from 'firebase/auth';
+import {
   doc,
-  setDoc,
   getDoc,
+  getFirestore,
   serverTimestamp,
+  setDoc,
+  type Firestore,
 } from 'firebase/firestore';
 import { exportEncryptedBlob, importEncryptedBlob } from './vault';
 
@@ -22,30 +40,53 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-// Only initialise if config is present (dev may run without Firebase)
-const app = firebaseConfig.apiKey ? initializeApp(firebaseConfig) : null;
-const db = app ? getFirestore(app) : null;
+// Only initialise if config is present (dev may run without Firebase).
+let app: FirebaseApp | null = null;
+let auth: Auth | null = null;
+let db: Firestore | null = null;
 
-/** Derive a stable, non-reversible document ID from the export JSON.
- *  We hash the pwSalt field so the Firestore doc ID is deterministic per vault. */
-async function vaultDocId(json: string): Promise<string> {
-  const enc = new TextEncoder().encode(json.slice(0, 200));
-  const hash = await crypto.subtle.digest('SHA-256', enc);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('');
+if (firebaseConfig.apiKey) {
+  app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getFirestore(app);
+}
+
+/**
+ * Returns the current anonymous user, signing in if needed. The Firebase
+ * SDK persists the anonymous session in IndexedDB, so this is a fast
+ * no-op on subsequent calls.
+ */
+async function ensureAnonUser(): Promise<User> {
+  if (!auth) throw new Error('Firebase not configured');
+  if (auth.currentUser) return auth.currentUser;
+  await signInAnonymously(auth);
+  return new Promise<User>((resolve, reject) => {
+    const unsub = onAuthStateChanged(
+      auth!,
+      (user) => {
+        if (user) {
+          unsub();
+          resolve(user);
+        }
+      },
+      (err) => {
+        unsub();
+        reject(err);
+      },
+    );
+  });
 }
 
 export type BackupStatus = 'idle' | 'pushing' | 'pulling' | 'done' | 'error';
 
-/** Push the locally-encrypted vault to Firestore. */
+/** Push the locally-encrypted vault to Firestore, keyed by anon UID. */
 export async function pushBackup(): Promise<void> {
   if (!db) throw new Error('Firebase not configured');
+  const user = await ensureAnonUser();
   const blob = await exportEncryptedBlob();
   const json = await blob.text();
-  const id = await vaultDocId(json);
   // Firestore max doc size is 1 MB. The encrypted journal should be well under.
-  await setDoc(doc(db, 'vaults', id), {
+  await setDoc(doc(db, 'vaults', user.uid), {
     data: json,
     updatedAt: serverTimestamp(),
   });
@@ -58,22 +99,15 @@ export async function pushBackup(): Promise<void> {
  * Caller must pass `{ confirmedReplace: true }` after showing a two-step
  * confirmation dialog; otherwise the underlying import refuses to run.
  */
-export async function pullBackup(
-  docId: string,
-  opts: { confirmedReplace: boolean },
-): Promise<void> {
+export async function pullBackup(opts: {
+  confirmedReplace: boolean;
+}): Promise<void> {
   if (!db) throw new Error('Firebase not configured');
-  const snap = await getDoc(doc(db, 'vaults', docId));
+  const user = await ensureAnonUser();
+  const snap = await getDoc(doc(db, 'vaults', user.uid));
   if (!snap.exists()) throw new Error('No backup found');
   const json = snap.data().data as string;
   await importEncryptedBlob(json, opts);
-}
-
-/** Get the doc ID for the current vault (so we know where to pull from). */
-export async function getVaultDocId(): Promise<string> {
-  const blob = await exportEncryptedBlob();
-  const json = await blob.text();
-  return vaultDocId(json);
 }
 
 export function isFirebaseConfigured(): boolean {

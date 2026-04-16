@@ -1,21 +1,20 @@
 rules_version = '2';
 
-// The vault collection stores AES-GCM-256 encrypted blobs. Document IDs are
-// SHA-256 hashes derived from the encrypted payload — only someone who holds
-// the local vault can compute the correct ID. No plaintext ever touches
-// Firestore. Size is capped at 1 MB to prevent abuse.
+// The vault collection stores AES-GCM-256 encrypted blobs, one document
+// per authenticated user. Each document is keyed by the caller's
+// anonymous Firebase Auth UID — read and write are permitted only if
+// the caller owns that UID. No plaintext ever touches Firestore.
 //
-// Reads are currently disabled at the rules layer because the write path in
-// src/storage/firebase.ts does not yet authenticate the client. Until
-// anonymous auth is wired in and documents are keyed by UID, serving
-// ciphertext publicly is unnecessary exposure. The "restore from cloud"
-// feature is not surfaced in the UI today, so disabling reads has no user
-// impact. Re-enable once the read path is gated by `request.auth.uid`.
+// Write-size is capped at ~1 MB (Firestore's hard limit) so a
+// compromised client can't run up quota.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /vaults/{docId} {
-      allow read: if false;
-      allow write: if request.resource.data.keys().hasAll(['data', 'updatedAt'])
+    match /vaults/{uid} {
+      allow read: if request.auth != null
+                  && request.auth.uid == uid;
+      allow write: if request.auth != null
+                   && request.auth.uid == uid
+                   && request.resource.data.keys().hasAll(['data', 'updatedAt'])
                    && request.resource.data.data is string
                    && request.resource.data.data.size() < 1000000;
     }
