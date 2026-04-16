@@ -164,6 +164,11 @@ export function Setup({ onDone }: { onDone: () => void }) {
               onChange={(e) => setPairCode(e.target.value)}
               placeholder={t('unlock_code_placeholder')}
               autoFocus
+              autoCapitalize="characters"
+              autoCorrect="off"
+              autoComplete="off"
+              spellCheck={false}
+              inputMode="text"
               onKeyDown={(e) => e.key === 'Enter' && !busy && submitPair()}
             />
             {err && <p className="pw-error">{err}</p>}

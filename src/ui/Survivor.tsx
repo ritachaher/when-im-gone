@@ -79,6 +79,11 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               placeholder="XXXX-XXXX-XXXX"
+              autoCapitalize="characters"
+              autoCorrect="off"
+              autoComplete="off"
+              spellCheck={false}
+              inputMode="text"
               onKeyDown={(e) => e.key === 'Enter' && submit()}
             />
           </>

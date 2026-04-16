@@ -71,6 +71,11 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
               onChange={(e) => setValue(e.target.value)}
               placeholder={t('unlock_code_placeholder')}
               autoFocus
+              autoCapitalize="characters"
+              autoCorrect="off"
+              autoComplete="off"
+              spellCheck={false}
+              inputMode="text"
               onKeyDown={(e) => e.key === 'Enter' && submit()}
             />
           </>
