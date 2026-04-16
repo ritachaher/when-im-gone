@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="When I'm gone">
+  <rect width="512" height="512" rx="72" fill="#2C3E5D"/>
+  <polyline points="112,148 216,376 256,240 296,376 400,148"
+            fill="none" stroke="#FAF6F0" stroke-width="52"
+            stroke-linejoin="round" stroke-linecap="round"/>
+</svg>
