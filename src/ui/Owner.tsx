@@ -1,7 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
-  exportEncryptedBlob,
-  importEncryptedBlob,
   setSectionField,
   setSectionList,
   useVault,
@@ -15,14 +13,13 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from './useTheme';
 import { ConfirmDialog } from './ConfirmDialog';
 import { LANGUAGES, changeLanguage } from '../i18n';
-import { pushBackup, pullBackup, getVaultDocId, isFirebaseConfigured, type BackupStatus } from '../storage/firebase';
+import { pushBackup, isFirebaseConfigured, type BackupStatus } from '../storage/firebase';
 
 export function Owner({ onLock }: { onLock: () => void }) {
   const { t, i18n } = useTranslation();
   const journal = useVault((s) => s.journal);
   const ownerName = useVault((s) => s.ownerDisplayName);
   const [active, setActive] = useState(SECTIONS[0].slug);
-  const fileRef = useRef<HTMLInputElement>(null);
 
   const progress = useMemo(() => {
     if (!journal) return 0;
@@ -43,19 +40,7 @@ export function Owner({ onLock }: { onLock: () => void }) {
   const section = findSection(active);
   const schema = SCHEMAS[section.slug];
 
-  async function onExport() {
-    const blob = await exportEncryptedBlob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    const stamp = new Date().toISOString().slice(0, 10);
-    a.download = `when-im-gone-${stamp}.wig`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
-
-  const [confirmAction, setConfirmAction] = useState<null | 'import' | 'wipe'>(null);
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [confirmAction, setConfirmAction] = useState<null | 'wipe'>(null);
   const { theme, toggle: toggleTheme } = useTheme();
   const [cloudStatus, setCloudStatus] = useState<BackupStatus>('idle');
 
@@ -69,40 +54,6 @@ export function Owner({ onLock }: { onLock: () => void }) {
       console.error('Cloud push failed:', e);
       setCloudStatus('error');
       setTimeout(() => setCloudStatus('idle'), 3000);
-    }
-  }
-
-  async function onCloudPull() {
-    setCloudStatus('pulling');
-    try {
-      const id = await getVaultDocId();
-      await pullBackup(id);
-      setCloudStatus('done');
-      setTimeout(() => { setCloudStatus('idle'); onLock(); }, 1500);
-    } catch (e) {
-      console.error('Cloud pull failed:', e);
-      setCloudStatus('error');
-      setTimeout(() => setCloudStatus('idle'), 3000);
-    }
-  }
-
-  function startImport(file: File) {
-    setPendingFile(file);
-    setConfirmAction('import');
-  }
-
-  async function doImport() {
-    if (!pendingFile) return;
-    try {
-      const text = await pendingFile.text();
-      await importEncryptedBlob(text);
-      alert('Backup imported. Unlock with the password or recovery code from that backup.');
-      onLock();
-    } catch (e) {
-      alert('Could not import: ' + (e as Error).message);
-    } finally {
-      setPendingFile(null);
-      setConfirmAction(null);
     }
   }
 
@@ -156,21 +107,23 @@ export function Owner({ onLock }: { onLock: () => void }) {
         </nav>
         <div className="nav-footer">
           {isFirebaseConfigured() && (
-            <>
+            <div className="footer-action">
               <button onClick={onCloudPush} disabled={cloudStatus === 'pushing' || cloudStatus === 'pulling'}>
-                {cloudStatus === 'pushing' ? t('cloud_pushing', 'Backing up…') : t('cloud_push_btn', 'Back up to cloud')}
+                {cloudStatus === 'pushing' ? t('cloud_pushing', 'Saving…') : t('cloud_push_btn', 'Save a copy')}
               </button>
-              <button onClick={onCloudPull} disabled={cloudStatus === 'pushing' || cloudStatus === 'pulling'}>
-                {cloudStatus === 'pulling' ? t('cloud_pulling', 'Restoring…') : t('cloud_pull_btn', 'Restore from cloud')}
-              </button>
-              {cloudStatus === 'done' && <div style={{ color: 'var(--ok)', fontSize: 12 }}>{t('cloud_done', '✓ Synced')}</div>}
-              {cloudStatus === 'error' && <div style={{ color: 'var(--danger)', fontSize: 12 }}>{t('cloud_error', 'Sync failed — try again')}</div>}
-            </>
+              <span className="footer-hint">{t('cloud_push_hint', 'Keeps a safe backup in case this device is lost')}</span>
+              {cloudStatus === 'done' && <span className="footer-hint" style={{ color: 'var(--ok)' }}>{t('cloud_done', '✓ Saved')}</span>}
+              {cloudStatus === 'error' && <span className="footer-hint" style={{ color: 'var(--danger)' }}>{t('cloud_error', 'Could not save — please try again')}</span>}
+            </div>
           )}
-          <button onClick={onExport}>{t('export_btn')}</button>
-          <button onClick={() => fileRef.current?.click()}>{t('import_btn')}</button>
-          <button onClick={onLock}>{t('lock_journal')}</button>
-          <button onClick={() => setConfirmAction('wipe')}>{t('wipe_btn')}</button>
+          <div className="footer-action">
+            <button onClick={onLock}>{t('lock_journal', 'Lock')}</button>
+            <span className="footer-hint">{t('lock_hint', 'Hides everything behind your password')}</span>
+          </div>
+          <div className="footer-action">
+            <button onClick={() => setConfirmAction('wipe')}>{t('wipe_btn', 'Wipe everything')}</button>
+            <span className="footer-hint">{t('wipe_hint', 'Permanently deletes all data on this device')}</span>
+          </div>
           <div className="toggle-wrap">
             <button
               className={`toggle-track${theme === 'dark' ? ' on' : ''}`}
@@ -194,17 +147,6 @@ export function Owner({ onLock }: { onLock: () => void }) {
               <option key={l.code} value={l.code}>{l.name}</option>
             ))}
           </select>
-          <input
-            type="file"
-            ref={fileRef}
-            accept=".wig,application/octet-stream,application/json"
-            style={{ display: 'none' }}
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) startImport(f);
-              e.target.value = '';
-            }}
-          />
         </div>
       </aside>
 
@@ -237,16 +179,6 @@ export function Owner({ onLock }: { onLock: () => void }) {
           danger
           onConfirm={doWipe}
           onCancel={() => setConfirmAction(null)}
-        />
-      )}
-      {confirmAction === 'import' && (
-        <ConfirmDialog
-          title={t('confirm_import_title')}
-          message={t('confirm_import_msg')}
-          confirmLabel={t('confirm_import_yes')}
-          cancelLabel={t('cancel')}
-          onConfirm={doImport}
-          onCancel={() => { setConfirmAction(null); setPendingFile(null); }}
         />
       )}
     </div>

@@ -118,8 +118,10 @@ p { margin: 0 0 .9em; }
 .nav a.active { background: rgba(255,255,255,.08); color: #fff; border-left-color: var(--accent); }
 .nav-footer {
   padding: 16px 22px 0; border-top: 1px solid rgba(255,255,255,.12); margin-top: 10px;
-  display: flex; flex-direction: column; gap: 8px;
+  display: flex; flex-direction: column; gap: 12px;
 }
+.footer-action { display: flex; flex-direction: column; gap: 3px; }
+.footer-hint { font-size: 11px; color: rgba(255,255,255,.5); padding-left: 2px; line-height: 1.35; }
 .nav-footer button {
   background: transparent; color: rgba(255,255,255,.8); border: 1px solid rgba(255,255,255,.2);
   padding: 8px 10px; border-radius: 6px; text-align: left;
