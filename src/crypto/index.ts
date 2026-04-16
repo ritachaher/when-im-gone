@@ -111,3 +111,29 @@ export function generateRecoveryCode(): string {
 export function normaliseRecoveryCode(input: string): string {
   return input.toUpperCase().replace(/[^A-Z0-9]/g, '');
 }
+
+/**
+ * Derives a stable hex identifier from a recovery code. Used as the
+ * Firestore document ID for the cloud vault so every device that holds
+ * the same recovery code converges on the same cloud document (enabling
+ * phone ↔ PC sync).
+ *
+ * Threat model: anyone holding the recovery code can already decrypt
+ * the journal, so gating the cloud document by "know the recovery code"
+ * adds no weakness — it's precisely the right level. The context prefix
+ * prevents the hash from being confused with any other hash of the same
+ * input (e.g. the wrap-key derivation path).
+ *
+ * Entropy: the 12-character code has ~60 bits of entropy (2^60 ≈ 1e18).
+ * Brute-force enumeration of the ID space is infeasible.
+ */
+export async function deriveVaultCloudId(recoveryCode: string): Promise<string> {
+  const normalised = normaliseRecoveryCode(recoveryCode);
+  const input = new TextEncoder().encode(
+    `when-im-gone:cloud-id:v1:${normalised}`,
+  );
+  const hash = await crypto.subtle.digest('SHA-256', input);
+  return Array.from(new Uint8Array(hash))
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('');
+}

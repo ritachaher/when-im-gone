@@ -4,6 +4,7 @@ import { create as createZustand } from 'zustand';
 import { db, wipeLocal } from './db';
 import {
   decryptJSON,
+  deriveVaultCloudId,
   encryptJSON,
   generateDataKey,
   generateRecoveryCode,
@@ -58,6 +59,7 @@ export async function create(opts: {
 
   const pw = await wrapDataKey(dataKey, opts.password);
   const rc = await wrapDataKey(dataKey, normaliseRecoveryCode(recoveryCode));
+  const vaultCloudId = await deriveVaultCloudId(recoveryCode);
 
   await db.meta.put({
     id: 'meta',
@@ -70,6 +72,7 @@ export async function create(opts: {
     rcIv: rc.iv,
     rcWrapped: rc.wrapped,
     schemaVersion: 1,
+    vaultCloudId,
   });
 
   const journal = emptyJournal();
@@ -111,6 +114,14 @@ export async function unlockWithPassword(password: string): Promise<void> {
 
 export async function unlockWithRecovery(code: string): Promise<void> {
   await unlockWith(normaliseRecoveryCode(code), 'rc');
+  // Backfill vaultCloudId for existing users who set up before cross-
+  // device sync existed. Runs silently after a successful unlock so we
+  // know the code is real.
+  const meta = await db.meta.get('meta');
+  if (meta && !meta.vaultCloudId) {
+    const vaultCloudId = await deriveVaultCloudId(code);
+    await db.meta.put({ ...meta, vaultCloudId });
+  }
 }
 
 export function lock(): void {
@@ -167,6 +178,16 @@ export async function wipe(): Promise<void> {
 export async function getLastCloudPushAt(): Promise<number | null> {
   const meta = await db.meta.get('meta');
   return meta?.lastCloudPushAt ?? null;
+}
+
+/**
+ * Reads the stable cloud document ID for this vault. Returns null if
+ * missing (pre-sync-era vaults that haven't been unlocked with the
+ * recovery code yet — the backfill runs there).
+ */
+export async function getVaultCloudId(): Promise<string | null> {
+  const meta = await db.meta.get('meta');
+  return meta?.vaultCloudId ?? null;
 }
 
 export async function markCloudPushed(at: number = Date.now()): Promise<void> {

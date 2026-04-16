@@ -1,19 +1,24 @@
 rules_version = '2';
 
-// The vault collection stores AES-GCM-256 encrypted blobs, one document
-// per authenticated user. Each document is keyed by the caller's
-// anonymous Firebase Auth UID — read and write are permitted only if
-// the caller owns that UID. No plaintext ever touches Firestore.
+// The vault collection stores AES-GCM-256 encrypted blobs. Each
+// document is keyed by SHA-256 of the user's recovery code (see
+// crypto/deriveVaultCloudId), which is ~60 bits of entropy — too
+// expensive to enumerate. Every device that holds the recovery code
+// computes the same ID, so phone and PC land on the same document.
 //
-// Write-size is capped at ~1 MB (Firestore's hard limit) so a
-// compromised client can't run up quota.
+// Access control: anyone holding the recovery code can already decrypt
+// the contents, so "you need the recovery code to find the document"
+// is exactly the right level of gating. We still require Firebase Auth
+// (anonymous is fine) so Firestore has a per-client rate-limit anchor
+// against drive-by spam. The 1 MB write cap blocks quota-exhaustion
+// attacks from a compromised client.
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /vaults/{uid} {
+    match /vaults/{vaultId} {
       allow read: if request.auth != null
-                  && request.auth.uid == uid;
+                  && vaultId.matches('^[0-9a-f]{64}$');
       allow write: if request.auth != null
-                   && request.auth.uid == uid
+                   && vaultId.matches('^[0-9a-f]{64}$')
                    && request.resource.data.keys().hasAll(['data', 'updatedAt'])
                    && request.resource.data.data is string
                    && request.resource.data.data.size() < 1000000;

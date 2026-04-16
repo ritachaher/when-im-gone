@@ -17,9 +17,11 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { deriveVaultCloudId } from '../crypto';
 import {
   create,
   exportEncryptedBlob,
+  getVaultCloudId,
   importEncryptedBlob,
   lock,
   setSectionField,
@@ -115,5 +117,65 @@ describe('vault: recovery round trip', () => {
     await expect(importEncryptedBlob(exportedText, {})).rejects.toThrow(
       /confirmedReplace/,
     );
+  });
+
+  // ---- Cross-device sync invariant ----
+  // For phone ↔ PC sync to work, two devices holding the same recovery
+  // code MUST compute the same vault cloud ID. If this ever diverges,
+  // every synced user would silently see two disconnected journals.
+  it('derives the same vault cloud ID on two devices holding the same recovery code', async () => {
+    // Device A creates a vault and records its cloud ID in meta.
+    const { recoveryCode } = await create({
+      password: 'test-pw',
+      ownerDisplayName: 'Eleanor',
+    });
+    const idOnDeviceA = await getVaultCloudId();
+    expect(idOnDeviceA).not.toBeNull();
+    expect(idOnDeviceA).toMatch(/^[0-9a-f]{64}$/);
+
+    // Device B (fresh install, no local state) computes the cloud ID
+    // from only the recovery code. This is what pairViaRecoveryCode
+    // does in production.
+    const idOnDeviceB = await deriveVaultCloudId(recoveryCode);
+    expect(idOnDeviceB).toBe(idOnDeviceA);
+
+    // Formatting variations (dashes, case, whitespace) must not matter.
+    const stripped = recoveryCode.replace(/-/g, '');
+    const lowercased = recoveryCode.toLowerCase();
+    const spaced = recoveryCode.replace(/-/g, ' ');
+    expect(await deriveVaultCloudId(stripped)).toBe(idOnDeviceA);
+    expect(await deriveVaultCloudId(lowercased)).toBe(idOnDeviceA);
+    expect(await deriveVaultCloudId(spaced)).toBe(idOnDeviceA);
+  });
+
+  it('different recovery codes derive different vault cloud IDs', async () => {
+    const a = await deriveVaultCloudId('ABCD-EFGH-JKLM');
+    const b = await deriveVaultCloudId('ABCD-EFGH-JKLN');
+    expect(a).not.toBe(b);
+  });
+
+  it('backfills the vault cloud ID on unlock-with-recovery for pre-sync vaults', async () => {
+    // Simulate an older vault created before cross-device sync: strip
+    // the field out of meta after create().
+    const { recoveryCode } = await create({
+      password: 'test-pw',
+      ownerDisplayName: 'Eleanor',
+    });
+    const meta = await db.meta.get('meta');
+    expect(meta?.vaultCloudId).toBeDefined();
+    // Remove the field and write back (as would an old install upgrading).
+    const { vaultCloudId: _drop, ...metaWithoutCloudId } = meta!;
+    void _drop;
+    await db.meta.put(metaWithoutCloudId);
+    expect((await db.meta.get('meta'))?.vaultCloudId).toBeUndefined();
+
+    // Simulate the user locking and unlocking with the recovery code.
+    lock();
+    await unlockWithRecovery(recoveryCode);
+
+    // The backfill should have run silently.
+    const backfilled = await db.meta.get('meta');
+    expect(backfilled?.vaultCloudId).toBeDefined();
+    expect(backfilled?.vaultCloudId).toBe(await deriveVaultCloudId(recoveryCode));
   });
 });

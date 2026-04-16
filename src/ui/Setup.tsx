@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { create } from '../storage/vault';
+import { create, unlockWithRecovery } from '../storage/vault';
+import { isFirebaseConfigured, pairViaRecoveryCode } from '../storage/firebase';
 
-type Step = 'welcome' | 'disclaimer' | 'name' | 'password' | 'recovery';
+type Step = 'welcome' | 'disclaimer' | 'name' | 'password' | 'recovery' | 'pair';
 
 export function Setup({ onDone }: { onDone: () => void }) {
   const { t } = useTranslation();
@@ -13,6 +14,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
+  const [pairCode, setPairCode] = useState('');
 
   const rules = {
     len: pw1.length >= 10,
@@ -33,6 +35,52 @@ export function Setup({ onDone }: { onDone: () => void }) {
       setStep('recovery');
     } catch (e) {
       setErr((e as Error).message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // Pairing flow: user has an existing journal on another device and a
+  // recovery code in hand. We pull the encrypted blob from Firestore,
+  // import it locally, then unlock with the same code to land in Owner.
+  async function submitPair() {
+    setErr(null);
+    setBusy(true);
+    try {
+      const found = await pairViaRecoveryCode(pairCode);
+      if (!found) {
+        setErr(
+          t(
+            'pair_not_found',
+            'We couldn\u2019t find a journal with that recovery code. Double-check the code, or use "Begin" to start a new journal.',
+          ),
+        );
+        return;
+      }
+      await unlockWithRecovery(pairCode);
+      onDone();
+    } catch (e) {
+      // OperationError means the code is wrong (the downloaded blob's
+      // auth tag didn't validate against this code). Any other error is
+      // network/storage/Firebase — treat differently.
+      const name =
+        e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
+      if (name === 'OperationError') {
+        setErr(
+          t(
+            'pair_wrong_code',
+            'That recovery code didn\u2019t unlock the journal. Check for typos and try again.',
+          ),
+        );
+      } else {
+        console.error('Pair failed:', e);
+        setErr(
+          t(
+            'pair_error_other',
+            'Something went wrong reaching the cloud. Check your internet and try again.',
+          ),
+        );
+      }
     } finally {
       setBusy(false);
     }
@@ -59,6 +107,15 @@ export function Setup({ onDone }: { onDone: () => void }) {
               <button className="btn btn-lg" onClick={() => setStep('disclaimer')}>
                 {t('begin')}
               </button>
+              {isFirebaseConfigured() && (
+                <button
+                  className="btn ghost"
+                  style={{ marginTop: 8 }}
+                  onClick={() => { setErr(null); setPairCode(''); setStep('pair'); }}
+                >
+                  {t('pair_existing', 'I already have a journal on another device')}
+                </button>
+              )}
               <ul className="trust-row">
                 <li>
                   <span className="ti" aria-hidden>
@@ -87,6 +144,40 @@ export function Setup({ onDone }: { onDone: () => void }) {
                   {t('trust_loved')}
                 </li>
               </ul>
+            </div>
+          </>
+        )}
+
+        {step === 'pair' && (
+          <>
+            <h2>{t('pair_title', 'Pair this device')}</h2>
+            <p className="muted">
+              {t(
+                'pair_hint',
+                'Enter the 12-character recovery code from your other device. We\u2019ll pull your journal down and unlock it here.',
+              )}
+            </p>
+            <label>{t('unlock_code_label')}</label>
+            <input
+              className="setup-input unlock-input"
+              value={pairCode}
+              onChange={(e) => setPairCode(e.target.value)}
+              placeholder={t('unlock_code_placeholder')}
+              autoFocus
+              onKeyDown={(e) => e.key === 'Enter' && !busy && submitPair()}
+            />
+            {err && <p className="pw-error">{err}</p>}
+            <div className="btnrow">
+              <button className="btn ghost" onClick={() => setStep('welcome')}>
+                {t('back')}
+              </button>
+              <button
+                className="btn"
+                disabled={busy || pairCode.trim().length < 12}
+                onClick={submitPair}
+              >
+                {busy ? t('pair_busy', 'Pairing\u2026') : t('pair_submit', 'Pair device')}
+              </button>
             </div>
           </>
         )}

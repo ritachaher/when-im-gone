@@ -25,6 +25,11 @@ export type MetaRow = {
   // clicked "Save a copy"). Used to nudge the user when the cloud copy
   // is stale (> 2 days).
   lastCloudPushAt?: number;
+  // SHA-256(recoveryCode) used as the Firestore document ID for cloud
+  // backup. Deterministic across devices → enables phone/PC sync.
+  // Optional for backward-compat; will be computed opportunistically on
+  // first unlock-with-recovery if missing.
+  vaultCloudId?: string;
 };
 
 export type BlobRow = {
