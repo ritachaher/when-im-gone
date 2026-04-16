@@ -16,19 +16,32 @@ const LOCALE_LOADERS: Record<string, () => Promise<{ default: Record<string, str
   hi: () => import('./locales/hi.json'),
 };
 
-export const LANGUAGES = [
-  { code: 'en', name: 'English' },
-  { code: 'es', name: 'Español' },
-  { code: 'fr', name: 'Français' },
-  { code: 'de', name: 'Deutsch' },
-  { code: 'it', name: 'Italiano' },
-  { code: 'pt', name: 'Português' },
-  { code: 'nl', name: 'Nederlands' },
-  { code: 'pl', name: 'Polski' },
-  { code: 'ar', name: 'العربية' },
-  { code: 'zh', name: '中文' },
-  { code: 'hi', name: 'हिन्दी' },
-] as const;
+// Translation status per locale. Set honestly so the language selector
+// can tell a user what they'll actually get before they switch:
+//   complete — every string translated (currently: English, the source)
+//   mostly   — ~90% translated; one section (Digital) still in English
+//   partial  — ~50% translated; a significant portion falls back to English
+// When the Digital section is translated, promote de/es/fr to 'complete'.
+// When another language is properly translated end-to-end, promote it.
+export type TranslationStatus = 'complete' | 'mostly' | 'partial';
+
+export const LANGUAGES: ReadonlyArray<{
+  code: string;
+  name: string;
+  status: TranslationStatus;
+}> = [
+  { code: 'en', name: 'English', status: 'complete' },
+  { code: 'de', name: 'Deutsch', status: 'mostly' },
+  { code: 'es', name: 'Español', status: 'mostly' },
+  { code: 'fr', name: 'Français', status: 'mostly' },
+  { code: 'it', name: 'Italiano', status: 'partial' },
+  { code: 'pt', name: 'Português', status: 'partial' },
+  { code: 'nl', name: 'Nederlands', status: 'partial' },
+  { code: 'pl', name: 'Polski', status: 'partial' },
+  { code: 'ar', name: 'العربية', status: 'partial' },
+  { code: 'zh', name: '中文', status: 'partial' },
+  { code: 'hi', name: 'हिन्दी', status: 'partial' },
+];
 
 function getSavedLang(): string {
   try {

@@ -176,9 +176,23 @@ export function Owner({ onLock }: { onLock: () => void }) {
             onChange={(e) => changeLanguage(e.target.value)}
             style={{ appearance: 'auto', cursor: 'pointer' }}
           >
-            {LANGUAGES.map((l) => (
-              <option key={l.code} value={l.code}>{l.name}</option>
-            ))}
+            {LANGUAGES.map((l) => {
+              // Tell users upfront if they'll see English fallback text.
+              // Suffix stays in English since it's on a language-picker
+              // where the user hasn't chosen the target language yet.
+              const suffix =
+                l.status === 'mostly'
+                  ? ' (beta)'
+                  : l.status === 'partial'
+                  ? ' (partial)'
+                  : '';
+              return (
+                <option key={l.code} value={l.code}>
+                  {l.name}
+                  {suffix}
+                </option>
+              );
+            })}
           </select>
         </div>
       </aside>
