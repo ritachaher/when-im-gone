@@ -26,10 +26,10 @@
 /* ===== Dark theme ===== */
 [data-theme="dark"] {
   --navy-soft: #7B93B8;
-  --page: #1A1E26;
-  --page-alt: #242830;
-  --paper: #242830;
-  --paper-alt: #2A2E38;
+  --page: #1B2335;
+  --page-alt: #222B3E;
+  --paper: #222B3E;
+  --paper-alt: #283248;
   --ink: #E8E4DE;
   --ink-soft: #9A9EAA;
   --accent: #D4896C;
@@ -38,7 +38,7 @@
   --ok: #6EA07D;
   --warn: #D4903F;
   --danger: #D46B5A;
-  --border: #3A3E48;
+  --border: #333D52;
   --shadow: 0 4px 20px rgba(0,0,0,.3);
   --callout-accent: rgba(201,122,93,.12);
   --callout-warn: rgba(194,124,58,.12);
