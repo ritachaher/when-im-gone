@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { create } from '../storage/vault';
 
-type Step = 'welcome' | 'name' | 'password' | 'recovery';
+type Step = 'welcome' | 'disclaimer' | 'name' | 'password' | 'recovery';
 
 export function Setup({ onDone }: { onDone: () => void }) {
   const { t } = useTranslation();
@@ -56,7 +56,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
               <p className="eyebrow">{t('eyebrow')}</p>
               <h1>{t('app_name')}</h1>
               <p className="lede">{t('welcome_lede')}</p>
-              <button className="btn btn-lg" onClick={() => setStep('name')}>
+              <button className="btn btn-lg" onClick={() => setStep('disclaimer')}>
                 {t('begin')}
               </button>
               <ul className="trust-row">
@@ -91,6 +91,38 @@ export function Setup({ onDone }: { onDone: () => void }) {
           </>
         )}
 
+        {step === 'disclaimer' && (
+          <>
+            <h2>{t('disclaimer_title', 'Before you begin — what we promise and what we don\u2019t')}</h2>
+            <p>
+              {t(
+                'disclaimer_p1',
+                'Everything you type is locked on this device using a key made from your password. We (the people who built this) don\u2019t have that key. We can\u2019t see what you write. We couldn\u2019t hand it over if we were asked to.',
+              )}
+            </p>
+            <p>
+              {t(
+                'disclaimer_p2',
+                'Only someone who knows your password, or holds your recovery code, can unlock the journal. You decide who that is.',
+              )}
+            </p>
+            <p className="muted">
+              {t(
+                'disclaimer_p3',
+                'There is no back door. If both the password and the recovery code are lost, nobody can recover what\u2019s inside — not even us. That\u2019s the price of real privacy. At the end of setup we\u2019ll help you print a sealed-envelope recovery sheet — keep it somewhere your trusted person can find it.',
+              )}
+            </p>
+            <div className="btnrow">
+              <button className="btn ghost" onClick={() => setStep('welcome')}>
+                {t('back')}
+              </button>
+              <button className="btn" onClick={() => setStep('name')}>
+                {t('disclaimer_continue', 'I understand, continue')}
+              </button>
+            </div>
+          </>
+        )}
+
         {step === 'name' && (
           <>
             <h2>{t('name_title')}</h2>
@@ -103,7 +135,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
               autoFocus
             />
             <div className="btnrow">
-              <button className="btn ghost" onClick={() => setStep('welcome')}>{t('back')}</button>
+              <button className="btn ghost" onClick={() => setStep('disclaimer')}>{t('back')}</button>
               <button className="btn" disabled={!name.trim()} onClick={() => setStep('password')}>{t('next')}</button>
             </div>
           </>
