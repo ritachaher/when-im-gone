@@ -22,8 +22,25 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
     try {
       if (mode === 'pw') await unlockWithPassword(value);
       else await unlockWithRecovery(value);
-    } catch {
-      setErr(mode === 'pw' ? 'That password doesn\u2019t match.' : 'That recovery code doesn\u2019t match.');
+    } catch (e) {
+      // Expected failure: WebCrypto's OperationError when the AES-GCM
+      // auth tag doesn't validate (i.e. wrong password/code). Anything
+      // else is an infrastructure problem the survivor shouldn't be
+      // blamed for — show a different message.
+      console.error('Unlock failed:', e);
+      const name =
+        e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
+      if (name === 'OperationError') {
+        setErr(
+          mode === 'pw'
+            ? 'That password doesn\u2019t match.'
+            : 'That recovery code doesn\u2019t match.',
+        );
+      } else {
+        setErr(
+          'Something went wrong opening the journal. Please try again.',
+        );
+      }
     } finally {
       setBusy(false);
     }

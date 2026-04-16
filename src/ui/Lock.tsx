@@ -15,8 +15,25 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
     try {
       if (mode === 'pw') await unlockWithPassword(value);
       else await unlockWithRecovery(value);
-    } catch {
-      setErr(mode === 'pw' ? t('pw_wrong') : t('rc_wrong'));
+    } catch (e) {
+      // Distinguish a wrong password/code (the expected, common failure)
+      // from infrastructure errors (IndexedDB quota, corrupted store,
+      // WebCrypto unavailable, etc). WebCrypto throws OperationError when
+      // the AES-GCM auth tag fails — that's the wrong-secret signature.
+      console.error('Unlock failed:', e);
+      const name =
+        e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
+      const looksLikeWrongSecret = name === 'OperationError';
+      if (looksLikeWrongSecret) {
+        setErr(mode === 'pw' ? t('pw_wrong') : t('rc_wrong'));
+      } else {
+        setErr(
+          t(
+            'unlock_error_other',
+            'Something went wrong opening the journal. Please try again, or reinstall the app if the problem continues.',
+          ),
+        );
+      }
     } finally {
       setBusy(false);
     }
