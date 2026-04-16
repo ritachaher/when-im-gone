@@ -20,6 +20,11 @@ export type MetaRow = {
   rcIv: Bytes;
   rcWrapped: Bytes;
   schemaVersion: number;
+  // Wall-clock ms of the last successful cloud push. Optional — not all
+  // meta rows have this (pre-existing vaults, or users who have never
+  // clicked "Save a copy"). Used to nudge the user when the cloud copy
+  // is stale (> 2 days).
+  lastCloudPushAt?: number;
 };
 
 export type BlobRow = {

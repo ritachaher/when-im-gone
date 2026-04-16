@@ -159,6 +159,22 @@ export async function wipe(): Promise<void> {
   await wipeLocal();
 }
 
+// ===== Cloud push freshness =====
+// Tracks when the user last clicked "Save a copy". The Owner view turns
+// the button terracotta when it's been more than 2 days, so users notice
+// their cloud backup is getting stale without a modal nag on close.
+
+export async function getLastCloudPushAt(): Promise<number | null> {
+  const meta = await db.meta.get('meta');
+  return meta?.lastCloudPushAt ?? null;
+}
+
+export async function markCloudPushed(at: number = Date.now()): Promise<void> {
+  const meta = await db.meta.get('meta');
+  if (!meta) return;
+  await db.meta.put({ ...meta, lastCloudPushAt: at });
+}
+
 // ===== Encrypted backup (.wig) =====
 //
 // Exports the IndexedDB contents to a self-contained blob. The recipient needs

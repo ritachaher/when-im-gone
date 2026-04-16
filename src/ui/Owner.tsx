@@ -1,5 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
+  getLastCloudPushAt,
+  markCloudPushed,
   setSectionField,
   setSectionList,
   useVault,
@@ -43,11 +45,34 @@ export function Owner({ onLock }: { onLock: () => void }) {
   const [confirmAction, setConfirmAction] = useState<null | 'wipe'>(null);
   const { theme, toggle: toggleTheme } = useTheme();
   const [cloudStatus, setCloudStatus] = useState<BackupStatus>('idle');
+  const [lastCloudPushAt, setLastCloudPushAt] = useState<number | null>(null);
+
+  // Load "last cloud push" timestamp on mount so we can decide whether
+  // to nudge the user with a terracotta button.
+  useEffect(() => {
+    let cancelled = false;
+    getLastCloudPushAt().then((t) => {
+      if (!cancelled) setLastCloudPushAt(t);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // Button goes terracotta if the journal has content AND either it's
+  // never been pushed or the last push was more than 2 days ago.
+  const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+  const isCloudStale =
+    progress > 0 &&
+    (lastCloudPushAt === null || Date.now() - lastCloudPushAt > TWO_DAYS_MS);
 
   async function onCloudPush() {
     setCloudStatus('pushing');
     try {
       await pushBackup();
+      const now = Date.now();
+      await markCloudPushed(now);
+      setLastCloudPushAt(now);
       setCloudStatus('done');
       setTimeout(() => setCloudStatus('idle'), 2500);
     } catch (e) {
@@ -108,11 +133,19 @@ export function Owner({ onLock }: { onLock: () => void }) {
         <div className="nav-footer">
           {isFirebaseConfigured() && (
             <div className="footer-action">
-              <button onClick={onCloudPush} disabled={cloudStatus === 'pushing' || cloudStatus === 'pulling'}>
+              <button
+                className={isCloudStale ? 'cloud-stale' : undefined}
+                onClick={onCloudPush}
+                disabled={cloudStatus === 'pushing' || cloudStatus === 'pulling'}
+              >
                 {cloudStatus === 'pushing' ? t('cloud_pushing', 'Saving…') : t('cloud_push_btn', 'Save a copy')}
               </button>
-              <span className="footer-hint">{t('cloud_push_hint', 'Keeps a safe backup in case this device is lost')}</span>
-              {cloudStatus === 'done' && <span className="footer-hint" style={{ color: 'var(--ok)' }}>{t('cloud_done', '✓ Saved')}</span>}
+              <span className="footer-hint">
+                {isCloudStale
+                  ? t('cloud_push_hint_stale', 'Your cloud copy is out of date — save now')
+                  : t('cloud_push_hint', 'Keeps a safe backup in case this device is lost')}
+              </span>
+              {cloudStatus === 'done' && <span className="footer-hint" style={{ color: 'var(--ok)' }}>{t('cloud_done', '\u2713 Saved')}</span>}
               {cloudStatus === 'error' && <span className="footer-hint" style={{ color: 'var(--danger)' }}>{t('cloud_error', 'Could not save — please try again')}</span>}
             </div>
           )}

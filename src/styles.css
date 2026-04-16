@@ -128,6 +128,15 @@ p { margin: 0 0 .9em; }
   font: inherit; font-size: 13px; cursor: pointer;
 }
 .nav-footer button:hover { background: rgba(255,255,255,.08); color: #fff; }
+/* "Save a copy" turns terracotta when the cloud copy is stale (>2 days)
+   to nudge the user to push. Matches the existing --accent warm-orange. */
+.nav-footer button.cloud-stale {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+.nav-footer button.cloud-stale:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.nav-footer button.cloud-stale:disabled { opacity: .75; }
 
 .main { padding: 38px clamp(20px, 5vw, 56px) 80px; max-width: 900px; }
 .crumbs { font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; letter-spacing: .3px; }
