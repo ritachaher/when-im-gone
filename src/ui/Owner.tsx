@@ -22,6 +22,19 @@ export function Owner({ onLock }: { onLock: () => void }) {
   const journal = useVault((s) => s.journal);
   const ownerName = useVault((s) => s.ownerDisplayName);
   const [active, setActive] = useState(SECTIONS[0].slug);
+  const [navOpen, setNavOpen] = useState(false);
+
+  // Lock body scroll while the mobile drawer is open.
+  useEffect(() => {
+    if (navOpen) document.body.classList.add('nav-open');
+    else document.body.classList.remove('nav-open');
+    return () => document.body.classList.remove('nav-open');
+  }, [navOpen]);
+
+  function pickSection(slug: string) {
+    setActive(slug);
+    setNavOpen(false);
+  }
 
   const progress = useMemo(() => {
     if (!journal) return 0;
@@ -89,7 +102,49 @@ export function Owner({ onLock }: { onLock: () => void }) {
 
   return (
     <div className="owner-shell">
-      <aside className="sidebar">
+      {/* Mobile top bar — only visible ≤720px */}
+      <div className="mobile-topbar">
+        <button
+          className="mt-hamburger"
+          aria-label={t('open_menu', 'Open menu')}
+          onClick={() => setNavOpen(true)}
+        >
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <line x1="3" y1="12" x2="21" y2="12" />
+            <line x1="3" y1="18" x2="21" y2="18" />
+          </svg>
+        </button>
+        <div className="mt-brand">{t(`sec_${section.slug}_title`, section.title)}</div>
+        <button
+          className="mt-lock"
+          aria-label={t('lock_journal', 'Lock')}
+          onClick={onLock}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+          </svg>
+        </button>
+      </div>
+
+      <div
+        className={`sidebar-backdrop${navOpen ? ' show' : ''}`}
+        onClick={() => setNavOpen(false)}
+        aria-hidden="true"
+      />
+
+      <aside className={`sidebar${navOpen ? ' open' : ''}`}>
+        <button
+          className="sidebar-close"
+          aria-label={t('close_menu', 'Close menu')}
+          onClick={() => setNavOpen(false)}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <line x1="6" y1="6" x2="18" y2="18" />
+            <line x1="6" y1="18" x2="18" y2="6" />
+          </svg>
+        </button>
         <div className="brand">
           {t('app_name')}
           <small>{t('journal_label', { name: ownerName })}</small>
@@ -120,7 +175,7 @@ export function Owner({ onLock }: { onLock: () => void }) {
                 <li key={s.slug}>
                   <a
                     className={s.slug === active ? 'active' : ''}
-                    onClick={() => setActive(s.slug)}
+                    onClick={() => pickSection(s.slug)}
                   >
                     <span className={`dot ${status}`} />
                     <span>{t(`sec_${s.slug}_title`, s.title)}</span>

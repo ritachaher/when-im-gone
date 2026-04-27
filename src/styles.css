@@ -87,6 +87,11 @@ p { margin: 0 0 .9em; }
   position: sticky; top: 0; height: 100vh;
   overflow-y: auto;
 }
+
+/* Mobile top bar (hidden on desktop) */
+.mobile-topbar { display: none; }
+.sidebar-close { display: none; }
+.sidebar-backdrop { display: none; }
 [data-theme="dark"] .sidebar { background: var(--navy-dark); }
 .brand {
   font-family: Georgia, serif; font-size: 1.4rem; color: #fff;
@@ -160,11 +165,115 @@ p { margin: 0 0 .9em; }
 .card h3 { margin-top: 0; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .card .hint { font-size: 13px; color: var(--ink-soft); margin: -4px 0 14px; }
 .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+
+/* ===== Mobile (≤720px): drawer navigation ===== */
 @media (max-width: 720px) {
   .grid2 { grid-template-columns: 1fr; }
-  .owner-shell { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; }
-  .main { padding: 24px 18px 60px; }
+  .owner-shell { display: block; }
+  .main { padding: 18px 16px 80px; max-width: 100%; }
+
+  /* Top bar with hamburger + brand */
+  .mobile-topbar {
+    display: flex; align-items: center; gap: 12px;
+    background: var(--navy); color: #fff;
+    padding: 12px 14px;
+    position: sticky; top: 0; z-index: 50;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  [data-theme="dark"] .mobile-topbar { background: var(--navy-dark); }
+  .mobile-topbar .mt-brand {
+    font-family: Georgia, serif; font-size: 1.05rem;
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .mobile-topbar .mt-hamburger,
+  .mobile-topbar .mt-lock {
+    background: transparent; border: 0; color: #fff;
+    width: 40px; height: 40px; border-radius: 8px;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .mobile-topbar .mt-hamburger:active,
+  .mobile-topbar .mt-lock:active { background: rgba(255,255,255,.12); }
+
+  /* Sidebar becomes a slide-out drawer */
+  .sidebar {
+    position: fixed; top: 0; left: 0;
+    width: 84%; max-width: 320px; height: 100vh;
+    z-index: 200;
+    transform: translateX(-100%);
+    transition: transform .25s ease;
+    box-shadow: 0 0 30px rgba(0,0,0,.25);
+    padding-top: 16px;
+  }
+  .sidebar.open { transform: translateX(0); }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,.45);
+    z-index: 150;
+    opacity: 0; pointer-events: none;
+    transition: opacity .25s ease;
+  }
+  .sidebar-backdrop.show { opacity: 1; pointer-events: auto; }
+
+  /* Close button inside drawer */
+  .sidebar-close {
+    display: inline-flex;
+    position: absolute; top: 10px; right: 10px;
+    width: 36px; height: 36px; border-radius: 8px;
+    background: rgba(255,255,255,.08);
+    border: 0; color: #fff; cursor: pointer;
+    align-items: center; justify-content: center;
+  }
+  .sidebar-close:active { background: rgba(255,255,255,.18); }
+
+  /* Body lock when drawer open */
+  body.nav-open { overflow: hidden; }
+
+  /* Tap targets in drawer get a bit larger on mobile */
+  .nav a { padding: 12px 22px; font-size: 14px; }
+  .nav-footer button,
+  .theme-toggle,
+  .toggle-wrap { font-size: 14px; }
+  .nav-footer button { padding: 10px 12px; }
+
+  /* Section head stacks on mobile */
+  .section-head { flex-direction: column; align-items: flex-start; gap: 6px; }
+  .section-head .pillstatus { align-self: flex-start; }
+
+  /* Cards & form spacing */
+  .card { padding: 18px 16px; margin-bottom: 14px; }
+  .card h3 { flex-wrap: wrap; }
+
+  /* Inputs sized to avoid iOS auto-zoom */
+  input[type=text], input[type=tel], input[type=email], input[type=date],
+  input[type=password], textarea, select { font-size: 16px; }
+
+  /* Buttons full-width-friendly */
+  .btnrow .btn { flex: 1; justify-content: center; }
+  .btn { padding: 12px 16px; }
+
+  /* Confirm dialog spacing */
+  .confirm-box { padding: 22px 20px; }
+
+  /* Centred screens (Setup / Lock) tighter padding */
+  .centre { padding: 24px 14px; }
+  .centre-card { padding: 28px 22px; border-radius: 12px; }
+  .welcome-hero h1 { font-size: 1.7rem; }
+  .welcome-hero .lede { font-size: 15px; }
+  .centre-card .recovery-code {
+    font-size: 20px; letter-spacing: .12em; padding: 16px 10px;
+    word-break: break-all;
+  }
+}
+
+/* Hide mobile top bar on desktop */
+@media (min-width: 721px) {
+  .mobile-topbar { display: none !important; }
+  .sidebar-close { display: none !important; }
+  .sidebar-backdrop { display: none !important; }
 }
 
 label {

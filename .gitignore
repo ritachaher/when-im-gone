@@ -1,6 +1,7 @@
 node_modules
 dist
 dist-ssr
+dist-mobile-check
 .env
 .env.local
 .env.*.local
