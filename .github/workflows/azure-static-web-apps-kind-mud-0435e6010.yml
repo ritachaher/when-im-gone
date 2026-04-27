@@ -36,6 +36,10 @@ jobs:
           VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
           VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
           VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
+      # SWA reads staticwebapp.config.json from the upload root. With
+      # app_location: "dist", we copy it in so routing rules and headers
+      # actually apply.
+      - run: cp staticwebapp.config.json dist/
       - name: Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -43,9 +47,11 @@ jobs:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_KIND_MUD_0435E6010 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)
           action: "upload"
-          app_location: "/"
+          # With skip_app_build, app_location is the directory uploaded
+          # as-is. Point it at the built artifacts (not the repo root,
+          # which would balloon to 250MB+ from node_modules).
+          app_location: "dist"
           api_location: ""
-          output_location: "dist"
           skip_app_build: true
 
   close_pull_request_job:
