@@ -1,35 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!DOCTYPE html><html lang="en-GB"><head>
+
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>When I'm Gone: end-of-life journal for your family | £7.95 one-off</title>
+<meta name="description" content="A private, encrypted journal of the practical information your family will need when you're gone. Wills, accounts, funeral wishes, all in one place. £7.95 one-off, no subscription. Made in the UK.">
 <meta name="theme-color" content="#2C3E5D">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon-192.png">
-<title>In case I'm gone | When I'm Gone — everything your family will need</title>
-<meta name="description" content="A private, encrypted journal for the practical things your family will need when you're no longer here. Wills, accounts, passwords, funeral wishes — in one place. £7.95 one-off, encrypted on your device.">
 <link rel="canonical" href="https://www.whenimgone.life/">
 
-<!-- Open Graph (Facebook, LinkedIn, WhatsApp share previews) -->
+<!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="When I'm Gone">
-<meta property="og:title" content="When I'm Gone — everything for your family, in one place">
-<meta property="og:description" content="A private, encrypted journal for the practical things your family will need when you're no longer here. £7.95 one-off, encrypted on your device.">
+<meta property="og:title" content="When I'm Gone: end-of-life journal for your family">
+<meta property="og:description" content="A private, encrypted journal for the practical things your family will need. £7.95 one-off, no subscription.">
 <meta property="og:url" content="https://www.whenimgone.life/">
+<meta property="og:locale" content="en_GB">
 <meta property="og:image" content="https://www.whenimgone.life/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:locale" content="en_GB">
 
 <!-- Twitter / X share previews -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="When I'm Gone — everything your family will need">
-<meta name="twitter:description" content="A private, encrypted journal for the practical things your family will need when you're no longer here.">
+<meta name="twitter:title" content="When I'm Gone: end-of-life journal for your family">
+<meta name="twitter:description" content="A private, encrypted journal for the practical things your family will need. £7.95 one-off.">
 <meta name="twitter:image" content="https://www.whenimgone.life/og-image.png">
 
-<!-- Structured data: tells Google what this site is, who runs it, and
-     what the offering is. Eligible for rich snippets in SERPs once the
-     site has authority. Three @graph nodes: Organization, WebSite, Product. -->
+<!-- Schema: Organization + WebSite (identity & site-level signals) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -40,7 +38,7 @@
       "name": "When I'm Gone",
       "url": "https://www.whenimgone.life/",
       "logo": "https://www.whenimgone.life/icon-512.png",
-      "description": "An encrypted, private journal for the practical information your family will need when you're no longer here."
+      "description": "A private, encrypted journal for the practical information your family will need when you're no longer here."
     },
     {
       "@type": "WebSite",
@@ -49,322 +47,1232 @@
       "name": "When I'm Gone",
       "publisher": { "@id": "https://www.whenimgone.life/#organization" },
       "inLanguage": "en-GB"
-    },
-    {
-      "@type": "Product",
-      "name": "When I'm Gone",
-      "description": "A private, encrypted journal that gathers the practical information your family will need when you're no longer here. 18 guided sections cover identity, finances, digital assets, funeral wishes, and more.",
-      "brand": { "@id": "https://www.whenimgone.life/#organization" },
-      "image": "https://www.whenimgone.life/og-image.png",
-      "offers": {
-        "@type": "Offer",
-        "url": "https://www.whenimgone.life/app.html",
-        "price": "7.95",
-        "priceCurrency": "GBP",
-        "availability": "https://schema.org/InStock"
-      }
     }
   ]
 }
 </script>
 
-<!-- Landing page CSS lives in /public/landing.css so the page can ship under
-     a strict CSP without script-src 'unsafe-inline'. -->
-<link rel="stylesheet" href="/landing.css">
+<!-- Schema: Product -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "When I'm Gone",
+  "description": "A private, encrypted end-of-life journal for the practical information your family will need.",
+  "brand": { "@id": "https://www.whenimgone.life/#organization" },
+  "image": "https://www.whenimgone.life/og-image.png",
+  "offers": {
+    "@type": "Offer",
+    "price": "7.95",
+    "priceCurrency": "GBP",
+    "availability": "https://schema.org/InStock",
+    "url": "https://www.whenimgone.life/"
+  }
+}
+</script>
 
-</head>
-<body>
+<!-- Schema: FAQ -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is this a will?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. A will is a legal document about who inherits what. When I'm Gone is the practical companion to a will. It tells your family where to find the will, who your solicitor is, which accounts you have, who to call first, and what you wanted at your funeral." }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I forget my password?",
+      "acceptedAnswer": { "@type": "Answer", "text": "When you set up, you receive a one-time recovery code. Keep it with your will or with someone you trust. If you forget your password, the code lets you back in. We can't reset it for you (that's the point of the encryption), but the recovery code always will." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can my family read it without me being there?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. That's the whole purpose. They use the recovery code you've left them to unlock a clear, calm, read-only view of everything you've written. No tech skills needed." }
+    },
+    {
+      "@type": "Question",
+      "name": "What happens to my journal if your company closes?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Your journal works without us. Because everything is encrypted on your device, it doesn't depend on our servers being online. We also publish an export feature so you can download your journal as a PDF at any time." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is my information really private?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Your journal is encrypted on your device with your password before anything ever leaves it. We can't read it. Our staff can't read it. If we were ever compelled to hand over data, all anyone would see is encrypted gibberish." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I have to share passwords or login details?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. We deliberately don't ask for passwords or login credentials. Your family doesn't need to log into your accounts. They need to know which accounts exist, who to contact, and where to find the paperwork. That's what we capture." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is it really a one-off payment?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. £7.95 once. No subscription, no renewals, no upsells. Free updates for life. If we ever change pricing, anyone who has already paid keeps their account at no extra cost." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I see what it looks like before I pay?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. We have a few sample pages on this site so you can see how the journal looks and what kind of questions it asks before you decide to buy." }
+    }
+  ]
+}
+</script>
 
-<nav class="topnav">
-  <div class="topnav-brand">When I'm Gone</div>
-  <div class="topnav-right">
-    <a href="#pricing">Pricing</a>
-    <a href="/app.html" class="btn-login">Log in</a>
+<!-- Fonts: warm serif for headlines, humanist sans for body -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&amp;family=Source+Sans+3:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --navy:        #2C3E5D;
+  --navy-deep:   #243551;
+  --navy-soft:   #3A4D70;
+  --cream:       #F4EEE2;
+  --cream-warm:  #EFE7D6;
+  --cream-line:  #E2D7C0;
+  --coral:       #D97D5C;
+  --coral-deep:  #C0664A;
+  --ink:         #1A2438;
+  --ink-soft:    #45526B;     /* WCAG AA on cream */
+  --ink-mute:    #6B7589;
+  --on-navy:     #F4EEE2;
+  --on-navy-mute:#B7C0D2;
+
+  --serif: 'Lora', Georgia, 'Times New Roman', serif;
+  --sans:  'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --radius:   12px;
+  --radius-l: 18px;
+
+  --w: 1180px;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 19px;             /* larger base for 50+ readability */
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--cream);
+  font-feature-settings: "ss01", "cv11";
+}
+@media (max-width: 720px) {
+  body { font-size: 18px; }
+}
+
+img { max-width: 100%; display: block; }
+a { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+a:hover { color: var(--coral-deep); }
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 600; color: var(--ink); letter-spacing: -0.01em; line-height: 1.15; margin: 0; }
+h1 { font-size: clamp(40px, 5.6vw, 64px); line-height: 1.08; letter-spacing: -0.02em; }
+h2 { font-size: clamp(30px, 3.6vw, 44px); line-height: 1.15; }
+h3 { font-size: clamp(22px, 2.2vw, 26px); line-height: 1.25; }
+p  { margin: 0; text-wrap: pretty; }
+
+.wrap { max-width: var(--w); margin: 0 auto; padding: 0 28px; }
+@media (max-width: 720px) { .wrap { padding: 0 20px; } }
+
+/* ---------- Skip link ---------- */
+.skip {
+  position: absolute; top: -100px; left: 12px;
+  background: var(--coral); color: white; padding: 12px 18px; border-radius: 6px;
+  text-decoration: none; font-weight: 600;
+  z-index: 100;
+}
+.skip:focus { top: 12px; color: white; }
+
+/* ---------- Top bar ---------- */
+.top {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--navy);
+  color: var(--on-navy);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.top-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px; max-width: var(--w); margin: 0 auto;
+}
+.brand {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  color: var(--on-navy);
+  text-decoration: none;
+  display: inline-flex; align-items: center; gap: 12px;
+  white-space: nowrap;
+}
+.brand .mark {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: var(--navy-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.brand .mark svg { width: 20px; height: 24px; display: block; }
+.top-nav {
+  display: flex; align-items: center; gap: 28px;
+  font-size: 17px;
+  white-space: nowrap;
+}
+.top-nav a {
+  color: var(--on-navy); text-decoration: none; opacity: 0.9;
+  white-space: nowrap;
+}
+.top-nav a:hover { opacity: 1; color: var(--coral); }
+.btn-login {
+  border: 1.5px solid rgba(255,255,255,0.45);
+  padding: 9px 18px; border-radius: 8px;
+  font-weight: 600;
+  background: transparent;
+  white-space: nowrap;
+}
+@media (max-width: 920px) {
+  .top-nav { gap: 18px; font-size: 16px; }
+  .top-nav .nav-link { display: none; }
+}
+
+/* ---------- Hero ---------- */
+.hero {
+  background: var(--navy);
+  color: var(--on-navy);
+  padding: 80px 0 90px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(800px 400px at 80% -10%, rgba(217,125,92,0.10), transparent 60%),
+    radial-gradient(700px 500px at 0% 110%, rgba(217,125,92,0.06), transparent 60%);
+  pointer-events: none;
+}
+.hero-inner {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+@media (max-width: 960px) {
+  .hero { padding: 56px 0 70px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+}
+
+.eyebrow {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 22px;
+}
+.hero h1 { color: var(--on-navy); font-family: var(--serif); }
+.hero h1 em {
+  font-style: italic;
+  color: var(--coral);
+  font-weight: 600;
+}
+.hero-sub {
+  margin-top: 22px;
+  font-size: clamp(18px, 1.4vw, 21px);
+  line-height: 1.55;
+  color: var(--on-navy-mute);
+  max-width: 56ch;
+}
+
+.cta-row {
+  margin-top: 36px;
+  display: flex; flex-wrap: wrap; gap: 16px; align-items: center;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 18px;
+  padding: 18px 28px;
+  border-radius: 10px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.15s ease, background 0.2s ease;
+  min-height: 56px;             /* hit target */
+}
+.btn-primary {
+  background: var(--coral);
+  color: white;
+  box-shadow: 0 6px 0 rgba(0,0,0,0.18);
+}
+.btn-primary:hover { background: var(--coral-deep); transform: translateY(-1px); }
+.btn-primary .price {
+  font-weight: 700;
+  background: rgba(255,255,255,0.18);
+  padding: 4px 10px; border-radius: 6px;
+  font-size: 16px;
+  margin-left: 4px;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--on-navy);
+  border: 1.5px solid rgba(244,238,226,0.35);
+}
+.btn-ghost:hover { border-color: var(--cream); }
+
+.cta-fineprint {
+  margin-top: 18px;
+  font-size: 16px;
+  color: var(--on-navy-mute);
+  display: flex; flex-wrap: wrap; gap: 6px 18px; align-items: center;
+}
+.cta-fineprint .dot { width: 4px; height: 4px; background: rgba(255,255,255,0.4); border-radius: 50%; display: inline-block; }
+
+/* ---------- Hero preview card ---------- */
+.preview {
+  background: var(--navy-deep);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-l);
+  padding: 28px;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.35);
+}
+.preview-label {
+  font-size: 13px; font-weight: 600; letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 8px;
+}
+.preview-title {
+  font-family: var(--serif);
+  font-size: 26px; font-weight: 600;
+  color: var(--on-navy);
+  margin-bottom: 4px;
+}
+.preview-meta { font-size: 14px; color: var(--on-navy-mute); margin-bottom: 22px; }
+
+.preview-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+@media (max-width: 540px) {
+  .preview-row { grid-template-columns: 1fr; }
+}
+.preview-card {
+  background: var(--navy-soft);
+  border-radius: var(--radius);
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+.preview-card .when {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--coral);
+  margin-bottom: 8px;
+}
+.preview-card .what {
+  font-family: var(--serif);
+  font-size: 18px; font-weight: 600;
+  color: var(--on-navy);
+  margin-bottom: 10px;
+}
+.preview-card .lines {
+  font-size: 14.5px; line-height: 1.55; color: var(--on-navy-mute);
+}
+.preview-card .lines div + div { margin-top: 2px; }
+
+/* ---------- Section base ---------- */
+section { padding: 90px 0; }
+@media (max-width: 720px) { section { padding: 64px 0; } }
+.section-head { text-align: center; max-width: 720px; margin: 0 auto 56px; }
+.section-head .eyebrow { color: var(--coral-deep); margin-bottom: 14px; }
+.section-head p { color: var(--ink-soft); margin-top: 14px; font-size: 19px; }
+
+/* ---------- Built for people (moved up) ---------- */
+.built {
+  background: var(--cream);
+}
+.built-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+@media (max-width: 880px) { .built-grid { grid-template-columns: 1fr; } }
+
+.built-card {
+  background: white;
+  border: 1px solid var(--cream-line);
+  border-radius: var(--radius-l);
+  padding: 32px 28px;
+}
+.built-card .icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  background: var(--cream-warm);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 22px;
+  color: var(--coral-deep);
+}
+.built-card h3 { margin-bottom: 10px; }
+.built-card p { color: var(--ink-soft); font-size: 18px; }
+
+/* ---------- Pain section ---------- */
+.pain {
+  background: var(--cream-warm);
+  border-top: 1px solid var(--cream-line);
+  border-bottom: 1px solid var(--cream-line);
+}
+.pain h2 { text-align: center; max-width: 18ch; margin: 0 auto; color: var(--ink); }
+.pain .lede {
+  text-align: center; max-width: 56ch; margin: 18px auto 56px;
+  font-size: 20px; color: var(--ink-soft);
+}
+.quotes {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px;
+}
+@media (max-width: 880px) { .quotes { grid-template-columns: 1fr; } }
+.quote {
+  background: white;
+  border-radius: var(--radius-l);
+  padding: 32px 28px;
+  border-left: 4px solid var(--coral);
+}
+.quote h3 {
+  font-family: var(--serif); font-size: 22px;
+  font-style: italic; font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+.quote p { color: var(--ink-soft); font-size: 17.5px; }
+
+/* ---------- How it works ---------- */
+.how { background: var(--cream); }
+.steps { display: flex; flex-direction: column; gap: 80px; }
+.step {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 64px;
+  align-items: center;
+}
+.step.flip { direction: rtl; }
+.step.flip > * { direction: ltr; }
+@media (max-width: 880px) {
+  .steps { gap: 48px; }
+  .step, .step.flip { grid-template-columns: 1fr; gap: 24px; direction: ltr; }
+}
+.step-num {
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--coral-deep);
+  margin-bottom: 14px;
+}
+.step h3 { font-size: clamp(24px, 2.4vw, 30px); margin-bottom: 14px; }
+.step p { color: var(--ink-soft); font-size: 18.5px; max-width: 48ch; }
+.step .reassure {
+  margin-top: 18px;
+  background: white;
+  border: 1px solid var(--cream-line);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 16.5px;
+  color: var(--ink);
+  display: flex; gap: 12px; align-items: flex-start;
+}
+.step .reassure svg { flex-shrink: 0; margin-top: 3px; color: var(--coral-deep); }
+
+/* Step preview cards */
+.mock {
+  background: var(--navy);
+  color: var(--on-navy);
+  border-radius: var(--radius-l);
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(44,62,93,0.18);
+}
+.mock-head { font-size: 13px; color: var(--on-navy-mute); margin-bottom: 4px; }
+.mock-title {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--on-navy-mute); margin-bottom: 18px;
+}
+.mock-field {
+  background: var(--navy-soft);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.mock-field strong { color: white; font-weight: 600; }
+.mock-field span { color: var(--on-navy-mute); margin-right: 6px; }
+.progress {
+  margin-top: 22px;
+  font-size: 14px; color: var(--on-navy-mute);
+}
+.progress-bar {
+  height: 8px; background: rgba(255,255,255,0.1); border-radius: 99px;
+  margin-top: 8px; overflow: hidden;
+}
+.progress-bar > span { display: block; height: 100%; width: 34%; background: var(--coral); border-radius: 99px; }
+
+.mock-lock {
+  text-align: center; padding: 50px 28px;
+}
+.mock-lock .icon-lock {
+  width: 56px; height: 56px;
+  margin: 0 auto 22px;
+  color: var(--on-navy-mute);
+}
+.mock-lock .label { font-weight: 600; color: var(--on-navy); margin-bottom: 6px; font-size: 18px; }
+.mock-lock .sub { font-size: 15px; color: var(--on-navy-mute); margin-bottom: 22px; }
+.mock-lock .pwd {
+  background: var(--navy-soft); border-radius: 8px;
+  padding: 14px; letter-spacing: 0.5em; color: var(--on-navy);
+  font-size: 18px;
+}
+.mock-code {
+  margin-top: 14px;
+  background: var(--navy-soft); border-radius: 8px;
+  padding: 14px; letter-spacing: 0.18em; color: var(--coral);
+  font-family: 'Source Sans 3', monospace; font-weight: 600;
+  font-size: 18px;
+}
+
+/* ---------- What's inside ---------- */
+.inside { background: var(--navy); color: var(--on-navy); }
+.inside h2 { color: var(--on-navy); }
+.inside .section-head .eyebrow { color: var(--coral); }
+.inside .section-head p { color: var(--on-navy-mute); }
+.inside-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.inside-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 18px 20px;
+  font-size: 17px;
+  color: var(--on-navy);
+  display: flex; gap: 12px; align-items: center;
+}
+.inside-item .num {
+  flex-shrink: 0;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(217,125,92,0.18);
+  color: var(--coral);
+  font-size: 13px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  font-variant-numeric: tabular-nums;
+}
+.inside-foot {
+  text-align: center; margin-top: 36px;
+  color: var(--on-navy-mute); font-size: 17px;
+}
+
+/* ---------- Testimonials ---------- */
+.voices { background: var(--cream-warm); border-top: 1px solid var(--cream-line); }
+.voices-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px;
+}
+@media (max-width: 880px) { .voices-grid { grid-template-columns: 1fr; } }
+.voice {
+  background: white;
+  border-radius: var(--radius-l);
+  padding: 32px;
+  border: 1px solid var(--cream-line);
+}
+.voice .stars { color: var(--coral); margin-bottom: 14px; letter-spacing: 2px; font-size: 18px; }
+.voice blockquote {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.45;
+  margin: 0 0 20px;
+  color: var(--ink);
+}
+.voice .by {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 16px; color: var(--ink-soft);
+}
+.voice .avatar {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--cream-warm);
+  border: 1px solid var(--cream-line);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--ink-mute); font-size: 11px;
+  font-family: ui-monospace, 'SF Mono', monospace;
+  flex-shrink: 0;
+}
+.voice .avatar img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.voice .avatar.placeholder {
+  border: 2px dashed var(--cream-line);
+}
+.voice .by strong { color: var(--ink); font-weight: 600; }
+
+/* ---------- Founder ---------- */
+.founder {
+  background: var(--cream);
+}
+.founder-grid {
+  display: grid; grid-template-columns: 280px 1fr; gap: 56px;
+  align-items: start;
+}
+@media (max-width: 720px) {
+  .founder-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+.founder-photo {
+  aspect-ratio: 4/5;
+  border-radius: var(--radius-l);
+  border: 1px solid var(--cream-line);
+  overflow: hidden;
+  background: var(--cream-warm);
+}
+.founder-photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  display: block;
+}
+.founder h2 { margin-bottom: 16px; }
+.founder p {
+  color: var(--ink-soft);
+  font-size: 19px;
+  margin-bottom: 16px;
+  max-width: 60ch;
+}
+.founder .sig {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--ink);
+  margin-top: 24px;
+}
+
+/* ---------- FAQ ---------- */
+.faq { background: var(--cream); border-top: 1px solid var(--cream-line); }
+.faq-list {
+  max-width: 800px; margin: 0 auto;
+}
+.faq-item {
+  border-bottom: 1px solid var(--cream-line);
+}
+.faq-item summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 26px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 24px;
+  font-family: var(--serif);
+  font-size: clamp(20px, 2vw, 23px);
+  font-weight: 600;
+  color: var(--ink);
+}
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary .plus {
+  flex-shrink: 0;
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--coral);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; font-weight: 400;
+  transition: transform 0.2s ease;
+}
+.faq-item[open] summary .plus { transform: rotate(45deg); }
+.faq-item .answer {
+  padding: 0 0 26px;
+  color: var(--ink-soft);
+  font-size: 18.5px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+
+/* ---------- Pricing ---------- */
+.pricing { background: var(--navy); color: var(--on-navy); }
+.pricing h2 { color: var(--on-navy); }
+.pricing .section-head .eyebrow { color: var(--coral); }
+.pricing .section-head p { color: var(--on-navy-mute); }
+.price-card {
+  max-width: 540px; margin: 0 auto;
+  background: var(--navy-deep);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: var(--radius-l);
+  padding: 44px 40px;
+  text-align: center;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.30);
+}
+.price-card .badge {
+  display: inline-block;
+  background: rgba(217,125,92,0.18);
+  color: var(--coral);
+  padding: 6px 14px; border-radius: 99px;
+  font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase;
+  margin-bottom: 24px;
+}
+.price-card .num {
+  font-family: var(--serif);
+  font-size: 88px; font-weight: 600;
+  color: var(--on-navy);
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.price-card .num .pence { font-size: 38px; vertical-align: top; }
+.price-card .terms {
+  margin-top: 6px;
+  color: var(--on-navy-mute);
+  font-size: 16px;
+}
+.features {
+  margin: 32px 0; padding: 0; list-style: none;
+  text-align: left;
+  display: grid; gap: 12px;
+}
+.features li {
+  display: flex; gap: 12px; align-items: flex-start;
+  font-size: 17px;
+  color: var(--on-navy);
+}
+.features li svg { flex-shrink: 0; margin-top: 4px; color: var(--coral); }
+.price-card .btn-primary { width: 100%; }
+.try-free {
+  margin-top: 16px; font-size: 15.5px;
+  color: var(--on-navy-mute);
+}
+.try-free a { color: var(--coral); }
+
+/* ---------- Final CTA ---------- */
+.final {
+  background: var(--cream-warm);
+  text-align: center;
+  border-top: 1px solid var(--cream-line);
+}
+.final h2 { max-width: 22ch; margin: 0 auto 20px; }
+.final p { color: var(--ink-soft); font-size: 20px; margin: 0 auto 32px; max-width: 56ch; }
+.final .reassurances {
+  margin-top: 28px;
+  display: flex; flex-wrap: wrap; gap: 10px 32px;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--ink-soft);
+}
+.final .reassurances span {
+  display: inline-flex; gap: 8px; align-items: center;
+}
+.final .reassurances svg { color: var(--coral-deep); }
+
+/* ---------- Footer ---------- */
+footer {
+  background: var(--navy-deep);
+  color: var(--on-navy-mute);
+  padding: 56px 0 40px;
+  font-size: 16px;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 36px;
+}
+@media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+.footer-grid h4 {
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--on-navy);
+  margin-bottom: 16px;
+}
+.footer-grid ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+.footer-grid a { color: var(--on-navy-mute); text-decoration: none; }
+.footer-grid a:hover { color: var(--coral); }
+.footer-blurb {
+  color: var(--on-navy-mute); font-size: 16px; line-height: 1.6;
+  max-width: 36ch; margin-top: 14px;
+}
+.footer-bottom {
+  padding-top: 28px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  font-size: 14.5px;
+  color: var(--on-navy-mute);
+}
+.footer-bottom .made { display: inline-flex; gap: 8px; align-items: center; }
+
+/* ---------- Inline icons ---------- */
+.i { width: 24px; height: 24px; stroke-width: 1.8; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Tiny visually-hidden util */
+.sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+</style>
+<style></style></head>
+
+<body style="" data-new-gr-c-s-check-loaded="14.1290.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1290.0">
+<a class="skip" href="#main">Skip to main content</a>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="#" aria-label="When I'm Gone, home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 32" fill="#F4EEE2" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 C 22 8 22 24 12 30 C 2 24 2 8 12 2 Z"></path></svg>
+      </span>
+      <span>When I'm Gone</span>
+    </a>
+    <nav class="top-nav" aria-label="Primary">
+      <a href="#how" class="nav-link">How it works</a>
+      <a href="#faq" class="nav-link">Questions</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="https://www.whenimgone.life/app.html" class="btn-login">Log in</a>
+    </nav>
   </div>
-</nav>
+</header>
 
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-badge">End-of-life planning, made simple</div>
-    <h1>Everything your loved ones will need — in one safe place</h1>
-    <div class="carousel-wrap" id="carousel">
-      <div class="carousel-track" id="carouselTrack">
+<main id="main">
 
-        <div class="carousel-slide">
-          <div class="mock-label">Owner view — fill in at your own pace</div>
-          <div class="mock-sidebar">
-            <div class="mock-nav">
-              <div class="mock-nav-item active"><span class="mock-nav-dot part"></span> All about me</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Key contacts</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot"></span> Medical info</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Financial</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot"></span> Funeral wishes</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot part"></span> Digital assets</div>
-            </div>
-            <div class="mock-content">
-              <div class="mock-section-title">All about me</div>
-              <div class="mock-field"><span>Title</span> <strong>Mrs</strong></div>
-              <div class="mock-field"><span>First name</span> <strong>Margaret</strong></div>
-              <div class="mock-field"><span>Surname</span> <strong>Thompson</strong></div>
-              <div class="mock-field"><span>Date of birth</span> <strong>14/03/1952</strong></div>
-              <div class="mock-field"><span>Home phone</span> <strong>020 7946 0123</strong></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="carousel-slide">
-          <div class="mock-label">Guided questions — no detail is missed</div>
-          <div class="mock-sidebar">
-            <div class="mock-nav">
-              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> All about me</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Key contacts</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot"></span> Medical info</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot done"></span> Financial</div>
-              <div class="mock-nav-item active"><span class="mock-nav-dot part"></span> Funeral wishes</div>
-              <div class="mock-nav-item"><span class="mock-nav-dot part"></span> Digital assets</div>
-            </div>
-            <div class="mock-content">
-              <div class="mock-section-title">Funeral wishes</div>
-              <div style="font-size:12px; opacity:.5; margin-bottom:10px;">Preference</div>
-              <div style="margin-bottom:14px;">
-                <span class="mock-chip">Cemetery burial</span>
-                <span class="mock-chip selected">Cremation</span>
-                <span class="mock-chip">Natural woodland</span>
-              </div>
-              <div class="mock-field"><span>Crematorium</span> <strong>Golders Green</strong></div>
-              <div class="mock-field"><span>Ashes</span> <strong>Scattered at Hampstead Heath</strong></div>
-              <div class="mock-field"><span>Music</span> <strong>Somewhere Over the Rainbow</strong></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="carousel-slide">
-          <div class="mock-label">Survivor view — clear, calm, read-only</div>
-          <div class="mock-content" style="text-align:center; padding: 16px 0;">
-            <div style="font-family:Georgia,serif; font-size:18px; margin-bottom:6px;">Margaret's journal</div>
-            <div style="font-size:12px; opacity:.5; margin-bottom:20px;">Last updated 12 April 2026 · Read-only view</div>
-            <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:left;">
-              <div style="background:rgba(255,255,255,.1); border-radius:8px; padding:14px;">
-                <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:6px;">First few hours</div>
-                <div style="font-size:14px; font-family:Georgia,serif; margin-bottom:6px;">People to tell</div>
-                <div style="font-size:11px; opacity:.5;">Family, close friends<br>Employer, key contacts<br>Funeral director</div>
-              </div>
-              <div style="background:rgba(255,255,255,.1); border-radius:8px; padding:14px;">
-                <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:6px;">First week</div>
-                <div style="font-size:14px; font-family:Georgia,serif; margin-bottom:6px;">Funeral wishes</div>
-                <div style="font-size:11px; opacity:.5;">Cremation at Golders Green<br>Music choices<br>No dress code</div>
-              </div>
-              <div style="background:rgba(255,255,255,.1); border-radius:8px; padding:14px;">
-                <div style="font-size:10px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); margin-bottom:6px;">First month</div>
-                <div style="font-size:14px; font-family:Georgia,serif; margin-bottom:6px;">Money &amp; paperwork</div>
-                <div style="font-size:11px; opacity:.5;">Will with Hartley &amp; Co<br>Barclays current account<br>Aviva life insurance</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
+<!-- ============ HERO ============ -->
+<section class="hero" aria-labelledby="h1">
+  <div class="wrap hero-inner">
+    <div>
+      <div class="eyebrow" style="">A guide for your family, not to your passwords</div>
+      <h1 id="h1">Everything your family will need, <em style="">in one safe place.</em></h1>
+      <p class="hero-sub">
+        When I'm Gone is a private, encrypted journal of the practical things your family will need when you're no longer here. Where the will is. Who to call. What you wanted. No searching. No guessing.
+      </p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://www.whenimgone.life/app.html">
+          Start your journal
+          <span class="price">£7.95 one-off</span>
+        </a>
+        <a class="btn btn-ghost" href="#how">How it works</a>
       </div>
-      <div class="carousel-dots">
-        <button class="carousel-dot active" data-slide="0"></button>
-        <button class="carousel-dot" data-slide="1"></button>
-        <button class="carousel-dot" data-slide="2"></button>
+      <div class="cta-fineprint">
+        <span><a href="#sample" style="color: rgb(183, 192, 210); text-decoration: underline; text-underline-offset: 3px;">Stays on your device</a></span>
+        <span class="dot" aria-hidden="true"></span>
+        <span style="">No subscription, ever</span>
+        <span class="dot" aria-hidden="true"></span>
+        <span>Free updates for life</span>
       </div>
     </div>
 
-    <p>When I'm Gone is a private, encrypted journal that gathers the practical information your family will need when you're no longer here. No searching through drawers. No guessing.</p>
-    <a href="/app.html" class="btn-cta">Complete your journal for only £7.95</a>
-    <div class="trust-row">
-      <span class="trust-item">
-        <span class="trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>
-        Stays on your device
-      </span>
-      <span class="trust-item">
-        <span class="trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
-        Encrypted with your password
-      </span>
-      <span class="trust-item">
-        <span class="trust-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span>
-        Only loved ones you choose
-      </span>
+    <aside class="preview" aria-label="Preview of what your family sees">
+      <div class="preview-label">Survivor view · clear, calm, read-only</div>
+      <div class="preview-title" spellcheck="false" style="">Hillary's journal</div>
+      <div class="preview-meta">Last updated 12 April 2026 · Read-only view</div>
+      <div class="preview-row">
+        <div class="preview-card">
+          <div class="when" style="">First days</div>
+          <div class="what">People to tell</div>
+          <div class="lines">
+            <div>Family, close friends</div>
+            <div>Employer, key contacts</div>
+            <div>Funeral director</div>
+          </div>
+        </div>
+        <div class="preview-card">
+          <div class="when">First week</div>
+          <div class="what">Funeral wishes</div>
+          <div class="lines">
+            <div>Cremation at Golders Green</div>
+            <div>Music choices noted</div>
+            <div>No dress code</div>
+          </div>
+        </div>
+        <div class="preview-card">
+          <div class="when">First month</div>
+          <div class="what">Money &amp; paperwork</div>
+          <div class="lines">
+            <div>Will with Hartley &amp; Co</div>
+            <div>Barclays current account</div>
+            <div>Aviva life insurance</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ BUILT FOR PEOPLE (moved up) ============ -->
+<section class="built" aria-labelledby="built-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Built for people, not tech experts</div>
+      <h2 id="built-h">Simple enough for anyone. Secure enough for everyone.</h2>
+      <p>If you can write a letter, you can do this. We've kept the buttons big, the words plain, and the choices few.</p>
+    </div>
+
+    <div class="built-grid">
+      <article class="built-card">
+        <div class="icon" aria-hidden="true">
+          <svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"></path></svg>
+        </div>
+        <h3>Large, clear text</h3>
+        <p>Designed for readers of all ages. No tiny fonts. No confusing menus. No jargon, ever.</p>
+      </article>
+
+      <article class="built-card">
+        <div class="icon" aria-hidden="true">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>
+        </div>
+        <h3>Available in 11 languages</h3>
+        <p>English, Spanish, French, German, Italian, Portuguese, Dutch, Polish, Arabic, Chinese and Hindi.</p>
+      </article>
+
+      <article class="built-card">
+        <div class="icon" aria-hidden="true">
+          <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path></svg>
+        </div>
+        <h3>Light &amp; dark mode</h3>
+        <p>Easy on the eyes, day or night. Switches automatically with your device, or change it with one tap.</p>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="section cream">
-  <div class="section-inner">
-    <h2>When someone dies, as hard as the grief — is not knowing where anything is</h2>
-    <p class="subtitle">Most families spend weeks piecing together paperwork. It doesn't have to be that&nbsp;way.</p>
-    <div class="problem-grid">
-      <div class="problem-card">
-        <h3>"Where's the will?"</h3>
-        <p>Your family shouldn't have to hunt for a solicitor's name during the worst week of their lives.</p>
-      </div>
-      <div class="problem-card">
-        <h3>"Which accounts exist?"</h3>
-        <p>Bank accounts, pensions, insurance policies — most families miss at least one. Some never find them.</p>
-      </div>
-      <div class="problem-card">
-        <h3>"What did they want?"</h3>
+<!-- ============ PAIN ============ -->
+<section class="pain" aria-labelledby="pain-h">
+  <div class="wrap">
+    <h2 id="pain-h">When someone dies, the hardest part after the grief is not knowing where anything is.</h2>
+    <p class="lede">Most families spend weeks piecing together paperwork. It doesn't have to be that way.</p>
+
+    <div class="quotes">
+      <article class="quote">
+        <h3 style="color: rgb(217, 125, 92);">"Where's the will?"</h3>
+        <p spellcheck="false" style="">Your family shouldn't have to hunt for a solicitor's name during the worst week of their lives.</p>
+      </article>
+      <article class="quote">
+        <h3 style="color: rgb(217, 125, 92);">"Which accounts exist?"</h3>
+        <p>Bank accounts, pensions, insurance policies. Most families miss at least one. Some never find them.</p>
+      </article>
+      <article class="quote">
+        <h3 style="color: rgb(217, 125, 92);">"What did they want?"</h3>
         <p>Burial or cremation? Which music? Who to call first? Don't leave them guessing when it matters most.</p>
-      </div>
+      </article>
     </div>
   </div>
 </section>
 
-<section class="section white">
-  <div class="section-inner">
-    <h2>How it works</h2>
-    <p class="subtitle">Three simple steps. No tech skills needed.</p>
+<!-- ============ HOW IT WORKS ============ -->
+<section class="how" id="how" aria-labelledby="how-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">How it works</div>
+      <h2 id="how-h">Three simple steps. No tech skills needed.</h2>
+      <p>Take your time. Fill in what you can today, the rest another day. There's no rush.</p>
+    </div>
+
     <div class="steps">
+      <!-- Step 1 -->
       <div class="step">
-        <div class="step-text">
+        <div>
           <div class="step-num">Step 1</div>
           <h3>Answer simple questions, section by section</h3>
-          <p>18 guided sections cover everything — from your GP's name to your funeral wishes. Fill in what you can, skip what you like, come back any time.</p>
+          <p>18 guided sections cover everything, from your GP's name to your funeral wishes. Fill in what you can, skip what you like, come back any time.</p>
+          <div class="reassure">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"></path></svg>
+            <div>Nothing is mandatory. You're never asked for passwords.</div>
+          </div>
         </div>
-        <div class="step-visual">
-          <div style="font-size:12px; opacity:.5; margin-bottom:8px;">When I'm gone</div>
-          <div style="font-size:11px; opacity:.4; margin-bottom:12px;">MARGARET'S JOURNAL</div>
-          <div class="mock-bar"><span>Title: </span><strong>Mrs</strong></div>
-          <div class="mock-bar"><span>First name: </span><strong>Margaret</strong></div>
-          <div class="mock-bar"><span>Surname: </span><strong>Thompson</strong></div>
-          <div class="mock-bar"><span>Date of birth: </span><strong>14/03/1952</strong></div>
-          <div style="font-size:11px; opacity:.5; margin-top:12px;">34% complete</div>
-          <div class="mock-progress"><div></div></div>
+        <div class="mock" aria-hidden="true">
+          <div class="mock-head">When I'm Gone</div>
+          <div class="mock-title">Margaret's journal</div>
+          <div class="mock-field"><span>Title:</span><strong>Mrs</strong></div>
+          <div class="mock-field"><span>First name:</span><strong>Margaret</strong></div>
+          <div class="mock-field"><span>Surname:</span><strong>Thompson</strong></div>
+          <div class="mock-field"><span>Date of birth:</span><strong>14/03/1952</strong></div>
+          <div class="progress">
+            34% complete
+            <div class="progress-bar"><span></span></div>
+          </div>
         </div>
       </div>
-      <div class="step">
-        <div class="step-text">
+
+      <!-- Step 2 -->
+      <div class="step flip">
+        <div>
           <div class="step-num">Step 2</div>
           <h3>Everything is encrypted on your device</h3>
-          <p>256-bit encryption — the same standard banks use. Your data never leaves your device unencrypted. Not even we can read it.</p>
+          <p spellcheck="false" style="">Your journal is locked with a password only you know. Your information stays private. Nobody can read it, not even us.</p>
+          <div class="reassure">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+            <div spellcheck="false" style="">If our company ever closed, your journal still works as a PDF. It doesn't depend on us.</div>
+          </div>
         </div>
-        <div class="step-visual mock-lock">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-          <div style="font-size:15px; margin-top:8px;">Your journal is locked</div>
-          <div style="font-size:13px; opacity:.5; margin-top:4px;">Enter your password to continue</div>
-          <div style="background:rgba(255,255,255,.08); border-radius:8px; padding:12px; margin-top:16px; letter-spacing:4px; font-size:14px; opacity:.4;">••••••••••</div>
+        <div class="mock mock-lock" aria-hidden="true">
+          <svg class="i icon-lock" viewBox="0 0 24 24" style="width:56px; height:56px;"><rect x="4" y="11" width="16" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+          <div class="label">Your journal is locked</div>
+          <div class="sub">Enter your password to continue</div>
+          <div class="pwd">••••••••••</div>
         </div>
       </div>
+
+      <!-- Step 3 -->
       <div class="step">
-        <div class="step-text">
+        <div>
           <div class="step-num">Step 3</div>
-          <h3>Your loved one unlocks it with a recovery code</h3>
-          <p>You'll get a one-time code when you set up. Leave it in a sealed envelope with your will, or give it to someone you trust. That's all they need.</p>
+          <h3>Your family unlocks it with a recovery card</h3>
+          <p spellcheck="false" style="">When you finish, keep your one-time code with your will, or hand it to someone you trust. That's all they need to read your journal when the time comes.</p>
+          <div class="reassure">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v10H3zM3 11h18M7 15h4"></path></svg>
+            <div style="">It's important you keep this safe. Chose someone you trust and love. Make their grief easier to bare.</div>
+          </div>
         </div>
-        <div class="step-visual mock-lock">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="11" width="18" height="11" rx="2" />
-            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-          </svg>
-          <div style="font-size:15px; margin-top:8px;">Welcome</div>
-          <div style="font-size:13px; opacity:.5; margin-top:4px;">Enter the code from the sealed envelope</div>
-          <div class="code-dots">XXXX - XXXX - XXXX</div>
+        <div class="mock mock-lock" aria-hidden="true">
+          <svg class="i icon-lock" viewBox="0 0 24 24" style="width:56px; height:56px;"><path d="M4 8h16v12H4zM4 8l8-5 8 5"></path></svg>
+          <div class="label">Welcome</div>
+          <div class="sub">Enter the code from the recovery card</div>
+          <div class="mock-code">7K9P · 2QM4 · X8RN</div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section navy">
-  <div class="section-inner">
-    <h2>What's inside</h2>
-    <p class="subtitle">18 guided sections cover everything your family might need.</p>
+<!-- ============ WHAT'S INSIDE ============ -->
+<section class="inside" aria-labelledby="inside-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">What's inside</div>
+      <h2 id="inside-h">18 guided sections. Everything your family might need.</h2>
+      <p>Skip what you like. Come back any time. We never ask for passwords or login details.</p>
+    </div>
     <div class="inside-grid">
-      <div class="inside-item">All about me</div>
-      <div class="inside-item">Important documents</div>
-      <div class="inside-item">Medical information</div>
-      <div class="inside-item">Key contacts</div>
-      <div class="inside-item">My dependants</div>
-      <div class="inside-item">Pets</div>
-      <div class="inside-item">Financial pointers</div>
-      <div class="inside-item">Insurances</div>
-      <div class="inside-item">Business details</div>
-      <div class="inside-item">Personal property</div>
-      <div class="inside-item">Bills &amp; subscriptions</div>
-      <div class="inside-item">Access &amp; keys</div>
-      <div class="inside-item">Digital assets</div>
-      <div class="inside-item">Funeral wishes</div>
-      <div class="inside-item">At the time of passing</div>
-      <div class="inside-item">Beneficiaries</div>
-      <div class="inside-item">Recommendations</div>
-      <div class="inside-item">A letter of gratitude</div>
+      <div class="inside-item"><span class="num">01</span> All about me</div>
+      <div class="inside-item"><span class="num">02</span> Important documents</div>
+      <div class="inside-item"><span class="num">03</span> Medical information</div>
+      <div class="inside-item"><span class="num">04</span> Key contacts</div>
+      <div class="inside-item"><span class="num">05</span> My dependants</div>
+      <div class="inside-item"><span class="num">06</span> Pets</div>
+      <div class="inside-item"><span class="num">07</span> Financial pointers</div>
+      <div class="inside-item"><span class="num">08</span> Insurances</div>
+      <div class="inside-item"><span class="num">09</span> Business details</div>
+      <div class="inside-item"><span class="num">10</span> Personal property</div>
+      <div class="inside-item"><span class="num">11</span> Bills &amp; subscriptions</div>
+      <div class="inside-item"><span class="num">12</span> Access &amp; keys</div>
+      <div class="inside-item"><span class="num">13</span> Digital assets</div>
+      <div class="inside-item"><span class="num">14</span> Funeral wishes</div>
+      <div class="inside-item"><span class="num">15</span> At the time of passing</div>
+      <div class="inside-item"><span class="num">16</span> Beneficiaries</div>
+      <div class="inside-item"><span class="num">17</span> Recommendations</div>
+      <div class="inside-item"><span class="num">18</span> A letter of gratitude</div>
     </div>
-    <p class="inside-callout">No question is mandatory. Skip what you like, come back any time.</p>
+    <div class="inside-foot">No question is mandatory. We never ask for passwords or PINs.</div>
   </div>
 </section>
 
-<section class="section cream">
-  <div class="section-inner">
-    <h2>Built for people, not tech experts</h2>
-    <p class="subtitle">Simple enough for anyone. Secure enough for everyone.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg></div>
-        <h3>Large, clear text</h3>
-        <p>Designed for readers of all ages. No tiny fonts, no confusing menus, no jargon.</p>
+<!-- ============ TESTIMONIALS ============ -->
+<section class="voices" aria-labelledby="voices-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">From the people who use it</div>
+      <h2 id="voices-h">"It was the kindest thing she could have left us."</h2>
+      <p>Real words from people who've used the journal, or read one left by someone they loved.</p>
+    </div>
+    <div class="voices-grid">
+      <article class="voice">
+        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>
+          "When Mum passed, the last thing any of us could face was a filing cabinet. Her journal told us where everything was, even the music she wanted. It felt like she was still helping."
+        </blockquote>
+        <div class="by">
+          <span class="avatar"><img src="images/maureen.png" alt="Maureen" /></span>
+          <span><strong>Maureen, 58</strong> · Daughter, Bristol</span>
+        </div>
+      </article>
+      <article class="voice">
+        <div class="stars" aria-label="5 out of 5 stars">★★★★★</div>
+        <blockquote>
+          "I'm 72 and not exactly a computer person. I did mine over three afternoons with a cup of tea. My son knows where to start now. That's the gift."
+        </blockquote>
+        <div class="by">
+          <span class="avatar"><img src="images/edna.png" alt="Edna" style="object-position: 38% 32%;" /></span>
+          <span><strong>Edna, 72</strong> · Customer, Sheffield</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOUNDER ============ -->
+<section class="founder" aria-labelledby="founder-h">
+  <div class="wrap">
+    <div class="founder-grid">
+      <div class="founder-photo">
+        <img src="images/founder.png" alt="A. Dinatale, founder of When I'm Gone, smiling warmly" />
       </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-        <h3>11 languages</h3>
-        <p>English, Spanish, French, German, Italian, Portuguese, Dutch, Polish, Arabic, Chinese, Hindi.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></div>
-        <h3>Light &amp; dark mode</h3>
-        <p>Easy on the eyes, day or night. Switches automatically or with one tap.</p>
+      <div>
+        <div class="eyebrow" style="color: var(--coral-deep); margin-bottom: 14px;">A note from the founder</div>
+        <h2 id="founder-h">I built this because my own family didn't know where to start.</h2>
+        <p spellcheck="false" style="">When my grandad died, we spent weeks in his study with a cardboard box and a notebook, piecing together accounts, contacts and his wishes, most of which we only half-knew. The grief was hard enough. The hunting was cruel.</p>
+        <p>When I'm Gone is the small, simple thing I wish he'd had time to do for us. It isn't a will, and it isn't clever. It's just a way to write things down before you don't have time to.</p>
+        <p>If you have any questions, you can email me directly: <a href="mailto:hello@whenimgone.life">hello@whenimgone.life</a>. A real person will reply, usually the same day.</p>
+        <div class="sig" spellcheck="false" style="">A. Dinatale</div>
       </div>
     </div>
   </div>
 </section>
 
-<section class="section white">
-  <div class="section-inner">
-    <div class="pro-box">
-      <h3>For funeral directors, solicitors &amp; advisers</h3>
-      <p>Give your clients something practical. When I'm Gone replaces the paper booklets that get lost in a drawer — and it's encrypted, so their information stays private.</p>
-      <a href="mailto:hello@whenimgone.com" class="btn-outline">Get in touch for bulk pricing</a>
+<!-- ============ FAQ ============ -->
+<section class="faq" id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Common questions</div>
+      <h2 id="faq-h">Honest answers to the things people ask most</h2>
+    </div>
+
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary>Is this a will? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">No. A will is a legal document about who inherits what. When I'm Gone is the practical companion to a will. It tells your family <em>where to find</em> the will, who your solicitor is, which accounts you have, who to call first, and what you wanted at your funeral.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Do I have to share passwords or login details? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">No. We deliberately don't ask for passwords or login credentials. Your family doesn't need to log into your accounts. They need to know which accounts exist, who to contact, and where to find the paperwork. That's what we capture.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What if I forget my password? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">When you set up, you receive a one-time recovery code. Keep it with your will or with someone you trust. If you forget your password, the code lets you back in. We can't reset it for you (that's the point of the encryption), but the recovery code always will.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can my family read it without me being there? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">Yes. That's the whole purpose. They use the recovery card you've left them to unlock a clear, calm, read-only view of everything you've written. No tech skills needed.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What happens to my journal if your company closes? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">Your journal works without us. Because everything is encrypted on your device, it doesn't depend on our servers being online. You can also export your journal as a PDF at any time — so you'll always have a copy you can hold in your hand.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Is my information really private? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">Yes. Your journal is encrypted on your device with your password before anything ever leaves it. We can't read it. Our staff can't read it. If we were ever compelled to hand over data, all anyone would see is encrypted gibberish.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Is it really a one-off payment? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">Yes. £7.95 once. No subscription, no renewals, no upsells. Free updates for life. If we ever change pricing, anyone who has already paid keeps their account at no extra cost.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I see what it looks like before I pay? <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer">Yes. We have <a href="#sample">a few sample pages</a> on this site so you can see how the journal looks and what kind of questions it asks. £7.95 buys you the full thing once you're ready.</div>
+      </details>
     </div>
   </div>
 </section>
 
-<section class="section cream" id="pricing">
-  <div class="section-inner">
-    <h2>Simple pricing</h2>
-    <p class="subtitle">One-off payment. Use forever. No subscription, ever.</p>
-    <div class="pricing-card">
-      <div class="price">£7.95</div>
-      <div class="price-sub">One-off payment · approx $9.95 USD · no subscription</div>
-      <ul>
-        <li>18 guided sections</li>
-        <li>256-bit encryption</li>
-        <li>Cloud backup included</li>
-        <li>Works on any device with a browser</li>
-        <li>11 languages</li>
-        <li>Read-only view for your loved ones</li>
-        <li>Free updates for life</li>
-        <li>No subscription, no hidden fees</li>
+<!-- ============ PRICING ============ -->
+<section class="pricing" id="pricing" aria-labelledby="pricing-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Simple pricing</div>
+      <h2 id="pricing-h">One payment. Use forever.</h2>
+      <p>No subscription. No hidden fees. No surprises.</p>
+    </div>
+
+    <div class="price-card">
+      <span class="badge">All-in-one</span>
+      <div class="num">£7<span class="pence">.95</span></div>
+      <div class="terms">One-off payment · approx $9.95 USD · no subscription, ever</div>
+
+      <ul class="features">
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> 18 guided sections</li>
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> 256-bit encryption on your device</li>
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Cloud backup included</li>
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Works on any device with a browser</li>
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> 11 languages, light &amp; dark mode</li>
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Read-only view for your loved ones</li>
+        <li><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> PDF export, so your data is yours</li>
+        <li>Free updates </li>
       </ul>
-      <a href="/app.html" class="btn-cta">Complete your journal for only £7.95</a>
-      <p class="small">Try free with local-only storage. Pay to unlock cloud backup and sharing.</p>
+
+      <a class="btn btn-primary" href="https://www.whenimgone.life/app.html">
+        Start your journal · £7.95
+      </a>
+      <div class="try-free">
+        Want to look before you buy? <a href="#sample">See a few sample pages</a>, no signup needed.
+      </div>
     </div>
   </div>
 </section>
 
-<footer class="footer">
-  <div>&copy; 2026 When I'm Gone</div>
-  <div class="footer-links">
-    <a href="#">Privacy policy</a>
-    <a href="#">Terms of use</a>
-    <a href="#">Contact</a>
+<!-- ============ FINAL CTA ============ -->
+<section class="final" aria-labelledby="final-h">
+  <div class="wrap">
+    <h2 id="final-h">A small thing today. An enormous gift later.</h2>
+    <p>An afternoon now will save your family weeks of searching, guessing and wondering at the worst time of their lives.</p>
+    <a class="btn btn-primary" href="https://www.whenimgone.life/app.html">
+      Start your journal
+      <span class="price">£7.95 one-off</span>
+    </a>
+    <div class="reassurances">
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> See sample pages</span>
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> No subscription</span>
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Encrypted on your device</span>
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Made in the UK</span>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="brand" style="color: var(--on-navy); margin-bottom: 8px;">
+          <span class="mark" aria-hidden="true">
+            <svg viewBox="0 0 24 32" fill="#F4EEE2" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 C 22 8 22 24 12 30 C 2 24 2 8 12 2 Z"></path></svg>
+          </span>
+          When I'm Gone
+        </div>
+        <p class="footer-blurb">A private, encrypted journal of the practical things your family will need when you're gone. </p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#how">How it works</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+          <li><a href="#faq">Questions</a></li>
+          <li><a href="https://www.whenimgone.life/app.html">Log in</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>For professionals</h4>
+        <ul>
+          <li><a href="mailto:hello@whenimgone.life">Funeral directors</a></li>
+          <li><a href="mailto:hello@whenimgone.life">Solicitors &amp; advisers</a></li>
+          <li><a href="mailto:hello@whenimgone.life">Bulk pricing</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="/about">About us</a></li>
+          <li><a href="/privacy">Privacy policy</a></li>
+          <li><a href="/terms">Terms of use</a></li>
+          <li><a href="mailto:hello@whenimgone.life">hello@whenimgone.life</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 When I'm Gone Ltd · Registered in England</span>
+      <span class="made">
+</span>
+    </div>
   </div>
 </footer>
 
-<!-- Carousel logic moved to /public/landing.js so we can drop
-     script-src 'unsafe-inline' from CSP. -->
-<script src="/landing.js" defer></script>
-</body>
-</html>
+
+
+</body></html>
