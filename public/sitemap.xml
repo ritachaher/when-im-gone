@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   When I'm Gone — sitemap.
-  Single-page site for now (just the homepage). When content pages are
-  added (/about, /faq, /security, /for-advisers, /privacy, /terms,
-  /articles/*), append <url> entries here. Update lastmod when content
-  changes.
+  Append <url> entries when new public pages are added. Bump <lastmod>
+  when the content of an existing page changes meaningfully.
 -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -12,5 +10,23 @@
     <lastmod>2026-05-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://www.whenimgone.life/about</loc>
+    <lastmod>2026-05-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.whenimgone.life/privacy</loc>
+    <lastmod>2026-05-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
+  </url>
+  <url>
+    <loc>https://www.whenimgone.life/terms</loc>
+    <lastmod>2026-05-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
 </urlset>

@@ -1,0 +1,124 @@
+/* Shared styles for the inner pages (privacy, terms, about, etc.).
+ * Mirrors the design tokens used in the v2 landing inline styles so
+ * inner pages look like the same site. Kept small on purpose — the
+ * landing has its own richer styles; these pages just need readable
+ * prose, the same header, and the same footer. */
+
+:root {
+  --navy:        #2C3E5D;
+  --navy-deep:   #243551;
+  --navy-soft:   #3A4D70;
+  --cream:       #F4EEE2;
+  --cream-warm:  #EFE7D6;
+  --cream-line:  #E2D7C0;
+  --coral:       #D97D5C;
+  --coral-deep:  #C0664A;
+  --ink:         #1A2438;
+  --ink-soft:    #45526B;
+  --ink-mute:    #6B7589;
+  --on-navy:     #F4EEE2;
+  --on-navy-mute:#B7C0D2;
+
+  --serif: 'Lora', Georgia, 'Times New Roman', serif;
+  --sans:  'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+
+  --radius: 12px;
+  --w: 760px;            /* narrower than landing — these are reading pages */
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: 19px;
+  line-height: 1.65;
+  color: var(--ink);
+  background: var(--cream);
+}
+@media (max-width: 720px) { body { font-size: 18px; } }
+
+img { max-width: 100%; display: block; }
+a { color: var(--navy); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1.5px; }
+a:hover { color: var(--coral-deep); }
+a:focus-visible, button:focus-visible {
+  outline: 3px solid var(--coral);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; color: var(--ink); letter-spacing: -0.01em; line-height: 1.2; margin: 0; }
+h1 { font-size: clamp(34px, 4.4vw, 48px); line-height: 1.1; }
+h2 { font-size: clamp(24px, 2.6vw, 30px); margin-top: 40px; }
+h3 { font-size: clamp(20px, 2.0vw, 22px); margin-top: 28px; }
+p, ul, ol { margin: 16px 0; }
+li { margin: 6px 0; }
+
+.wrap { max-width: var(--w); margin: 0 auto; padding: 0 24px; }
+
+/* ---------- Top bar (matches landing) ---------- */
+.top {
+  position: sticky; top: 0; z-index: 30;
+  background: var(--navy); color: var(--on-navy);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.top-inner {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px; max-width: 1180px; margin: 0 auto;
+}
+.brand {
+  font-family: var(--serif); font-weight: 600; font-size: 22px;
+  letter-spacing: -0.01em; color: var(--on-navy); text-decoration: none;
+  display: inline-flex; align-items: center; gap: 12px;
+}
+.brand .mark {
+  width: 38px; height: 38px; border-radius: 10px;
+  background: var(--navy-soft);
+  display: inline-flex; align-items: center; justify-content: center;
+}
+.brand .mark svg { width: 22px; height: 28px; }
+.btn-login {
+  background: rgba(244,238,226,0.12); color: var(--on-navy);
+  padding: 8px 18px; border-radius: 6px;
+  border: 1px solid rgba(244,238,226,0.18);
+  font-weight: 600; font-size: 15px; text-decoration: none;
+}
+.btn-login:hover { background: rgba(244,238,226,0.20); color: var(--on-navy); }
+
+/* ---------- Page chrome ---------- */
+.page {
+  padding: 60px 0 96px;
+}
+.eyebrow {
+  font-size: 14px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--coral-deep); margin-bottom: 14px;
+}
+.lede {
+  font-size: 21px; color: var(--ink-soft); line-height: 1.55;
+  margin: 14px 0 28px;
+}
+.callout {
+  background: var(--cream-warm);
+  border-left: 4px solid var(--coral);
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin: 24px 0;
+  color: var(--ink-soft);
+}
+.muted { color: var(--ink-mute); font-size: 16px; }
+hr { border: 0; border-top: 1px solid var(--cream-line); margin: 36px 0; }
+
+/* ---------- Footer (matches landing) ---------- */
+footer {
+  background: var(--navy-deep); color: var(--on-navy-mute);
+  padding: 56px 0 36px; font-size: 16px;
+  margin-top: 40px;
+}
+footer a { color: var(--on-navy-mute); }
+footer a:hover { color: var(--on-navy); }
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  margin-top: 28px; padding-top: 18px;
+  font-size: 14px; color: rgba(255,255,255,0.45);
+}
+.footer-links { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 8px; }

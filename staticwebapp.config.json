@@ -1,16 +1,20 @@
 {
   "routes": [
-    {
-      "route": "/app",
-      "rewrite": "/app.html"
-    }
+    { "route": "/app", "rewrite": "/app.html" },
+    { "route": "/privacy", "rewrite": "/privacy.html" },
+    { "route": "/terms", "rewrite": "/terms.html" },
+    { "route": "/about", "rewrite": "/about.html" }
   ],
   "navigationFallback": {
     "rewrite": "/app.html",
     "exclude": [
       "/assets/*",
+      "/images/*",
       "/*.{css,js,png,svg,webmanifest,ico,txt,xml,webp,jpg,jpeg,gif,woff,woff2}",
       "/index.html",
+      "/privacy.html",
+      "/terms.html",
+      "/about.html",
       "/robots.txt",
       "/sitemap.xml"
     ]

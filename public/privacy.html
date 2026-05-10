@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Privacy notice · When I'm Gone</title>
+<meta name="description" content="What we can and can't see about your journal. Plain English, no jargon.">
+<meta name="theme-color" content="#2C3E5D">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="canonical" href="https://www.whenimgone.life/privacy">
+<meta name="robots" content="index, follow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/page.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <a class="brand" href="/" aria-label="When I'm Gone, home">
+      <span class="mark" aria-hidden="true">
+        <svg viewBox="0 0 24 32" fill="#F4EEE2" xmlns="http://www.w3.org/2000/svg"><path d="M12 2 C 22 8 22 24 12 30 C 2 24 2 8 12 2 Z"/></svg>
+      </span>
+      <span>When I'm Gone</span>
+    </a>
+    <a class="btn-login" href="/app.html">Log in</a>
+  </div>
+</header>
+
+<main class="page">
+  <div class="wrap">
+    <div class="eyebrow">Privacy notice</div>
+    <h1>What we can see, and what we can't.</h1>
+    <p class="lede">
+      We built When I'm Gone so that we cannot read your journal — not by accident, not on purpose,
+      not under legal pressure. This notice spells out exactly how that works, what we do see, and
+      what your rights are.
+    </p>
+    <p class="muted">Last updated: 10 May 2026</p>
+
+    <div class="callout">
+      <strong>The one-line version.</strong> Everything you type into your journal is encrypted on
+      your device, with a key only you hold. We never see the contents. When you back up to the
+      cloud, what we store is a sealed envelope that we have no way to open.
+    </div>
+
+    <h2>Who we are</h2>
+    <p>
+      When I'm Gone is operated by When I'm Gone Ltd, a company registered in England. If you have
+      any questions about your data or this notice, write to
+      <a href="mailto:hello@whenimgone.life">hello@whenimgone.life</a>. A real person will answer.
+    </p>
+
+    <h2>What we cannot see</h2>
+    <p>
+      Your journal is encrypted on your device, with a key derived from your password. The
+      encrypted blob is the only thing that ever leaves your device. We can't read it. Our
+      staff can't read it. If we were ever compelled to hand over data by a court order, all
+      anyone would see is encrypted gibberish.
+    </p>
+    <p>This means we have no way to:</p>
+    <ul>
+      <li>Read what you've written in your journal.</li>
+      <li>Recover your journal if you lose both your password and your recovery code.</li>
+      <li>Search your data, profile you, or build any kind of dataset from journal contents.</li>
+      <li>Share your journal contents with anyone, including any government or law enforcement.</li>
+    </ul>
+    <p>
+      That is the deliberate trade-off. The price of a journal that no-one else can ever read is
+      that we cannot help you get back in if you've lost the way in. The recovery code we give
+      you at setup is the only safety net we can offer.
+    </p>
+
+    <h2>What we do see</h2>
+    <p>To run the service, we and our providers see a small amount of information:</p>
+    <ul>
+      <li>
+        <strong>The encrypted blob itself.</strong> When you click "Save a copy", we store the
+        encrypted version of your journal in Google Firestore (a cloud database). The contents
+        are unreadable to us. We also store an anonymous identifier derived from your recovery
+        code so the right device can find the right blob when you sync between devices.
+      </li>
+      <li>
+        <strong>A Firebase anonymous user ID.</strong> When the app talks to the cloud it
+        creates a temporary anonymous Firebase account. There's no email, no password, and
+        no way to link that ID back to you personally. We use it only for rate-limiting and
+        abuse prevention.
+      </li>
+      <li>
+        <strong>Standard server logs.</strong> Like any website, our hosting provider (Azure
+        Static Web Apps) records basic request information — IP address, browser type, page
+        requested. These are retained for a short period for security and diagnostics, then
+        deleted.
+      </li>
+      <li>
+        <strong>Payment information.</strong> When you pay £7.95, our payment processor
+        (when we add one) will see the standard card details required to process the payment.
+        We will not store your card number. We will only know that a payment was made.
+      </li>
+    </ul>
+
+    <h2>Cookies and local storage</h2>
+    <p>
+      We don't use tracking cookies. We don't use Google Analytics or any other behaviour-
+      tracking tool. The app uses your browser's local storage and IndexedDB to keep your
+      encrypted journal on your device — that's the journal itself, not tracking data.
+    </p>
+
+    <h2>Your rights under UK GDPR</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li>Ask what data we hold about you.</li>
+      <li>Ask for your encrypted blob to be deleted from our cloud backup.</li>
+      <li>Object to processing or withdraw consent at any time.</li>
+      <li>Lodge a complaint with the Information Commissioner's Office (ICO) at
+        <a href="https://ico.org.uk/" rel="noopener">ico.org.uk</a> if you believe we've
+        mishandled your data.</li>
+    </ul>
+    <p>
+      To exercise any of these, email <a href="mailto:hello@whenimgone.life">hello@whenimgone.life</a>.
+      Because we hold so little data, most requests are quick — typically resolved within a week.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      When I'm Gone is intended for adults planning their estate. We don't knowingly collect
+      data from anyone under 16. If you believe a child has used the service, please contact us
+      and we'll remove their backup.
+    </p>
+
+    <h2>International transfers</h2>
+    <p>
+      Our cloud backup runs on Google Firestore, which may store the encrypted blob in data
+      centres outside the UK. Because the blob is encrypted before it leaves your device, the
+      legal exposure is limited — anyone with access to those data centres sees only encrypted
+      gibberish.
+    </p>
+
+    <h2>Changes to this notice</h2>
+    <p>
+      If we change anything material, we'll update the "Last updated" date at the top and
+      explain the change in plain English at the top of this page. We won't change the
+      fundamental promise — that we can't read your journal — without a very loud announcement.
+    </p>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap" style="max-width: 1180px;">
+    <p>© 2026 When I'm Gone Ltd · Registered in England</p>
+    <div class="footer-links">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:hello@whenimgone.life">Contact</a>
+    </div>
+    <div class="footer-bottom">
+      A private, encrypted journal of the practical things your family will need when you're gone.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
