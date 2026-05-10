@@ -1,0 +1,12 @@
+# When I'm Gone — robots.txt
+# Public site (https://www.whenimgone.life). The React app shell at
+# /app.html and the bundled JS/CSS under /assets/ have no SEO value
+# and shouldn't be indexed — only the marketing pages should rank.
+
+User-agent: *
+Allow: /
+Disallow: /app.html
+Disallow: /app
+Disallow: /assets/
+
+Sitemap: https://www.whenimgone.life/sitemap.xml
