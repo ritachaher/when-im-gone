@@ -355,6 +355,7 @@ function SingleCard({
             field={f}
             value={values[f.id]}
             onChange={(v) => setSectionField(slug, f.id, v)}
+            inputId={`${slug}-c${cardIndex}-${f.id}`}
           />
         ))}
       </div>
@@ -424,6 +425,7 @@ function RepeatingCard({
                 field={f}
                 value={it[f.id]}
                 onChange={(v) => change(it.id as string, f.id, v)}
+                inputId={`${slug}-c${cardIndex}-${it.id}-${f.id}`}
               />
             ))}
           </div>

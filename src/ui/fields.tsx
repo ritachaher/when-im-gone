@@ -19,13 +19,20 @@ type FieldProps = {
   field: Field;
   value: unknown;
   onChange: (next: string) => void;
+  // Unique DOM id/name scope. Required to avoid collisions when the same
+  // field renders multiple times (e.g. each row of a RepeatingCard, or the
+  // user's own `dob` plus a child's `dob` in the same section).
+  inputId?: string;
 };
 
-export function FieldInput({ slug, field, value, onChange }: FieldProps) {
+export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps) {
   const { t } = useTranslation();
   const str = (value as string | undefined) ?? '';
+  // Fall back to field.id for legacy callers, but every Owner.tsx call site
+  // now passes a unique inputId scoped to slug/card/item.
+  const domId = inputId ?? field.id;
   const common = {
-    id: field.id,
+    id: domId,
     value: str,
     onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
       onChange(e.target.value),
@@ -38,7 +45,7 @@ export function FieldInput({ slug, field, value, onChange }: FieldProps) {
 
   return (
     <div className={`field ${field.full ? 'full' : ''}`}>
-      <label htmlFor={field.id}>
+      <label htmlFor={domId}>
         {label}
         {field.optional && <span className="optional">(optional)</span>}
       </label>
@@ -66,7 +73,10 @@ export function FieldInput({ slug, field, value, onChange }: FieldProps) {
               <label key={o} className={`chip ${str === o ? 'on' : ''}`}>
                 <input
                   type="radio"
-                  name={field.id}
+                  // Scope the radio group to this specific input — without
+                  // this, repeated chip fields share one group across rows
+                  // and selecting in row 2 deselects row 1.
+                  name={domId}
                   checked={str === o}
                   onChange={() => onChange(o)}
                 />
