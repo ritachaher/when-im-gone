@@ -2,6 +2,43 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { unlockWithPassword, unlockWithRecovery } from '../storage/vault';
 
+// Exponential-backoff throttle for unlock attempts. Persisted in
+// localStorage so an attacker can't bypass it with a page reload.
+// PBKDF2-600k is slow but not infinite; combining it with backoff
+// makes targeted brute-force impractical against a stolen device.
+const FAIL_KEY = 'wig.unlock.fails';
+const FAIL_AT_KEY = 'wig.unlock.fails.at';
+
+function readFails(): { count: number; lastAt: number } {
+  try {
+    return {
+      count: Number(localStorage.getItem(FAIL_KEY)) || 0,
+      lastAt: Number(localStorage.getItem(FAIL_AT_KEY)) || 0,
+    };
+  } catch {
+    return { count: 0, lastAt: 0 };
+  }
+}
+
+function writeFails(count: number, at: number) {
+  try {
+    localStorage.setItem(FAIL_KEY, String(count));
+    localStorage.setItem(FAIL_AT_KEY, String(at));
+  } catch { /* ignore — private mode etc. */ }
+}
+
+function clearFails() {
+  try { localStorage.removeItem(FAIL_KEY); localStorage.removeItem(FAIL_AT_KEY); } catch {}
+}
+
+// Returns ms to wait before the next attempt is allowed. After 3 free
+// tries we add 2^(n-3) seconds, capped at 5 minutes.
+function backoffMs(count: number): number {
+  if (count < 3) return 0;
+  const seconds = Math.min(300, Math.pow(2, count - 3));
+  return seconds * 1000;
+}
+
 export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
   const { t } = useTranslation();
   const [mode, setMode] = useState<'pw' | 'rc'>('pw');
@@ -11,20 +48,43 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
 
   async function submit() {
     setErr(null);
+    // Throttle check — refuse if we're inside the cooldown window from
+    // recent failures. The window grows exponentially after 3 attempts.
+    const { count, lastAt } = readFails();
+    const wait = backoffMs(count) - (Date.now() - lastAt);
+    if (wait > 0) {
+      const sec = Math.ceil(wait / 1000);
+      setErr(
+        t('unlock_throttled', 'Too many attempts. Please wait {{sec}} seconds before trying again.', { sec }),
+      );
+      return;
+    }
     setBusy(true);
     try {
       if (mode === 'pw') await unlockWithPassword(value);
       else await unlockWithRecovery(value);
+      // Successful unlock — reset the failure counter so the next
+      // device-locked-up event starts fresh.
+      clearFails();
     } catch (e) {
       // Distinguish a wrong password/code (the expected, common failure)
       // from infrastructure errors (IndexedDB quota, corrupted store,
       // WebCrypto unavailable, etc). WebCrypto throws OperationError when
       // the AES-GCM auth tag fails — that's the wrong-secret signature.
-      console.error('Unlock failed:', e);
       const name =
         e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
+      // Log only the error class — never the exception object, which
+      // can carry the attempted secret in some browser builds and would
+      // leak into DevTools / screen recordings.
+      console.error('Unlock failed:', name || 'unknown');
       const looksLikeWrongSecret = name === 'OperationError';
       if (looksLikeWrongSecret) {
+        // Increment the failure counter so each wrong attempt extends
+        // the backoff window. Only counts wrong-secret failures, not
+        // infrastructure errors (those would punish honest users for
+        // problems outside their control).
+        const next = readFails().count + 1;
+        writeFails(next, Date.now());
         setErr(mode === 'pw' ? t('pw_wrong') : t('rc_wrong'));
       } else {
         setErr(

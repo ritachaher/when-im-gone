@@ -38,6 +38,8 @@ import {
   exportEncryptedBlob,
   getVaultCloudId,
   importEncryptedBlob,
+  recordCloudPush,
+  recordCloudPull,
 } from './vault';
 
 const firebaseConfig = {
@@ -102,6 +104,7 @@ export async function pushBackup(): Promise<void> {
     data: json,
     updatedAt: serverTimestamp(),
   });
+  await recordCloudPush();
 }
 
 /**
@@ -122,6 +125,7 @@ export async function pullBackup(opts: {
   if (!snap.exists()) throw new Error('No backup found');
   const json = snap.data().data as string;
   await importEncryptedBlob(json, opts);
+  await recordCloudPull();
 }
 
 /**

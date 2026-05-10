@@ -2,10 +2,12 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   getLastCloudPushAt,
   markCloudPushed,
+  readAudit,
   setSectionField,
   setSectionList,
   useVault,
   wipe,
+  type AuditEvent,
   type RepeatingItem,
 } from '../storage/vault';
 import { SECTIONS, findSection } from './sections';
@@ -59,6 +61,16 @@ export function Owner({ onLock }: { onLock: () => void }) {
   const { theme, toggle: toggleTheme } = useTheme();
   const [cloudStatus, setCloudStatus] = useState<BackupStatus>('idle');
   const [lastCloudPushAt, setLastCloudPushAt] = useState<number | null>(null);
+  // Audit log viewer state. Lazy-loaded only when the user opens the
+  // panel — no point decrypting 50 records on every render.
+  const [showAudit, setShowAudit] = useState(false);
+  const [auditEvents, setAuditEvents] = useState<AuditEvent[] | null>(null);
+  useEffect(() => {
+    if (!showAudit) return;
+    let cancelled = false;
+    readAudit(50).then((evs) => { if (!cancelled) setAuditEvents(evs); });
+    return () => { cancelled = true; };
+  }, [showAudit]);
 
   // Load "last cloud push" timestamp on mount so we can decide whether
   // to nudge the user with a terracotta button.
@@ -212,6 +224,13 @@ export function Owner({ onLock }: { onLock: () => void }) {
             <button onClick={() => setConfirmAction('wipe')}>{t('wipe_btn', 'Wipe everything')}</button>
             <span className="footer-hint">{t('wipe_hint', 'Permanently deletes all data on this device')}</span>
           </div>
+          {/* Encrypted audit log — shows the user every time their
+              journal has been unlocked, exported, or synced. Helps
+              spot "who else has been in here". */}
+          <div className="footer-action">
+            <button onClick={() => setShowAudit(true)}>{t('audit_btn', 'Recent activity')}</button>
+            <span className="footer-hint">{t('audit_hint', 'See unlocks, exports and cloud syncs')}</span>
+          </div>
           <div className="toggle-wrap">
             <button
               className={`toggle-track${theme === 'dark' ? ' on' : ''}`}
@@ -283,8 +302,72 @@ export function Owner({ onLock }: { onLock: () => void }) {
           onCancel={() => setConfirmAction(null)}
         />
       )}
+
+      {showAudit && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setShowAudit(false)}
+          style={{
+            position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              background: 'var(--paper)', borderRadius: 12, padding: 24,
+              maxWidth: 520, width: '90%', maxHeight: '80vh', overflow: 'auto',
+            }}
+          >
+            <h3 style={{ marginBottom: 8 }}>{t('audit_title', 'Recent activity')}</h3>
+            <p className="muted" style={{ fontSize: 13, marginBottom: 14 }}>
+              {t(
+                'audit_desc',
+                'Every time your journal is unlocked, exported or synced, it’s recorded here. If you see something you don’t recognise, change your password.',
+              )}
+            </p>
+            {auditEvents === null ? (
+              <p className="muted">{t('audit_loading', 'Loading…')}</p>
+            ) : auditEvents.length === 0 ? (
+              <p className="muted">{t('audit_empty', 'No activity recorded yet.')}</p>
+            ) : (
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {auditEvents.map((ev, i) => (
+                  <li key={i} style={{ borderBottom: '1px solid var(--border)', padding: '10px 0', fontSize: 13 }}>
+                    <div style={{ fontWeight: 600 }}>{auditLabel(ev.kind, t)}</div>
+                    <div className="muted" style={{ fontSize: 12 }}>
+                      {new Date(ev.at).toLocaleString()}
+                    </div>
+                    {ev.ua && (
+                      <div className="muted" style={{ fontSize: 11, marginTop: 2, wordBreak: 'break-word' }}>
+                        {ev.ua}
+                      </div>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className="btnrow" style={{ marginTop: 16 }}>
+              <button className="btn" onClick={() => setShowAudit(false)}>{t('close', 'Close')}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function auditLabel(kind: AuditEvent['kind'], t: any): string {
+  switch (kind) {
+    case 'unlock_pw': return t('audit_unlock_pw', 'Unlocked with password');
+    case 'unlock_rc': return t('audit_unlock_rc', 'Unlocked with recovery code');
+    case 'export':    return t('audit_export', 'Exported a copy');
+    case 'cloud_push':return t('audit_cloud_push', 'Saved to cloud');
+    case 'cloud_pull':return t('audit_cloud_pull', 'Pulled from cloud');
+    case 'wipe':      return t('audit_wipe', 'Wiped device');
+  }
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

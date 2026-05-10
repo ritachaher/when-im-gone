@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { create, unlockWithRecovery } from '../storage/vault';
 import { isFirebaseConfigured, pairViaRecoveryCode } from '../storage/firebase';
+import { checkBreached, checkLocalRules, localRulesPass } from '../crypto/password-strength';
 
 type Step = 'welcome' | 'disclaimer' | 'name' | 'password' | 'recovery' | 'pair';
 
@@ -15,14 +16,31 @@ export function Setup({ onDone }: { onDone: () => void }) {
   const [err, setErr] = useState<string | null>(null);
   const [recoveryCode, setRecoveryCode] = useState<string | null>(null);
   const [pairCode, setPairCode] = useState('');
+  // True after the user has acknowledged a HIBP-breached warning. Lets
+  // them proceed with eyes-open if they really insist, but only once
+  // they've seen the warning.
+  const [breachAck, setBreachAck] = useState(false);
+  // Recovery-code reveal state. Code is masked by default and the user
+  // has to click "Reveal" to see it. We also blank the code while the
+  // tab is hidden, which neutralises naive screen-recording tools that
+  // capture the visible viewport. The "I've stored it safely" checkbox
+  // forces a deliberate acknowledgement before they can leave the screen.
+  const [revealed, setRevealed] = useState(false);
+  const [storedAck, setStoredAck] = useState(false);
+  useEffect(() => {
+    function onVisibility() {
+      if (document.visibilityState !== 'visible') setRevealed(false);
+    }
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('blur', onVisibility);
+    return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('blur', onVisibility);
+    };
+  }, []);
 
-  const rules = {
-    len: pw1.length >= 10,
-    letter: /[A-Za-z]/.test(pw1),
-    number: /\d/.test(pw1),
-    mixed: /[A-Z]/.test(pw1) && /[a-z]/.test(pw1),
-  };
-  const allMet = rules.len && rules.letter && rules.number && rules.mixed;
+  const rules = checkLocalRules(pw1);
+  const allMet = localRulesPass(rules);
 
   async function submit() {
     setErr(null);
@@ -30,6 +48,28 @@ export function Setup({ onDone }: { onDone: () => void }) {
     if (pw1 !== pw2) return setErr(t('pw_error_mismatch'));
     setBusy(true);
     try {
+      // HIBP k-anonymity check. Only the first 5 hex chars of SHA-1 leave
+      // the device. Network failures are treated as a soft 'unknown' and
+      // do not block setup — being offline shouldn't stop someone making
+      // a journal.
+      if (!breachAck) {
+        const breach = await checkBreached(pw1);
+        if (breach.status === 'breached') {
+          setBusy(false);
+          // i18next typings expect a numeric `count`; pass it raw and
+          // let the formatter render it. We don't bother with locale
+          // grouping here — the warning value is the message itself.
+          setErr(
+            t(
+              'pw_breached',
+              'This password has appeared in {{count}} known data breaches. Please pick a different one — or click Create again to use it anyway.',
+              { count: breach.count },
+            ),
+          );
+          setBreachAck(true);
+          return;
+        }
+      }
       const { recoveryCode } = await create({ password: pw1, ownerDisplayName: name });
       setRecoveryCode(recoveryCode);
       setStep('recovery');
@@ -73,7 +113,9 @@ export function Setup({ onDone }: { onDone: () => void }) {
           ),
         );
       } else {
-        console.error('Pair failed:', e);
+        // Log only the error class — never the exception object — so
+        // the recovery code can't leak via DevTools or screen capture.
+        console.error('Pair failed:', name || 'unknown');
         setErr(
           t(
             'pair_error_other',
@@ -242,11 +284,12 @@ export function Setup({ onDone }: { onDone: () => void }) {
             <h2>{t('pw_title')}</h2>
             <p className="muted">{t('pw_hint')}</p>
             <label>{t('pw_label')}</label>
-            <input className="setup-input" type="password" value={pw1} onChange={(e) => setPw1(e.target.value)} autoFocus />
+            <input className="setup-input" type="password" value={pw1} onChange={(e) => { setPw1(e.target.value); setBreachAck(false); }} autoFocus />
             <ul className="pw-rules">
-              <li className={rules.len ? 'ok' : ''}>{rules.len ? '\u2713' : '\u2022'} {t('pw_rule_length')}</li>
+              <li className={rules.len ? 'ok' : ''}>{rules.len ? '\u2713' : '\u2022'} {t('pw_rule_length', 'At least 14 characters')}</li>
               <li className={rules.mixed ? 'ok' : ''}>{rules.mixed ? '\u2713' : '\u2022'} {t('pw_rule_mixed')}</li>
               <li className={rules.number ? 'ok' : ''}>{rules.number ? '\u2713' : '\u2022'} {t('pw_rule_number')}</li>
+              <li className={rules.symbol ? 'ok' : ''}>{rules.symbol ? '\u2713' : '\u2022'} {t('pw_rule_symbol', 'At least one symbol (! ? # etc.)')}</li>
             </ul>
             <label>{t('pw_confirm_label')}</label>
             <input className="setup-input" type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} />
@@ -267,10 +310,47 @@ export function Setup({ onDone }: { onDone: () => void }) {
           <>
             <h2>{t('recovery_title')}</h2>
             <p className="muted">{t('recovery_hint')}</p>
-            <div className="recovery-code">{recoveryCode}</div>
+            {/* Code is masked until the user actively reveals it, and we
+                re-mask the moment the tab loses focus. This makes it harder
+                for screen-recording / casual screenshot tools to capture
+                the code. We also nudge users explicitly away from photo
+                backups, which retain screenshots indefinitely. */}
+            <div className="recovery-code" aria-live="polite">
+              {revealed ? recoveryCode : '••••-••••-••••'}
+            </div>
+            <button
+              className="btn ghost"
+              type="button"
+              onClick={() => setRevealed((v) => !v)}
+              style={{ marginBottom: 8 }}
+            >
+              {revealed
+                ? t('recovery_hide', 'Hide code')
+                : t('recovery_reveal', 'Reveal code')}
+            </button>
+            <div className="callout warn" style={{ fontSize: 13 }}>
+              {t(
+                'recovery_screenshot_warn',
+                'Please don’t screenshot this — phone screenshots get backed up to iCloud or Google Photos automatically and stay there forever. Print it or write it down on paper instead.',
+              )}
+            </div>
+            <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', margin: '12px 0', fontSize: 14 }}>
+              <input
+                type="checkbox"
+                checked={storedAck}
+                onChange={(e) => setStoredAck(e.target.checked)}
+                style={{ marginTop: 3 }}
+              />
+              <span>
+                {t(
+                  'recovery_stored_ack',
+                  'I’ve written it down or printed it, and I’ve stored it somewhere only my chosen person can find.',
+                )}
+              </span>
+            </label>
             <div className="btnrow">
               <button className="btn ghost" onClick={() => window.print()}>{t('print')}</button>
-              <button className="btn" onClick={onDone}>{t('recovery_done')}</button>
+              <button className="btn" disabled={!storedAck} onClick={onDone}>{t('recovery_done')}</button>
             </div>
           </>
         )}

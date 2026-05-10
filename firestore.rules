@@ -3,26 +3,70 @@ rules_version = '2';
 // The vault collection stores AES-GCM-256 encrypted blobs. Each
 // document is keyed by SHA-256 of the user's recovery code (see
 // crypto/deriveVaultCloudId), which is ~60 bits of entropy — too
-// expensive to enumerate. Every device that holds the recovery code
-// computes the same ID, so phone and PC land on the same document.
+// expensive to enumerate at scale.
 //
 // Access control: anyone holding the recovery code can already decrypt
 // the contents, so "you need the recovery code to find the document"
-// is exactly the right level of gating. We still require Firebase Auth
+// is the right level of gating. We still require Firebase Auth
 // (anonymous is fine) so Firestore has a per-client rate-limit anchor
-// against drive-by spam. The 1 MB write cap blocks quota-exhaustion
-// attacks from a compromised client.
+// against drive-by spam. A monotonic-updatedAt guard prevents an
+// attacker who learns the cloud ID from silently rolling the vault
+// back to an older state. The 1 MB write cap blocks quota-exhaustion.
+//
+// Operational hardening recommended in addition to these rules:
+//  - Enable Firebase App Check (reCAPTCHA Enterprise / Play Integrity /
+//    DeviceCheck) so reads/writes require a real-client attestation.
+//    Once enabled, switch the `appCheck` clause below from `true` to
+//    `request.app != null`.
+//  - Configure Firestore App Engine quota / per-IP rate limits in the
+//    Firebase console for the `vaults` collection.
 service cloud.firestore {
   match /databases/{database}/documents {
     match /vaults/{vaultId} {
-      allow read: if request.auth != null
-                  && vaultId.matches('^[0-9a-f]{64}$');
-      allow write: if request.auth != null
-                   && vaultId.matches('^[0-9a-f]{64}$')
-                   && request.resource.data.keys().hasAll(['data', 'updatedAt'])
-                   && request.resource.data.data is string
-                   && request.resource.data.data.size() < 1000000;
+      // Shared shape check: 32-byte hex ID, authenticated request.
+      function isWellFormed() {
+        return request.auth != null
+               && vaultId.matches('^[0-9a-f]{64}$');
+      }
+
+      // Replace `true` with `request.app != null` once App Check is
+      // enabled in the Firebase console. Until then we accept any
+      // authenticated client (including anonymous) so the existing app
+      // keeps working — App Check is a follow-up.
+      function appCheck() {
+        return true;
+      }
+
+      allow read: if isWellFormed() && appCheck();
+
+      // New documents (no prior `resource`) just need the right shape.
+      // Updates to an existing document must carry an updatedAt that is
+      // strictly greater than the stored one — this stops an attacker
+      // who knows the cloud ID from rolling the vault back to an older
+      // snapshot or wiping it with empty content.
+      allow create: if isWellFormed()
+                    && appCheck()
+                    && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+                    && request.resource.data.data is string
+                    && request.resource.data.data.size() > 0
+                    && request.resource.data.data.size() < 1000000
+                    && request.resource.data.updatedAt == request.time;
+
+      allow update: if isWellFormed()
+                    && appCheck()
+                    && request.resource.data.keys().hasOnly(['data', 'updatedAt'])
+                    && request.resource.data.data is string
+                    && request.resource.data.data.size() > 0
+                    && request.resource.data.data.size() < 1000000
+                    && request.resource.data.updatedAt == request.time
+                    && request.resource.data.updatedAt > resource.data.updatedAt;
+
+      // Deletion is never allowed from the client. If a user wants to
+      // wipe their cloud copy, they overwrite with an empty (still
+      // encrypted) journal — the local "wipe" flow handles that.
+      allow delete: if false;
     }
+
     match /{document=**} {
       allow read, write: if false;
     }

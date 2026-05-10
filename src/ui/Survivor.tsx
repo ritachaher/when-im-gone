@@ -27,9 +27,11 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
       // auth tag doesn't validate (i.e. wrong password/code). Anything
       // else is an infrastructure problem the survivor shouldn't be
       // blamed for — show a different message.
-      console.error('Unlock failed:', e);
       const name =
         e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
+      // Log only the error class so the secret can never end up in
+      // DevTools logs or a screen recording.
+      console.error('Unlock failed:', name || 'unknown');
       if (name === 'OperationError') {
         setErr(
           mode === 'pw'

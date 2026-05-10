@@ -106,6 +106,71 @@ async function unlockWith(secret: string, which: 'pw' | 'rc'): Promise<void> {
     journal,
     dataKey,
   });
+
+  // Audit: record the successful unlock so the user can see "where has
+  // my journal been opened from". Encrypted with the data key, so the
+  // log is unreadable to anyone who doesn't already hold the password.
+  await writeAudit({ kind: which === 'pw' ? 'unlock_pw' : 'unlock_rc' });
+}
+
+// ===== Encrypted audit log =====
+//
+// Successful security-relevant events (unlock, export, cloud push/pull,
+// wipe) are recorded as small JSON blobs encrypted with the data key.
+// Failed unlocks are deliberately NOT recorded here — they're tracked
+// by the throttle counter in the Lock UI, which doesn't need the data
+// key. Storing failure attempts encrypted would also leak that the
+// vault was probed even after the actual records can't be read.
+
+export type AuditEvent = {
+  kind:
+    | 'unlock_pw'
+    | 'unlock_rc'
+    | 'export'
+    | 'cloud_push'
+    | 'cloud_pull'
+    | 'wipe';
+  at: number;
+  // Loose user-agent fingerprint to help the user spot "this unlocked
+  // from a device I don't recognise". Truncated to keep records small.
+  ua?: string;
+};
+
+async function writeAudit(ev: Omit<AuditEvent, 'at' | 'ua'>): Promise<void> {
+  const { dataKey } = useVault.getState();
+  if (!dataKey) return; // can only write encrypted records when unlocked
+  const full: AuditEvent = {
+    ...ev,
+    at: Date.now(),
+    ua: typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 120) : undefined,
+  };
+  const blob = await encryptJSON(dataKey, full);
+  await db.audit.add({ blob, at: full.at });
+}
+
+// Public wrappers used by the cloud sync module so it can record pushes
+// and pulls without reaching into the private writeAudit helper.
+export async function recordCloudPush(): Promise<void> {
+  await writeAudit({ kind: 'cloud_push' });
+}
+export async function recordCloudPull(): Promise<void> {
+  await writeAudit({ kind: 'cloud_pull' });
+}
+
+/** Decrypts the most recent audit events for display in the Owner UI. */
+export async function readAudit(limit = 50): Promise<AuditEvent[]> {
+  const { dataKey } = useVault.getState();
+  if (!dataKey) return [];
+  const rows = await db.audit.orderBy('at').reverse().limit(limit).toArray();
+  const out: AuditEvent[] = [];
+  for (const r of rows) {
+    try {
+      out.push(await decryptJSON<AuditEvent>(dataKey, r.blob));
+    } catch {
+      // Old or corrupted record — skip rather than fail the whole list.
+    }
+  }
+  return out;
 }
 
 export async function unlockWithPassword(password: string): Promise<void> {
@@ -166,6 +231,9 @@ export async function setSectionList(
 }
 
 export async function wipe(): Promise<void> {
+  // Record the wipe BEFORE actually wiping, so it lands in the audit
+  // table the user could see if they restore from a backup. Best-effort.
+  try { await writeAudit({ kind: 'wipe' }); } catch { /* noop */ }
   lock();
   await wipeLocal();
 }
@@ -247,6 +315,7 @@ export async function exportEncryptedBlob(): Promise<Blob> {
     journalBlob: b64(journal.blob),
     updatedAt: journal.updatedAt,
   };
+  await writeAudit({ kind: 'export' });
   return new Blob([JSON.stringify(payload)], { type: 'application/octet-stream' });
 }
 
