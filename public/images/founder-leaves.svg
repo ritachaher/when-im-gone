@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 750" role="img" aria-label="Two leaves intertwined with a smaller leaf nestled at the base, representing family held together">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3A5172"></stop>
+      <stop offset="100%" stop-color="#243551"></stop>
+    </linearGradient>
+    <radialGradient id="glow4" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(244,238,226,0.12)"></stop>
+      <stop offset="100%" stop-color="rgba(244,238,226,0)"></stop>
+    </radialGradient>
+    <filter id="leafShadow4" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"></feGaussianBlur>
+      <feOffset dx="2" dy="6" result="off"></feOffset>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"></feFuncA></feComponentTransfer>
+      <feMerge><feMergeNode></feMergeNode><feMergeNode in="SourceGraphic"></feMergeNode></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="600" height="750" fill="url(#bg4)"></rect>
+  <rect width="600" height="750" fill="url(#glow4)"></rect>
+
+  
+  <g transform="translate(80 120) rotate(20) scale(1.4)" opacity="0.12">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#243551" stroke-width="0.71" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+  <g transform="translate(520 180) rotate(-40) scale(1.6)" opacity="0.10">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#243551" stroke-width="0.625" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+  <g transform="translate(80 620) rotate(150) scale(1.5)" opacity="0.18">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#D97D5C"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#F4EEE2" stroke-width="0.667" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+  <g transform="translate(530 580) rotate(170) scale(1.4)" opacity="0.12">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#243551" stroke-width="0.71" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+  <g transform="translate(140 680) rotate(-15) scale(1.2)" opacity="0.10">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#243551" stroke-width="0.833" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+  <g transform="translate(470 80) rotate(210) scale(1.2)" opacity="0.10">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#243551" stroke-width="0.833" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+
+  
+  <circle cx="300" cy="405" r="170" fill="none" stroke="#F4EEE2" stroke-width="0.5" opacity="0.18"></circle>
+  <circle cx="300" cy="405" r="240" fill="none" stroke="#D97D5C" stroke-width="0.5" opacity="0.20"></circle>
+
+  
+  <g filter="url(#leafShadow4)">
+    <g transform="translate(250 275) rotate(-25) scale(9)">
+      <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+      <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#2C3E5D" stroke-width="0.111" stroke-linecap="round" fill="none" opacity="0.45"></path>
+    </g>
+    <g transform="translate(345 295) rotate(28) scale(8.5)">
+      <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#D97D5C"></path>
+      <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#F4EEE2" stroke-width="0.118" stroke-linecap="round" fill="none" opacity="0.55"></path>
+    </g>
+  </g>
+
+  
+  <g transform="translate(300 505) rotate(5) scale(3.2)" opacity="0.95">
+    <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"></path>
+    <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#2C3E5D" stroke-width="0.3125" stroke-linecap="round" fill="none" opacity="0.55"></path>
+  </g>
+
+  
+  <text x="300" y="700" text-anchor="middle" font-family="Lora, Georgia, serif" font-style="italic" font-size="22" fill="#F4EEE2" opacity="0.78">held, together</text>
+</svg>
