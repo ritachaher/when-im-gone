@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>When I'm gone — Clickable mockup</title>
+<style>
+  :root {
+    --navy: #2C3E5D;
+    --navy-dark: #1E2C44;
+    --navy-soft: #4A5D7E;
+    --cream: #FAF6F0;
+    --cream-dark: #F0EADF;
+    --paper: #FFFFFF;
+    --ink: #2A2E36;
+    --ink-soft: #5A6170;
+    --accent: #C97A5D;
+    --accent-dark: #A85F44;
+    --ok: #5B8A6A;
+    --warn: #C27C3A;
+    --border: #D8CFBF;
+    --shadow: 0 4px 20px rgba(44,62,93,.08);
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin:0; padding:0; background: var(--cream); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 17px; line-height: 1.55; }
+  h1,h2,h3,h4 { font-family: Georgia, "Times New Roman", serif; color: var(--navy); font-weight: 500; letter-spacing: .2px; }
+  h1 { font-size: 2.1rem; margin: 0 0 .4em; }
+  h2 { font-size: 1.5rem; margin: 0 0 .5em; }
+  h3 { font-size: 1.15rem; margin: 0 0 .4em; }
+  p { margin: 0 0 .9em; }
+  button { font: inherit; cursor: pointer; }
+  a { color: var(--accent-dark); }
+
+  /* ----- Demo top bar ----- */
+  .demobar {
+    position: sticky; top:0; z-index: 50;
+    background: var(--navy-dark); color: #fff;
+    display:flex; align-items:center; gap: 12px;
+    padding: 8px 18px; font-size: 14px;
+  }
+  .demobar .tag { background: var(--accent); padding: 2px 8px; border-radius: 99px; font-weight:600; font-size: 12px; letter-spacing:.5px; }
+  .demobar .spacer { flex:1; }
+  .demobar .switch { display:inline-flex; background: rgba(255,255,255,.08); border-radius: 99px; padding: 3px; }
+  .demobar .switch button {
+    background: transparent; color:#fff; border:0; padding: 6px 14px; border-radius: 99px; font-size: 13px;
+  }
+  .demobar .switch button.on { background: var(--accent); color: #fff; }
+
+  /* ----- Shell layouts ----- */
+  .view { display:none; min-height: calc(100vh - 44px); }
+  .view.on { display: block; }
+
+  /* ===== OWNER VIEW ===== */
+  .owner {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: calc(100vh - 44px);
+  }
+  .sidebar {
+    background: var(--navy); color: #fff;
+    padding: 24px 0 40px;
+    position: sticky; top: 44px; height: calc(100vh - 44px);
+    overflow-y: auto;
+  }
+  .brand {
+    font-family: Georgia, serif; font-size: 1.4rem; color: #fff;
+    padding: 0 22px 14px; border-bottom: 1px solid rgba(255,255,255,.12);
+    margin-bottom: 10px;
+  }
+  .brand small { display:block; font-size: 12px; opacity: .6; letter-spacing: 1px; text-transform: uppercase; margin-top: 4px; font-family: inherit; }
+  .nav-overall {
+    padding: 10px 22px 18px; border-bottom: 1px solid rgba(255,255,255,.12);
+    font-size: 13px; color: rgba(255,255,255,.75);
+  }
+  .progress {
+    background: rgba(255,255,255,.12); border-radius: 99px; height: 6px; margin-top: 6px; overflow: hidden;
+  }
+  .progress > div { height:100%; background: var(--accent); width: 34%; border-radius: 99px; }
+  .nav ul { list-style: none; margin: 10px 0; padding: 0; }
+  .nav li { position: relative; }
+  .nav a {
+    display:flex; align-items:center; gap: 10px;
+    padding: 9px 22px; color: rgba(255,255,255,.82);
+    text-decoration: none; font-size: 14.5px; border-left: 3px solid transparent;
+  }
+  .nav a .dot { width: 8px; height: 8px; border-radius: 99px; background: rgba(255,255,255,.25); flex-shrink: 0; }
+  .nav a .dot.done { background: var(--ok); }
+  .nav a .dot.part { background: var(--warn); }
+  .nav a:hover { background: rgba(255,255,255,.06); color: #fff; }
+  .nav a.active { background: rgba(255,255,255,.08); color: #fff; border-left-color: var(--accent); }
+
+  .main { padding: 38px clamp(20px, 5vw, 56px) 80px; max-width: 900px; }
+  .crumbs { font-size: 13px; color: var(--ink-soft); margin-bottom: 6px; letter-spacing:.3px; }
+  .section-head { display:flex; align-items:flex-end; justify-content: space-between; gap: 16px; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+  .section-head p { color: var(--ink-soft); margin: 6px 0 0; max-width: 55ch; font-size: 15px; }
+  .pillstatus { font-size: 12px; background: var(--cream-dark); color: var(--navy); padding: 4px 10px; border-radius:99px; border: 1px solid var(--border); white-space: nowrap; }
+
+  .card {
+    background: var(--paper); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 22px 24px; margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .card h3 { margin-top: 0; display:flex; justify-content:space-between; align-items:center; gap: 12px; }
+  .card .hint { font-size: 13px; color: var(--ink-soft); margin: -4px 0 14px; }
+  .grid2 { display:grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } .owner { grid-template-columns: 1fr; } .sidebar { position: static; height:auto; } .main { padding: 24px 18px 60px; }}
+
+  label { display:block; font-size: 13px; color: var(--navy-soft); margin-bottom: 4px; font-weight: 600; letter-spacing: .2px; }
+  input[type=text], input[type=tel], input[type=email], input[type=date], textarea, select {
+    width: 100%; padding: 10px 12px; font: inherit; color: var(--ink);
+    border: 1px solid var(--border); border-radius: 8px; background: #fff;
+    transition: border-color .15s, box-shadow .15s;
+  }
+  input:focus, textarea:focus, select:focus { outline: none; border-color: var(--navy-soft); box-shadow: 0 0 0 3px rgba(74,93,126,.15); }
+  textarea { resize: vertical; min-height: 88px; }
+  .field { margin-bottom: 12px; }
+  .field.full { grid-column: 1/-1; }
+  .radios, .checks { display:flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    display:inline-flex; align-items:center; gap: 6px;
+    padding: 7px 12px; border: 1px solid var(--border); border-radius: 99px; background: #fff; font-size: 14px;
+    cursor: pointer; user-select: none;
+  }
+  .chip input { display:none; }
+  .chip.on, .chip:has(input:checked) { background: var(--navy); color: #fff; border-color: var(--navy); }
+
+  .btn {
+    display:inline-flex; align-items:center; gap: 8px;
+    background: var(--accent); color: #fff; border: 0; padding: 11px 18px; border-radius: 8px;
+    font-weight: 600; font-size: 15px;
+  }
+  .btn:hover { background: var(--accent-dark); }
+  .btn.ghost { background: transparent; color: var(--navy); border: 1px solid var(--border); }
+  .btn.ghost:hover { background: var(--cream-dark); }
+  .btnrow { display:flex; gap: 10px; margin-top: 10px; flex-wrap:wrap; }
+  .addmore { display:inline-flex; align-items:center; gap: 8px; color: var(--navy); background: var(--cream-dark); border: 1px dashed var(--border); padding: 10px 14px; border-radius: 8px; font-weight: 600; }
+
+  .callout {
+    background: #FBEFE8; border-left: 4px solid var(--accent); padding: 12px 16px;
+    border-radius: 6px; font-size: 14px; color: var(--ink);
+  }
+  .callout.warn { background: #FFF6E6; border-left-color: var(--warn); }
+  .callout.info { background: #EEF2F7; border-left-color: var(--navy-soft); }
+  .callout strong { color: var(--navy); }
+
+  .stub { background: #fff; border: 1px dashed var(--border); border-radius: var(--radius); padding: 40px; text-align:center; color: var(--ink-soft); }
+  .stub em { color: var(--navy); font-style: normal; font-weight: 600; display:block; margin-bottom: 6px; font-family: Georgia, serif; font-size: 1.2rem; }
+
+  /* ===== SURVIVOR VIEW ===== */
+  .survivor { background: linear-gradient(180deg, var(--cream) 0%, #fff 100%); }
+
+  .lockscreen {
+    max-width: 460px; margin: 60px auto; background: #fff;
+    border: 1px solid var(--border); border-radius: 14px; padding: 40px 34px; box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .lock-icon {
+    width: 58px; height: 58px; border-radius: 99px; background: var(--cream-dark);
+    display: grid; place-items: center; margin: 0 auto 14px; color: var(--navy);
+    border: 1px solid var(--border);
+  }
+  .lockscreen h1 { font-size: 1.6rem; }
+  .lockscreen p { color: var(--ink-soft); font-size: 15px; }
+  .lockscreen input { text-align: center; letter-spacing: 4px; font-size: 18px; padding: 14px; }
+  .lockscreen .note { font-size: 12.5px; color: var(--ink-soft); margin-top: 20px; }
+  .lockscreen .note a { display: block; margin-top: 4px; }
+
+  .sv-shell {
+    max-width: 980px; margin: 0 auto; padding: 34px clamp(16px, 4vw, 40px) 80px;
+  }
+  .sv-header {
+    background: var(--navy); color: #fff; border-radius: 14px; padding: 28px 32px; margin-bottom: 26px;
+    display:flex; justify-content: space-between; gap: 16px; align-items: center;
+  }
+  .sv-header h1 { color: #fff; margin: 0 0 4px; font-size: 1.7rem; }
+  .sv-header p { margin: 0; opacity: .8; font-size: 14px; }
+  .sv-header .chip-light { background: rgba(255,255,255,.14); color:#fff; border-radius:99px; padding: 6px 12px; font-size: 13px; border: 1px solid rgba(255,255,255,.18); }
+
+  .triage {
+    display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 30px;
+  }
+  @media (max-width: 780px) { .triage { grid-template-columns: 1fr; } .sv-header { flex-direction: column; align-items: flex-start; } }
+  .triage-card {
+    background: #fff; border-radius: 12px; border: 1px solid var(--border); padding: 18px 20px;
+    box-shadow: var(--shadow);
+  }
+  .triage-card .urg { font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--accent-dark); margin-bottom: 6px; }
+  .triage-card h3 { margin-bottom: 10px; }
+  .triage-card ul { padding: 0 0 0 18px; margin: 0; font-size: 14px; color: var(--ink); }
+  .triage-card li { margin: 4px 0; }
+
+  .sv-sections { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .sv-sec {
+    background:#fff; border:1px solid var(--border); border-radius: 10px; padding: 16px 18px;
+    cursor: pointer; transition: border-color .15s, transform .1s;
+    display:flex; flex-direction:column; gap: 4px;
+  }
+  .sv-sec:hover { border-color: var(--navy-soft); }
+  .sv-sec .ic { font-size: 18px; }
+  .sv-sec .nm { font-weight: 600; color: var(--navy); font-family: Georgia, serif; font-size: 1.05rem; }
+  .sv-sec .dc { font-size: 13px; color: var(--ink-soft); }
+
+  .sv-detail { display:none; }
+  .sv-detail.on { display:block; }
+  .sv-back {
+    background: transparent; border: 0; color: var(--navy); font-weight: 600; margin-bottom: 14px;
+    padding: 6px 10px 6px 0; display:inline-flex; align-items:center; gap:6px;
+  }
+  .sv-row {
+    display:grid; grid-template-columns: 200px 1fr; gap: 14px;
+    padding: 12px 0; border-bottom: 1px solid var(--cream-dark); font-size: 15px;
+  }
+  @media (max-width: 640px) { .sv-row { grid-template-columns: 1fr; gap: 2px; } }
+  .sv-row .k { color: var(--ink-soft); font-size: 13px; font-weight: 600; letter-spacing: .3px; text-transform: uppercase; }
+  .sv-row .v { color: var(--ink); }
+  .sv-row .v.empty { color: #aaa; font-style: italic; }
+
+  /* subtle book-feel accent */
+  .book-accent { display:inline-block; font-family: Georgia, serif; font-style: italic; color: var(--navy-soft); }
+
+</style>
+</head>
+<body>
+
+<!-- ============ DEMO TOP BAR ============ -->
+<div class="demobar">
+  <span class="tag">MOCKUP</span>
+  <span>When I'm gone — clickable preview</span>
+  <span class="spacer"></span>
+  <span style="opacity:.7; margin-right:6px; font-size: 13px;">Switch view:</span>
+  <div class="switch" role="tablist">
+    <button id="btnOwner" class="on" onclick="setView('owner')">📖 Owner (fill in)</button>
+    <button id="btnSurvivor" onclick="setView('survivor')">🕊️ Loved one (when I'm gone)</button>
+  </div>
+</div>
+
+<!-- ============ OWNER VIEW ============ -->
+<div id="viewOwner" class="view on">
+  <div class="owner">
+    <aside class="sidebar">
+      <div class="brand">When I'm gone<small>Eleanor's journal</small></div>
+      <div class="nav-overall">
+        34% complete
+        <div class="progress"><div></div></div>
+        <div style="margin-top:10px; font-size: 12px; opacity:.7;">Last saved a few seconds ago</div>
+      </div>
+      <nav class="nav">
+        <ul id="navList">
+          <!-- filled by JS -->
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div id="ownerPanel"><!-- filled by JS --></div>
+    </main>
+  </div>
+</div>
+
+<!-- ============ SURVIVOR VIEW ============ -->
+<div id="viewSurvivor" class="view survivor">
+
+  <!-- Lock screen -->
+  <div id="lockScreen">
+    <div class="lockscreen">
+      <div class="lock-icon">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <h1>Welcome</h1>
+      <p>Eleanor left this information for you.<br/>Please enter the unlock code from the sealed envelope.</p>
+      <div style="margin: 22px 0 8px; text-align: left;">
+        <label for="unlockCode" style="text-align:center; display:block;">Unlock code</label>
+        <input id="unlockCode" type="text" placeholder="· · · · · ·" maxlength="12" onkeydown="if(event.key==='Enter') unlock()"/>
+      </div>
+      <button class="btn" style="width:100%; justify-content:center;" onclick="unlock()">Unlock</button>
+      <div class="note">
+        <span>This information is read-only. It will not be modified.</span>
+        <a href="#" onclick="event.preventDefault(); document.getElementById('unlockCode').value='demo'; unlock();">Try the demo (use code: <strong>demo</strong>)</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- After unlock -->
+  <div id="svShell" class="sv-shell" style="display:none;">
+
+    <div id="svHome">
+      <div class="sv-header">
+        <div>
+          <h1>Eleanor Martin</h1>
+          <p>Journal last updated 14 March 2026 · Read-only view</p>
+        </div>
+        <span class="chip-light">🕊️ Unlocked for James Martin</span>
+      </div>
+
+      <h2 style="margin-bottom: 14px;">Where to start</h2>
+      <div class="triage">
+        <div class="triage-card">
+          <div class="urg">First few hours</div>
+          <h3>People to tell</h3>
+          <ul>
+            <li>7 people to call immediately</li>
+            <li>6 organisations to notify</li>
+            <li>Funeral director contact</li>
+          </ul>
+          <div class="btnrow"><button class="btn ghost" onclick="svOpen('contacts')">Open list →</button></div>
+        </div>
+        <div class="triage-card">
+          <div class="urg">First week</div>
+          <h3>Funeral wishes</h3>
+          <ul>
+            <li>Signed funeral plan</li>
+            <li>Burial / cremation choice</li>
+            <li>Readings, music, dress code</li>
+          </ul>
+          <div class="btnrow"><button class="btn ghost" onclick="svOpen('funeral')">Open wishes →</button></div>
+        </div>
+        <div class="triage-card">
+          <div class="urg">First month</div>
+          <h3>Money &amp; paperwork</h3>
+          <ul>
+            <li>Will filed with solicitor</li>
+            <li>5 bank accounts (where to look)</li>
+            <li>Life insurance &amp; pension</li>
+          </ul>
+          <div class="btnrow"><button class="btn ghost" onclick="svOpen('financial')">Open details →</button></div>
+        </div>
+      </div>
+
+      <h2 style="margin: 28px 0 10px;">Browse everything</h2>
+      <p style="color:var(--ink-soft); font-size:14px; margin-bottom:16px;">Each section is a set of pointers — <span class="book-accent">where</span> to find things, not passwords or balances.</p>
+
+      <div class="sv-sections" id="svSectionsGrid"></div>
+    </div>
+
+    <!-- Dynamic detail panes -->
+    <div id="svDetail" class="sv-detail">
+      <button class="sv-back" onclick="svBack()">← Back</button>
+      <div id="svDetailBody"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---- Section definitions (drawn from the PDF TOC) ----
+const SECTIONS = [
+  { id:'me',         ic:'👤', nm:'All about me',           dc:'Names, address, family',           status:'done' },
+  { id:'docs',       ic:'📄', nm:'Important documents',    dc:'Will, passport, certificates',     status:'done' },
+  { id:'medical',    ic:'⚕️', nm:'Medical information',    dc:'GP, conditions, medication',       status:'part' },
+  { id:'contacts',   ic:'📞', nm:'Key contacts',           dc:'Attorney, advisor, insurer',       status:'part' },
+  { id:'dependants', ic:'👨‍👩‍👧', nm:'My dependants',       dc:'Children, parents, others',        status:'empty' },
+  { id:'pets',       ic:'🐾', nm:'Pets',                   dc:'Vet, insurance, care wishes',      status:'empty' },
+  { id:'financial',  ic:'💰', nm:'Financial information',  dc:'Banks, cards, debts (pointers only)',status:'part' },
+  { id:'insurances', ic:'🛡️', nm:'Insurances',             dc:'Life, home, health, vehicle',      status:'empty' },
+  { id:'business',   ic:'🏢', nm:'Business details',       dc:'Company, shareholdings',           status:'empty' },
+  { id:'property',   ic:'🏠', nm:'Personal property',      dc:'Residence, heirlooms, vehicles',   status:'empty' },
+  { id:'pay',        ic:'🧾', nm:'What to pay and when',   dc:'Bills, subscriptions, charities',  status:'empty' },
+  { id:'access',     ic:'🔑', nm:'Access &amp; location',      dc:'Safe deposit, keys',               status:'empty' },
+  { id:'digital',    ic:'💻', nm:'Digital assets',         dc:'Email, accounts (pointers only)',  status:'part' },
+  { id:'funeral',    ic:'🕯️', nm:'Funeral wishes',         dc:'Burial, service, music, readings', status:'done' },
+  { id:'passing',    ic:'🤝', nm:'At the time of passing', dc:'People and orgs to contact',       status:'done' },
+  { id:'beneficiaries',ic:'📜', nm:'What beneficiaries can expect', dc:'Life insurance, pension',   status:'empty' },
+  { id:'recommend',  ic:'✨', nm:'Recommendations',        dc:'Things I loved, places, people',   status:'empty' },
+  { id:'gratitude',  ic:'💌', nm:'Expression of gratitude',dc:'A final message',                  status:'empty' },
+];
+
+// ---- Owner: build sidebar ----
+function buildOwnerNav(active) {
+  const list = document.getElementById('navList');
+  list.innerHTML = SECTIONS.map(s => `
+    <li><a href="#" class="${s.id===active?'active':''}" onclick="event.preventDefault(); showSection('${s.id}')">
+      <span class="dot ${s.status==='done'?'done':s.status==='part'?'part':''}"></span>
+      <span>${s.nm.replace('&amp;','&')}</span>
+    </a></li>
+  `).join('');
+}
+
+// ---- Owner: render the main panel for a given section ----
+function ownerPanelHTML(id) {
+  const meta = SECTIONS.find(s=>s.id===id);
+  if (!meta) return '';
+  const head = `
+    <div class="crumbs">Journal &nbsp;›&nbsp; ${meta.nm.replace('&amp;','&')}</div>
+    <div class="section-head">
+      <div>
+        <h1>${meta.nm.replace('&amp;','&')}</h1>
+        <p>${sectionIntro(id)}</p>
+      </div>
+      <span class="pillstatus">${statusLabel(meta.status)}</span>
+    </div>
+  `;
+  return head + (PANEL[id] || stub(meta.nm.replace('&amp;','&')));
+}
+
+function sectionIntro(id){
+  return {
+    me:        'Your basic identity — names, dates, family. The first thing anyone looking for information will need.',
+    docs:      'Where your Will and key documents are kept, so the people who need them can find them.',
+    medical:   'Medical history and contacts — useful both if you\'re incapacitated and after.',
+    contacts:  'The people your family should call first — executor, advisor, insurer.',
+    dependants:'Information about the people who rely on you.',
+    pets:      'Everything your pets will need — vet, food, where to look.',
+    financial: 'Pointers to your accounts. Never write full passwords or PINs here — this tells survivors where to go.',
+    insurances:'Your active insurance policies and where survivors can claim.',
+    business:  'If you own or direct a business, details people will need.',
+    property:  'Real estate, heirlooms, vehicles — what you own and where papers live.',
+    pay:       'Recurring bills, subscriptions and donations. Helps your family stop, continue or cancel each one.',
+    access:    'Safe deposit box, house keys, spare-key locations.',
+    digital:   'Email and other online accounts. List them; don\'t store passwords — use a password manager.',
+    funeral:   'Your wishes so your family don\'t have to guess during a painful time.',
+    passing:   'The people and organisations to contact first, and in what order.',
+    beneficiaries:'What your beneficiaries can expect to receive.',
+    recommend: 'Songs, books, places, people worth knowing — a legacy of taste.',
+    gratitude: 'A final note of thanks.'
+  }[id] || '';
+}
+
+function statusLabel(s){
+  return s==='done'?'✓ Complete': s==='part'?'◐ In progress': '○ Not started';
+}
+
+function stub(nm){
+  return `<div class="stub"><em>${nm}</em>In the real app, this section would have the same guided fields as the others.<br/>Fully designed in the other sections — click "All about me", "Financial", "Digital" or "Funeral wishes".</div>`;
+}
+
+// ---- Detailed panels for a few representative sections ----
+const PANEL = {
+  me: `
+    <div class="card">
+      <h3>Personal information</h3>
+      <p class="hint">Start here — the basics everyone will need.</p>
+      <div class="grid2">
+        <div class="field"><label>Title</label>
+          <select><option>Mrs</option><option>Mr</option><option>Miss</option><option>Mx</option><option>Dr</option></select>
+        </div>
+        <div class="field"><label>Preferred pronouns</label><input type="text" value="she/her"/></div>
+        <div class="field"><label>First name</label><input type="text" value="Eleanor"/></div>
+        <div class="field"><label>Middle name</label><input type="text" value="Jane"/></div>
+        <div class="field"><label>Surname</label><input type="text" value="Martin"/></div>
+        <div class="field"><label>Nicknames</label><input type="text" value="Ellie, Nora"/></div>
+        <div class="field"><label>Date of birth</label><input type="date" value="1962-04-18"/></div>
+        <div class="field"><label>Place of birth</label><input type="text" value="Bristol, UK"/></div>
+        <div class="field full"><label>Have you ever been legally known by a different name?</label><input type="text" placeholder="e.g. maiden name, previous legal name"/></div>
+        <div class="field"><label>Ethnicity <span style="color:var(--ink-soft); font-weight:normal;">(optional)</span></label><input type="text"/></div>
+        <div class="field"><label>Religion <span style="color:var(--ink-soft); font-weight:normal;">(optional)</span></label><input type="text"/></div>
+        <div class="field full"><label>National Insurance / Social Security Number</label><input type="text" value="QQ 12 34 56 A"/>
+          <div class="callout info" style="margin-top:8px;"><strong>Why we ask:</strong> needed to claim pensions and close tax accounts. Stored only on this device.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Most recent address</h3>
+      <div class="grid2">
+        <div class="field full"><label>Street address</label><textarea>14 Elm Grove
+Clifton</textarea></div>
+        <div class="field"><label>Postcode</label><input type="text" value="BS8 4PG"/></div>
+        <div class="field"><label>Country</label><input type="text" value="United Kingdom"/></div>
+        <div class="field"><label>Home phone</label><input type="tel" value="0117 555 0101"/></div>
+        <div class="field"><label>Mobile</label><input type="tel" value="07700 900 123"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>My family</h3>
+      <p class="hint">The people listed below are or once were part of my family.</p>
+      <div class="field">
+        <label>Marital status</label>
+        <div class="checks">
+          <label class="chip"><input type="radio" name="ms"/>Single</label>
+          <label class="chip on"><input type="radio" name="ms" checked/>Married</label>
+          <label class="chip"><input type="radio" name="ms"/>Divorced</label>
+          <label class="chip"><input type="radio" name="ms"/>Widowed</label>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Current spouse</label><input type="text" value="Paul Martin"/></div>
+        <div class="field"><label>Phone</label><input type="tel" value="07700 900 200"/></div>
+      </div>
+      <button class="addmore">＋ Add a child or stepchild</button>
+    </div>
+  `,
+
+  financial: `
+    <div class="callout warn"><strong>Important:</strong> Do <u>not</u> enter passwords, PINs, CVVs or account balances. This book tells your family <em>where</em> to look — it is not a password vault. For logins, use a password manager and leave access instructions in the <em>Digital</em> section.</div>
+
+    <div class="card">
+      <h3>Power of attorney</h3>
+      <div class="grid2">
+        <div class="field full">
+          <label>I have given power of attorney to</label>
+          <input type="text" value="Paul Martin (financial & welfare, registered 2023)"/>
+        </div>
+        <div class="field full">
+          <label>Where the document is kept</label>
+          <input type="text" value="Solicitors' safe — Jarvis & Co, Bristol. Copy in home safe."/>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Bank accounts <span style="font-size:13px; font-weight:normal; color:var(--ink-soft);">(2 of up to 10)</span></h3>
+      <p class="hint">Add each account your family should know about. Include the <em>purpose</em> so they know what's what.</p>
+
+      <div style="border:1px solid var(--border); border-radius:8px; padding: 16px; margin-bottom: 12px; background: #FCFAF5;">
+        <div class="grid2">
+          <div class="field"><label>Account purpose</label><input type="text" value="Main current account"/></div>
+          <div class="field"><label>Bank</label><input type="text" value="Nationwide"/></div>
+          <div class="field"><label>Account number (last 4 only)</label><input type="text" value="•••• 4471"/></div>
+          <div class="field"><label>Sort code</label><input type="text" value="07-00-93"/></div>
+          <div class="field">
+            <label>Joint account?</label>
+            <div class="checks">
+              <label class="chip"><input type="radio" name="j1"/>No</label>
+              <label class="chip on"><input type="radio" name="j1" checked/>Yes — with Paul</label>
+            </div>
+          </div>
+          <div class="field"><label>Where paperwork is kept</label><input type="text" value="Home safe, blue folder"/></div>
+        </div>
+      </div>
+
+      <div style="border:1px solid var(--border); border-radius:8px; padding: 16px; margin-bottom: 12px; background: #FCFAF5;">
+        <div class="grid2">
+          <div class="field"><label>Account purpose</label><input type="text" value="Savings (ISA)"/></div>
+          <div class="field"><label>Bank</label><input type="text" value="Marcus by Goldman Sachs"/></div>
+          <div class="field"><label>Account number (last 4 only)</label><input type="text" value="•••• 8830"/></div>
+          <div class="field"><label>Sort code</label><input type="text" value="—"/></div>
+          <div class="field">
+            <label>Joint account?</label>
+            <div class="checks">
+              <label class="chip on"><input type="radio" name="j2" checked/>No</label>
+              <label class="chip"><input type="radio" name="j2"/>Yes</label>
+            </div>
+          </div>
+          <div class="field"><label>Where paperwork is kept</label><input type="text" value="Online only — see Digital section"/></div>
+        </div>
+      </div>
+
+      <button class="addmore">＋ Add another account</button>
+    </div>
+
+    <div class="card">
+      <h3>Cards, investments, mortgage, debts</h3>
+      <div class="stub" style="padding:24px;"><em>Collapsed for the mockup</em>Credit cards · Debit cards · Investments · Tax records · What I am owed · What I owe · Mortgage — each uses the same card pattern as above.</div>
+    </div>
+  `,
+
+  digital: `
+    <div class="callout"><strong>Golden rule:</strong> never write full passwords in this book. Use a password manager (1Password, Bitwarden, etc.) and record <em>only</em> which manager you use and how your trusted person can access it.</div>
+
+    <div class="card">
+      <h3>Password manager</h3>
+      <div class="grid2">
+        <div class="field"><label>Which manager</label><input type="text" value="1Password"/></div>
+        <div class="field"><label>Emergency Kit location</label><input type="text" value="Home safe, envelope marked 'Digital'"/></div>
+        <div class="field full"><label>Designated recovery contact</label><input type="text" value="Paul Martin — set up as 1Password Family organiser"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Email accounts</h3>
+      <div class="grid2">
+        <div class="field"><label>Primary email</label><input type="text" value="eleanor.martin@gmail.com"/></div>
+        <div class="field"><label>Provider recovery path</label><input type="text" value="Google Inactive Account Manager"/></div>
+        <div class="field"><label>Secondary email</label><input type="text" value="ellie1962@outlook.com"/></div>
+        <div class="field"><label>Work email</label><input type="text" value="emartin@oakridge.co.uk"/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Social & digital assets</h3>
+      <p class="hint">What should happen to each account? (memorialise, delete, transfer)</p>
+      <div class="stub" style="padding:20px;"><em>Add an account</em>Facebook, Instagram, LinkedIn, subscriptions, cloud storage, domain names, crypto wallets…</div>
+    </div>
+  `,
+
+  funeral: `
+    <div class="callout info"><strong>Not legally binding.</strong> These wishes guide your loved ones but don't replace a Will. You can skip anything you'd rather leave to them.</div>
+
+    <div class="card">
+      <h3>Burial or cremation</h3>
+      <div class="checks" style="margin-bottom:10px;">
+        <label class="chip"><input type="radio" name="br"/>Cemetery burial</label>
+        <label class="chip on"><input type="radio" name="br" checked/>Cremation</label>
+        <label class="chip"><input type="radio" name="br"/>Natural woodland</label>
+        <label class="chip"><input type="radio" name="br"/>At sea</label>
+        <label class="chip"><input type="radio" name="br"/>Other</label>
+      </div>
+      <div class="grid2">
+        <div class="field"><label>Preferred crematorium</label><input type="text" value="Canford Crematorium, Bristol"/></div>
+        <div class="field"><label>Ashes — what should happen</label>
+          <select><option>Scattered at a meaningful place</option><option>Kept by a relative</option><option>Buried in a family plot</option></select>
+        </div>
+        <div class="field full"><label>Where exactly?</label><input type="text" value="Durdle Door beach, Dorset — where Paul and I went on our honeymoon."/></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>The service</h3>
+      <div class="grid2">
+        <div class="field"><label>Religious / secular</label>
+          <div class="checks">
+            <label class="chip on"><input type="radio" name="rs" checked/>Secular</label>
+            <label class="chip"><input type="radio" name="rs"/>Religious</label>
+          </div>
+        </div>
+        <div class="field"><label>Coffin during service</label>
+          <div class="checks">
+            <label class="chip"><input type="radio" name="coff"/>Open</label>
+            <label class="chip on"><input type="radio" name="coff" checked/>Closed</label>
+          </div>
+        </div>
+        <div class="field full"><label>Readings I'd like</label><textarea>— "Do Not Stand at My Grave and Weep" (Mary Elizabeth Frye)
+— A passage from Middlemarch, chosen by James</textarea></div>
+        <div class="field full"><label>Music</label><textarea>— Entry: Nimrod (Elgar)
+— During: Clair de lune (Debussy)
+— Exit: What a Wonderful World (Louis Armstrong)</textarea></div>
+        <div class="field"><label>Dress code</label><input type="text" value="Bright colours — please, no black."/></div>
+        <div class="field"><label>Flowers</label>
+          <select><option>Family flowers only</option><option selected>Family and close friends</option><option>No flowers — donations instead</option></select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>After the service</h3>
+      <div class="grid2">
+        <div class="field full"><label>Gathering</label><input type="text" value="Buffet at The Lido, Clifton"/></div>
+        <div class="field full"><label>Charities for donations (instead of flowers)</label>
+          <textarea>1. St Peter's Hospice, Bristol
+2. Dogs Trust
+3. RNLI</textarea></div>
+      </div>
+    </div>
+
+    <div class="btnrow">
+      <button class="btn">Save section</button>
+      <button class="btn ghost">Print funeral wishes only</button>
+    </div>
+  `,
+};
+
+let currentOwnerSection = 'me';
+function showSection(id){
+  currentOwnerSection = id;
+  buildOwnerNav(id);
+  const panel = document.getElementById('ownerPanel');
+  panel.innerHTML = ownerPanelHTML(id);
+  panel.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// ---- Demo view switcher ----
+function setView(v){
+  document.getElementById('viewOwner').classList.toggle('on', v==='owner');
+  document.getElementById('viewSurvivor').classList.toggle('on', v==='survivor');
+  document.getElementById('btnOwner').classList.toggle('on', v==='owner');
+  document.getElementById('btnSurvivor').classList.toggle('on', v==='survivor');
+  if (v==='survivor') {
+    // always start at lock screen for the demo
+    document.getElementById('lockScreen').style.display = '';
+    document.getElementById('svShell').style.display = 'none';
+    svBack();
+  }
+  window.scrollTo({top:0});
+}
+
+// ---- Survivor flow ----
+function unlock(){
+  const v = (document.getElementById('unlockCode').value || '').trim().toLowerCase();
+  if (!v) { alert('Enter the unlock code from the sealed envelope. (Demo code: demo)'); return; }
+  document.getElementById('lockScreen').style.display = 'none';
+  document.getElementById('svShell').style.display = '';
+  buildSvGrid();
+}
+
+function buildSvGrid(){
+  document.getElementById('svSectionsGrid').innerHTML = SECTIONS.map(s => `
+    <div class="sv-sec" onclick="svOpen('${s.id}')">
+      <div class="ic">${s.ic}</div>
+      <div class="nm">${s.nm.replace('&amp;','&')}</div>
+      <div class="dc">${s.dc}</div>
+    </div>
+  `).join('');
+}
+
+function svBack(){
+  document.getElementById('svHome').style.display = '';
+  document.getElementById('svDetail').classList.remove('on');
+  window.scrollTo({top:0});
+}
+function svOpen(id){
+  document.getElementById('svHome').style.display = 'none';
+  document.getElementById('svDetail').classList.add('on');
+  document.getElementById('svDetailBody').innerHTML = svDetailHTML(id);
+  window.scrollTo({top:0});
+}
+
+function row(k, v, empty){
+  return `<div class="sv-row"><div class="k">${k}</div><div class="v ${empty?'empty':''}">${empty?'(not filled in)':v}</div></div>`;
+}
+
+function svDetailHTML(id){
+  const meta = SECTIONS.find(s=>s.id===id);
+  const title = `<h1>${meta.nm.replace('&amp;','&')}</h1><p style="color:var(--ink-soft);">${sectionIntro(id)}</p><div style="height:14px;"></div>`;
+  switch(id){
+    case 'contacts': return title + `
+      <div class="card"><h3>People to call first</h3>
+        ${row('Paul Martin (husband)','07700 900 200')}
+        ${row('James Martin (son)','07700 900 340')}
+        ${row('Sarah Blake (sister)','07700 900 411')}
+        ${row('Dr. N. Okafor (GP)','0117 555 0780')}
+        ${row('Jarvis & Co — solicitors','0117 555 0244 · ask for David')}
+        ${row('Canford Funeral Directors','0117 555 0199')}
+        ${row('Helen Grey (closest friend)','07700 900 502')}
+      </div>
+      <div class="card"><h3>Organisations</h3>
+        ${row('Employer — Oakridge HR','hr@oakridge.co.uk · 0117 555 0050')}
+        ${row('Life insurer (Aviva)','Policy AV-22-77185 · 0800 555 4422')}
+        ${row('Pension — NEST','0300 020 0090')}
+        ${row('HMRC bereavement','0300 200 3300')}
+        ${row('DVLA','0300 790 6801')}
+        ${row('Tell Us Once service','gov.uk/tell-us-once')}
+      </div>`;
+
+    case 'funeral': return title + `
+      <div class="card"><h3>Burial or cremation</h3>
+        ${row('Preference','Cremation')}
+        ${row('Crematorium','Canford Crematorium, Bristol')}
+        ${row('Ashes','Scattered at Durdle Door beach, Dorset (our honeymoon)')}
+      </div>
+      <div class="card"><h3>The service</h3>
+        ${row('Style','Secular, closed coffin')}
+        ${row('Readings','"Do Not Stand at My Grave and Weep"; a passage from Middlemarch (chosen by James)')}
+        ${row('Music','Nimrod (entry) · Clair de lune · What a Wonderful World (exit)')}
+        ${row('Dress code','Bright colours — please, no black.')}
+        ${row('Flowers','Family and close friends only')}
+      </div>
+      <div class="card"><h3>After</h3>
+        ${row('Gathering','Buffet at The Lido, Clifton')}
+        ${row('Donations to','St Peter&#39;s Hospice · Dogs Trust · RNLI')}
+      </div>
+      <div class="callout info">Signed 12 March 2026 by Eleanor Martin. This guides you — it does not legally bind you.</div>`;
+
+    case 'financial': return title + `
+      <div class="callout warn"><strong>No passwords or PINs are stored here.</strong> These are pointers only. You'll need to speak to each institution with a death certificate.</div>
+      <div class="card"><h3>Will & Power of Attorney</h3>
+        ${row('Will held by','Jarvis & Co solicitors, Bristol — David Reid · 0117 555 0244')}
+        ${row('Copy at home','Fireproof safe, blue folder')}
+        ${row('Power of Attorney','Paul Martin — financial & welfare (registered 2023)')}
+      </div>
+      <div class="card"><h3>Bank accounts</h3>
+        ${row('Main current account','Nationwide · joint with Paul · •••• 4471')}
+        ${row('Savings (ISA)','Marcus by Goldman Sachs · •••• 8830')}
+        <div class="sv-row"><div class="k">More</div><div class="v" style="font-style:italic;">3 additional accounts — open to see all</div></div>
+      </div>
+      <div class="card"><h3>Insurance & pension</h3>
+        ${row('Life insurance','Aviva policy AV-22-77185 — call 0800 555 4422')}
+        ${row('Workplace pension','NEST — 0300 020 0090')}
+        ${row('Home & contents','Direct Line policy DL-88-22114')}
+      </div>`;
+
+    default:
+      // Generic read-only pane for sections we haven't detailed
+      return title + `<div class="stub"><em>${meta.nm.replace('&amp;','&')}</em>In the full app, this would show the read-only version of everything Eleanor filled in.<br/>Try <strong>People to call first</strong>, <strong>Funeral wishes</strong>, or <strong>Money &amp; paperwork</strong> from the home screen.</div>`;
+  }
+}
+
+// ---- Init ----
+showSection('me');
+</script>
+
+</body>
+</html>

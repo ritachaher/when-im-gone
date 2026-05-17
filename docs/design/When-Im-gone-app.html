@@ -1,0 +1,1333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>When I'm gone</title>
+<style>
+  :root {
+    --navy:#2C3E5D; --navy-dark:#1E2C44; --navy-soft:#4A5D7E;
+    --cream:#FAF6F0; --cream-dark:#F0EADF; --paper:#FFFFFF;
+    --ink:#2A2E36; --ink-soft:#5A6170; --ink-faint:#8A92A0;
+    --accent:#C97A5D; --accent-dark:#A85F44;
+    --ok:#5B8A6A; --warn:#C27C3A; --err:#B44A3A;
+    --border:#D8CFBF; --shadow:0 4px 20px rgba(44,62,93,.08);
+    --radius:10px;
+  }
+  * { box-sizing:border-box; }
+  html,body { margin:0; padding:0; background:var(--cream); color:var(--ink); font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; font-size:17px; line-height:1.55; }
+  h1,h2,h3,h4 { font-family:Georgia,"Times New Roman",serif; color:var(--navy); font-weight:500; letter-spacing:.2px; }
+  h1 { font-size:2rem; margin:0 0 .4em; }
+  h2 { font-size:1.45rem; margin:0 0 .4em; }
+  h3 { font-size:1.1rem; margin:0 0 .4em; }
+  p { margin:0 0 .8em; }
+  button { font:inherit; cursor:pointer; }
+  a { color:var(--accent-dark); }
+  .screen { display:none; min-height:100vh; }
+  .screen.on { display:block; }
+
+  /* ---------- BUTTONS + FIELDS ---------- */
+  .btn { display:inline-flex; align-items:center; gap:8px; background:var(--accent); color:#fff; border:0; padding:11px 18px; border-radius:8px; font-weight:600; font-size:15px; }
+  .btn:hover { background:var(--accent-dark); }
+  .btn.ghost { background:transparent; color:var(--navy); border:1px solid var(--border); }
+  .btn.ghost:hover { background:var(--cream-dark); }
+  .btn.big { padding:14px 22px; font-size:16px; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  .btnrow { display:flex; gap:10px; flex-wrap:wrap; }
+  label { display:block; font-size:13px; color:var(--navy-soft); margin-bottom:4px; font-weight:600; letter-spacing:.2px; }
+  input[type=text],input[type=password],input[type=tel],input[type=email],input[type=date],textarea,select {
+    width:100%; padding:10px 12px; font:inherit; color:var(--ink);
+    border:1px solid var(--border); border-radius:8px; background:#fff;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus,textarea:focus,select:focus { outline:none; border-color:var(--navy-soft); box-shadow:0 0 0 3px rgba(74,93,126,.15); }
+  textarea { resize:vertical; min-height:70px; }
+  .field { margin-bottom:12px; }
+  .field.full { grid-column:1/-1; }
+  .chip { display:inline-flex; align-items:center; gap:6px; padding:7px 12px; border:1px solid var(--border); border-radius:99px; background:#fff; font-size:14px; cursor:pointer; user-select:none; }
+  .chip input { display:none; }
+  .chip.on { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; }
+
+  /* ---------- CALLOUTS ---------- */
+  .callout { background:#FBEFE8; border-left:4px solid var(--accent); padding:12px 16px; border-radius:6px; font-size:14px; }
+  .callout.info { background:#EEF2F7; border-left-color:var(--navy-soft); }
+  .callout.warn { background:#FFF6E6; border-left-color:var(--warn); }
+  .callout.danger { background:#FBEBE7; border-left-color:var(--err); }
+  .callout strong { color:var(--navy); }
+
+  /* ---------- SETUP + LOCK ---------- */
+  .centered { min-height:100vh; display:grid; place-items:center; padding:28px 16px; }
+  .panel { max-width:520px; width:100%; background:#fff; border:1px solid var(--border); border-radius:14px; padding:34px clamp(22px,4vw,38px); box-shadow:var(--shadow); }
+  .panel .brand { font-family:Georgia,serif; color:var(--navy); font-size:1.4rem; text-align:center; margin-bottom:4px; }
+  .panel .tag { text-align:center; color:var(--ink-soft); font-size:13px; letter-spacing:1px; text-transform:uppercase; margin-bottom:20px; }
+  .step-dots { display:flex; justify-content:center; gap:8px; margin-bottom:18px; }
+  .step-dots span { width:8px; height:8px; border-radius:99px; background:var(--border); }
+  .step-dots span.on { background:var(--accent); }
+  .step-dots span.done { background:var(--ok); }
+  .recovery-code { font-family:Menlo,Consolas,monospace; font-size:22px; letter-spacing:3px; background:var(--cream-dark); border:1px dashed var(--border); border-radius:8px; padding:18px; text-align:center; color:var(--navy); user-select:all; }
+  .muted { color:var(--ink-soft); font-size:13.5px; }
+
+  /* ---------- OWNER APP ---------- */
+  .topbar { background:var(--navy-dark); color:#fff; display:flex; align-items:center; gap:14px; padding:8px 18px; font-size:14px; position:sticky; top:0; z-index:20; }
+  .topbar .left { display:flex; align-items:center; gap:10px; flex:1; }
+  .topbar .brand2 { font-family:Georgia,serif; font-size:1.05rem; color:#fff; }
+  .topbar .saveind { font-size:12px; opacity:.7; }
+  .topbar .saveind.saving { color:#FFD89C; opacity:1; }
+  .topbar .switch { display:inline-flex; background:rgba(255,255,255,.08); border-radius:99px; padding:3px; }
+  .topbar .switch button { background:transparent; color:#fff; border:0; padding:6px 12px; border-radius:99px; font-size:13px; }
+  .topbar .switch button.on { background:var(--accent); color:#fff; }
+  .topbar .menu { position:relative; }
+  .topbar .menu > button { background:rgba(255,255,255,.08); color:#fff; border:0; padding:6px 10px; border-radius:6px; font-size:13px; }
+  .topbar .menu-panel { display:none; position:absolute; right:0; top:36px; background:#fff; color:var(--ink); border:1px solid var(--border); border-radius:8px; min-width:240px; box-shadow:var(--shadow); padding:6px; }
+  .topbar .menu-panel.on { display:block; }
+  .topbar .menu-panel button { width:100%; text-align:left; background:transparent; border:0; padding:10px 12px; border-radius:6px; color:var(--ink); }
+  .topbar .menu-panel button:hover { background:var(--cream-dark); }
+  .topbar .menu-panel hr { border:0; border-top:1px solid var(--cream-dark); margin:4px 0; }
+
+  .owner { display:grid; grid-template-columns:300px 1fr; min-height:calc(100vh - 46px); }
+  .sidebar { background:var(--navy); color:#fff; padding:22px 0 40px; position:sticky; top:46px; height:calc(100vh - 46px); overflow-y:auto; }
+  .side-head { padding:0 22px 14px; border-bottom:1px solid rgba(255,255,255,.12); margin-bottom:10px; font-family:Georgia,serif; font-size:1.2rem; }
+  .side-head small { display:block; font-family:inherit; font-size:11px; letter-spacing:1px; text-transform:uppercase; opacity:.5; margin-top:4px; }
+  .side-prog { padding:10px 22px 16px; border-bottom:1px solid rgba(255,255,255,.12); font-size:13px; color:rgba(255,255,255,.75); }
+  .progress { background:rgba(255,255,255,.12); border-radius:99px; height:6px; margin-top:6px; overflow:hidden; }
+  .progress > div { height:100%; background:var(--accent); width:0; border-radius:99px; transition:width .3s; }
+  .nav ul { list-style:none; margin:8px 0; padding:0; }
+  .nav a { display:flex; align-items:center; gap:10px; padding:9px 22px; color:rgba(255,255,255,.82); text-decoration:none; font-size:14.5px; border-left:3px solid transparent; cursor:pointer; }
+  .nav a .dot { width:8px; height:8px; border-radius:99px; background:rgba(255,255,255,.25); flex-shrink:0; }
+  .nav a .dot.done { background:var(--ok); } .nav a .dot.part { background:var(--warn); }
+  .nav a:hover { background:rgba(255,255,255,.06); color:#fff; }
+  .nav a.active { background:rgba(255,255,255,.08); color:#fff; border-left-color:var(--accent); }
+
+  .main { padding:34px clamp(18px,5vw,56px) 80px; max-width:900px; }
+  .crumbs { font-size:13px; color:var(--ink-soft); margin-bottom:6px; letter-spacing:.3px; }
+  .section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:22px; padding-bottom:18px; border-bottom:1px solid var(--border); }
+  .section-head p { color:var(--ink-soft); margin:6px 0 0; max-width:55ch; font-size:15px; }
+  .pillstatus { font-size:12px; background:var(--cream-dark); color:var(--navy); padding:4px 10px; border-radius:99px; border:1px solid var(--border); white-space:nowrap; }
+
+  .card { background:var(--paper); border:1px solid var(--border); border-radius:var(--radius); padding:22px 24px; margin-bottom:18px; box-shadow:var(--shadow); }
+  .card h3 { margin-top:0; }
+  .card .hint { font-size:13px; color:var(--ink-soft); margin:-4px 0 14px; }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px 18px; }
+  @media (max-width:760px) { .grid2{grid-template-columns:1fr;} .owner{grid-template-columns:1fr;} .sidebar{position:static; height:auto;} .main{padding:22px 16px 60px;} }
+  .repeat-item { border:1px solid var(--border); border-radius:8px; padding:14px 16px; margin-bottom:10px; background:#FCFAF5; position:relative; }
+  .repeat-item .rm { position:absolute; top:8px; right:8px; background:transparent; border:0; color:var(--ink-faint); font-size:18px; cursor:pointer; padding:4px 8px; border-radius:4px; }
+  .repeat-item .rm:hover { background:#fff; color:var(--err); }
+  .addmore { display:inline-flex; align-items:center; gap:8px; color:var(--navy); background:var(--cream-dark); border:1px dashed var(--border); padding:10px 14px; border-radius:8px; font-weight:600; }
+
+  /* ---------- SURVIVOR PREVIEW ---------- */
+  .sv { padding:30px clamp(16px,4vw,40px) 80px; max-width:980px; margin:0 auto; }
+  .sv-header { background:var(--navy); color:#fff; border-radius:14px; padding:26px 28px; margin-bottom:24px; display:flex; justify-content:space-between; gap:16px; align-items:center; flex-wrap:wrap; }
+  .sv-header h1 { color:#fff; margin:0 0 4px; font-size:1.6rem; }
+  .sv-header p { margin:0; opacity:.8; font-size:14px; }
+  .sv-header .chip-light { background:rgba(255,255,255,.14); color:#fff; border-radius:99px; padding:6px 12px; font-size:13px; border:1px solid rgba(255,255,255,.18); }
+  .triage { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:26px; }
+  @media (max-width:780px){ .triage{grid-template-columns:1fr;} .sv-header{flex-direction:column; align-items:flex-start;} }
+  .triage-card { background:#fff; border-radius:12px; border:1px solid var(--border); padding:18px 20px; box-shadow:var(--shadow); }
+  .triage-card .urg { font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--accent-dark); margin-bottom:6px; }
+  .sv-sections { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:12px; }
+  .sv-sec { background:#fff; border:1px solid var(--border); border-radius:10px; padding:16px 18px; cursor:pointer; display:flex; flex-direction:column; gap:4px; }
+  .sv-sec:hover { border-color:var(--navy-soft); }
+  .sv-sec .nm { font-weight:600; color:var(--navy); font-family:Georgia,serif; font-size:1.05rem; }
+  .sv-sec .dc { font-size:13px; color:var(--ink-soft); }
+  .sv-row { display:grid; grid-template-columns:200px 1fr; gap:14px; padding:12px 0; border-bottom:1px solid var(--cream-dark); font-size:15px; }
+  @media (max-width:640px){ .sv-row{grid-template-columns:1fr; gap:2px;} }
+  .sv-row .k { color:var(--ink-soft); font-size:13px; font-weight:600; letter-spacing:.3px; text-transform:uppercase; }
+  .sv-back { background:transparent; border:0; color:var(--navy); font-weight:600; margin-bottom:14px; padding:6px 10px 6px 0; cursor:pointer; }
+  .preview-ribbon { background:var(--warn); color:#fff; text-align:center; padding:8px; font-size:13px; font-weight:600; letter-spacing:.5px; }
+
+  /* ---------- MODAL ---------- */
+  .modal { display:none; position:fixed; inset:0; background:rgba(30,44,68,.5); z-index:50; align-items:center; justify-content:center; padding:16px; }
+  .modal.on { display:flex; }
+  .modal-panel { background:#fff; border-radius:14px; max-width:520px; width:100%; padding:28px; box-shadow:var(--shadow); max-height:90vh; overflow-y:auto; }
+
+  /* ---------- ENVELOPE PRINT ---------- */
+  #envelope { display:none; padding:40px; background:#fff; }
+  #envelope.on { display:block; }
+  .env-sheet { max-width:720px; margin:0 auto; border:2px solid var(--navy); padding:34px; border-radius:6px; }
+  .env-sheet h1 { margin:0 0 6px; color:var(--navy); }
+  .env-sheet .env-sub { color:var(--ink-soft); font-style:italic; margin-bottom:22px; }
+  .env-sheet .env-code { font-family:Menlo,Consolas,monospace; font-size:32px; letter-spacing:5px; text-align:center; background:var(--cream-dark); padding:24px; border:1px dashed var(--navy); border-radius:8px; margin:16px 0 22px; }
+  .env-sheet ol li { margin:6px 0; }
+  .env-cut { border-top:1px dashed var(--ink-soft); margin:30px 0; text-align:center; font-size:12px; color:var(--ink-soft); }
+  .env-bar { max-width:720px; margin:0 auto 20px; display:flex; justify-content:space-between; gap:10px; }
+  @media print {
+    body { background:#fff; }
+    .env-bar, .topbar, .sidebar, .preview-ribbon { display:none !important; }
+    #envelope { padding:0; }
+    .env-sheet { border:2px solid #000; }
+    @page { margin:1.5cm; }
+  }
+
+  /* hide helper */
+  .hide { display:none !important; }
+</style>
+</head>
+<body>
+
+<!-- =================================================================== -->
+<!-- SETUP WIZARD                                                         -->
+<!-- =================================================================== -->
+<div id="scrSetup" class="screen">
+  <div class="centered">
+    <div class="panel" id="setupPanel">
+      <div class="brand">When I'm gone</div>
+      <div class="tag">First-time setup</div>
+      <div class="step-dots" id="setupDots">
+        <span class="on"></span><span></span><span></span><span></span>
+      </div>
+      <div id="setupBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- LOCK SCREEN                                                          -->
+<!-- =================================================================== -->
+<div id="scrLock" class="screen">
+  <div class="centered">
+    <div class="panel" style="text-align:center;">
+      <div class="brand">When I'm gone</div>
+      <div class="tag" id="lockTag">Welcome back</div>
+      <div id="lockBody">
+        <div style="text-align:left;">
+          <label for="lockPw">Master password</label>
+          <input id="lockPw" type="password" autofocus onkeydown="if(event.key==='Enter') unlockWithPassword()"/>
+          <div id="lockErr" class="callout danger hide" style="margin-top:10px;"></div>
+        </div>
+        <div class="btnrow" style="margin-top:16px; justify-content:center;">
+          <button class="btn big" onclick="unlockWithPassword()">Unlock</button>
+          <button class="btn ghost" onclick="showLockRecovery()">Use recovery code</button>
+        </div>
+        <div class="muted" style="margin-top:16px;">
+          No password reset. If you've lost it, use the 12-character code from your sealed envelope.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- OWNER APP                                                            -->
+<!-- =================================================================== -->
+<div id="scrApp" class="screen">
+  <div class="topbar">
+    <div class="left">
+      <span class="brand2">When I'm gone</span>
+      <span id="saveInd" class="saveind">·</span>
+    </div>
+    <div class="switch" id="modeSwitch">
+      <button id="modeOwner" class="on" onclick="setMode('owner')">📖 Owner</button>
+      <button id="modeSurvivor" onclick="setMode('survivor')">🕊️ Preview loved-one view</button>
+    </div>
+    <div class="menu">
+      <button onclick="toggleMenu()">⋯ More</button>
+      <div class="menu-panel" id="menuPanel">
+        <button onclick="closeMenu(); printEnvelope()">🖨️ Print recovery envelope</button>
+        <button onclick="closeMenu(); exportEncrypted()">💾 Export encrypted backup</button>
+        <button onclick="closeMenu(); triggerImport()">📥 Import encrypted backup</button>
+        <hr/>
+        <button onclick="closeMenu(); lockApp()">🔒 Lock</button>
+        <button onclick="closeMenu(); confirmReset()" style="color:var(--err);">⚠️ Wipe this device</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OWNER VIEW -->
+  <div id="ownerView" class="owner">
+    <aside class="sidebar">
+      <div class="side-head">When I'm gone<small id="ownerName">Your journal</small></div>
+      <div class="side-prog">
+        <span id="progPct">0%</span> complete
+        <div class="progress"><div id="progBar"></div></div>
+        <div style="margin-top:8px; font-size:12px; opacity:.7;" id="lastSaved">No changes yet</div>
+      </div>
+      <nav class="nav"><ul id="navList"></ul></nav>
+    </aside>
+    <main class="main" id="mainPanel"></main>
+  </div>
+
+  <!-- SURVIVOR PREVIEW -->
+  <div id="survivorView" class="hide">
+    <div class="preview-ribbon">🔎 Preview only — this is what a loved one will see when they unlock the journal with the recovery code</div>
+    <div class="sv">
+      <div id="svHome">
+        <div class="sv-header">
+          <div>
+            <h1 id="svOwnerName">Your journal</h1>
+            <p id="svUpdatedAt">Read-only view</p>
+          </div>
+          <span class="chip-light">🕊️ Unlocked for your family</span>
+        </div>
+        <h2 style="margin-bottom:14px;">Where to start</h2>
+        <div class="triage" id="svTriage"></div>
+        <h2 style="margin:26px 0 10px;">Browse everything</h2>
+        <p style="color:var(--ink-soft); font-size:14px; margin-bottom:16px;">Each section is a set of pointers — <em>where</em> to find things, not passwords or balances.</p>
+        <div class="sv-sections" id="svSectionsGrid"></div>
+      </div>
+      <div id="svDetail" class="hide">
+        <button class="sv-back" onclick="svBack()">← Back</button>
+        <div id="svDetailBody"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- SEALED ENVELOPE (printable)                                          -->
+<!-- =================================================================== -->
+<div id="envelope">
+  <div class="env-bar">
+    <button class="btn ghost" onclick="closeEnvelope()">← Back to app</button>
+    <button class="btn" onclick="window.print()">🖨️ Print</button>
+  </div>
+  <div class="env-sheet">
+    <h1>Sealed recovery envelope</h1>
+    <div class="env-sub">For the family of <strong id="envOwnerName">[your name]</strong></div>
+
+    <p><strong>Please do not open unless I have died or am permanently unable to speak for myself.</strong></p>
+    <p>This code unlocks my <em>When I'm gone</em> journal — information that will help you manage my affairs. It does not contain passwords, PINs, or account numbers. It is a guide to where to find things.</p>
+
+    <div style="margin-top:18px;"><strong>Recovery code:</strong></div>
+    <div class="env-code" id="envCode">XXXX-XXXX-XXXX</div>
+
+    <p><strong>To use it:</strong></p>
+    <ol>
+      <li>Open the <em>When I'm gone</em> app on my computer, phone, or tablet.</li>
+      <li>On the lock screen, choose <em>Use recovery code</em>.</li>
+      <li>Enter the code above.</li>
+    </ol>
+
+    <p class="muted" style="margin-top:20px;">If the device is lost, the journal can be restored from the most recent encrypted backup file using the same code. If neither the device nor a backup can be found, the information cannot be recovered — this is the price of real privacy.</p>
+
+    <div class="env-cut">— fold, seal, and store somewhere safe —</div>
+    <p class="muted" style="text-align:center;">Recommended: in a fire-safe at home, with your solicitor alongside your Will, or with one or two trusted people.</p>
+  </div>
+</div>
+
+<!-- =================================================================== -->
+<!-- IMPORT FILE PICKER                                                   -->
+<!-- =================================================================== -->
+<input type="file" id="importFile" accept=".wig" class="hide" onchange="handleImportFile(event)"/>
+
+<!-- =================================================================== -->
+<!-- CONFIRM MODAL                                                        -->
+<!-- =================================================================== -->
+<div class="modal" id="confirmModal">
+  <div class="modal-panel">
+    <h2 id="confirmTitle">Are you sure?</h2>
+    <p id="confirmMsg"></p>
+    <div class="btnrow" style="margin-top:16px; justify-content:flex-end;">
+      <button class="btn ghost" onclick="closeConfirm()">Cancel</button>
+      <button class="btn" id="confirmOk" style="background:var(--err);">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ==========================================================================
+   CRYPTO MODULE — WebCrypto-based encryption
+   ========================================================================== */
+const CRYPTO = (() => {
+  const enc = new TextEncoder();
+  const dec = new TextDecoder();
+
+  // base64 helpers
+  function b64enc(bytes){ let bin=''; const a=new Uint8Array(bytes); for(let i=0;i<a.length;i++) bin+=String.fromCharCode(a[i]); return btoa(bin); }
+  function b64dec(s){ const bin=atob(s); const a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return a; }
+
+  async function deriveKeyFromPassword(password, salt, iterations=600000) {
+    const mat = await crypto.subtle.importKey('raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey(
+      { name:'PBKDF2', salt, iterations, hash:'SHA-256' },
+      mat, { name:'AES-GCM', length:256 }, true, ['encrypt','decrypt','wrapKey','unwrapKey']
+    );
+  }
+
+  async function generateDataKey() {
+    return crypto.subtle.generateKey({ name:'AES-GCM', length:256 }, true, ['encrypt','decrypt']);
+  }
+
+  async function wrapKey(dataKey, wrappingKey) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const raw = await crypto.subtle.exportKey('raw', dataKey);
+    const wrapped = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, wrappingKey, raw);
+    return { iv: b64enc(iv), ct: b64enc(wrapped) };
+  }
+  async function unwrapKey(wrapped, wrappingKey) {
+    const iv = b64dec(wrapped.iv);
+    const ct = b64dec(wrapped.ct);
+    const raw = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, wrappingKey, ct);
+    return crypto.subtle.importKey('raw', raw, { name:'AES-GCM', length:256 }, true, ['encrypt','decrypt']);
+  }
+
+  async function encryptJSON(obj, dataKey) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const ct = await crypto.subtle.encrypt({ name:'AES-GCM', iv }, dataKey, enc.encode(JSON.stringify(obj)));
+    return { iv: b64enc(iv), ct: b64enc(ct) };
+  }
+  async function decryptJSON(blob, dataKey) {
+    const iv = b64dec(blob.iv); const ct = b64dec(blob.ct);
+    const pt = await crypto.subtle.decrypt({ name:'AES-GCM', iv }, dataKey, ct);
+    return JSON.parse(dec.decode(pt));
+  }
+
+  // Recovery code: 12 chars from unambiguous alphabet, grouped XXXX-XXXX-XXXX
+  function generateRecoveryCode() {
+    const alpha = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no 0/O, 1/I
+    const bytes = crypto.getRandomValues(new Uint8Array(12));
+    let out = '';
+    for (let i=0;i<12;i++) { out += alpha[bytes[i] % alpha.length]; if (i===3||i===7) out += '-'; }
+    return out;
+  }
+  function normalizeCode(s){ return (s||'').toUpperCase().replace(/[^A-Z0-9]/g,''); }
+
+  function randSalt(){ return crypto.getRandomValues(new Uint8Array(16)); }
+
+  return { deriveKeyFromPassword, generateDataKey, wrapKey, unwrapKey,
+           encryptJSON, decryptJSON, generateRecoveryCode, normalizeCode,
+           randSalt, b64enc, b64dec };
+})();
+
+/* ==========================================================================
+   STORAGE MODULE — IndexedDB (single KV store, minimal)
+   ========================================================================== */
+const STORAGE = (() => {
+  const DB_NAME = 'whenimgone';
+  const STORE = 'kv';
+  let dbPromise;
+
+  function openDB(){
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise((res, rej) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => { req.result.createObjectStore(STORE); };
+      req.onsuccess = () => res(req.result);
+      req.onerror = () => rej(req.error);
+    });
+    return dbPromise;
+  }
+
+  async function get(key){
+    const db = await openDB();
+    return new Promise((res,rej)=>{
+      const tx = db.transaction(STORE,'readonly');
+      const r = tx.objectStore(STORE).get(key);
+      r.onsuccess = ()=> res(r.result);
+      r.onerror = ()=> rej(r.error);
+    });
+  }
+  async function set(key, val){
+    const db = await openDB();
+    return new Promise((res,rej)=>{
+      const tx = db.transaction(STORE,'readwrite');
+      tx.objectStore(STORE).put(val, key);
+      tx.oncomplete = ()=> res();
+      tx.onerror = ()=> rej(tx.error);
+    });
+  }
+  async function del(key){
+    const db = await openDB();
+    return new Promise((res,rej)=>{
+      const tx = db.transaction(STORE,'readwrite');
+      tx.objectStore(STORE).delete(key);
+      tx.oncomplete = ()=> res();
+      tx.onerror = ()=> rej(tx.error);
+    });
+  }
+  async function clearAll(){
+    const db = await openDB();
+    return new Promise((res,rej)=>{
+      const tx = db.transaction(STORE,'readwrite');
+      tx.objectStore(STORE).clear();
+      tx.oncomplete = ()=> res();
+      tx.onerror = ()=> rej(tx.error);
+    });
+  }
+  return { get, set, del, clearAll };
+})();
+
+/* ==========================================================================
+   VAULT — high-level: persist the journal, encrypted at rest
+   ========================================================================== */
+const VAULT = (() => {
+  // Disk layout (in IDB):
+  //  meta:       { schemaVersion, createdAt, pwSalt, rcSalt, wrappedByPw, wrappedByRc, ownerDisplayName }
+  //  journal:    { iv, ct }   <- encrypted JSON blob
+
+  let _dataKey = null; // in-memory only
+  let _journal = null; // decrypted
+
+  async function exists(){ return !!(await STORAGE.get('meta')); }
+
+  async function create({ password, ownerDisplayName }) {
+    const pwSalt = CRYPTO.randSalt();
+    const rcSalt = CRYPTO.randSalt();
+    const dataKey = await CRYPTO.generateDataKey();
+    const pwKey = await CRYPTO.deriveKeyFromPassword(password, pwSalt);
+    const recoveryCode = CRYPTO.generateRecoveryCode();
+    const rcKey = await CRYPTO.deriveKeyFromPassword(recoveryCode, rcSalt);
+    const wrappedByPw = await CRYPTO.wrapKey(dataKey, pwKey);
+    const wrappedByRc = await CRYPTO.wrapKey(dataKey, rcKey);
+
+    _dataKey = dataKey;
+    _journal = newEmptyJournal(ownerDisplayName);
+
+    const meta = {
+      schemaVersion: 1,
+      createdAt: new Date().toISOString(),
+      pwSalt: CRYPTO.b64enc(pwSalt),
+      rcSalt: CRYPTO.b64enc(rcSalt),
+      wrappedByPw, wrappedByRc,
+      ownerDisplayName
+    };
+    await STORAGE.set('meta', meta);
+    await save();
+    return { recoveryCode };
+  }
+
+  async function unlockWithPw(password){
+    const meta = await STORAGE.get('meta');
+    if (!meta) throw new Error('No journal on this device.');
+    const pwKey = await CRYPTO.deriveKeyFromPassword(password, CRYPTO.b64dec(meta.pwSalt));
+    try {
+      _dataKey = await CRYPTO.unwrapKey(meta.wrappedByPw, pwKey);
+    } catch(e) { throw new Error('Incorrect password.'); }
+    await _loadJournal();
+    return meta;
+  }
+
+  async function unlockWithRecovery(code){
+    const meta = await STORAGE.get('meta');
+    if (!meta) throw new Error('No journal on this device.');
+    const normalized = CRYPTO.normalizeCode(code);
+    if (normalized.length !== 12) throw new Error('Recovery code should be 12 characters.');
+    // Re-insert dashes to match the display format we derived the key from
+    const formatted = normalized.slice(0,4)+'-'+normalized.slice(4,8)+'-'+normalized.slice(8,12);
+    const rcKey = await CRYPTO.deriveKeyFromPassword(formatted, CRYPTO.b64dec(meta.rcSalt));
+    try {
+      _dataKey = await CRYPTO.unwrapKey(meta.wrappedByRc, rcKey);
+    } catch(e) { throw new Error('Incorrect recovery code.'); }
+    await _loadJournal();
+    return meta;
+  }
+
+  async function _loadJournal(){
+    const enc = await STORAGE.get('journal');
+    if (!enc) { _journal = newEmptyJournal('Your journal'); return; }
+    _journal = await CRYPTO.decryptJSON(enc, _dataKey);
+  }
+
+  async function save(){
+    if (!_dataKey || !_journal) return;
+    _journal.updatedAt = new Date().toISOString();
+    const enc = await CRYPTO.encryptJSON(_journal, _dataKey);
+    await STORAGE.set('journal', enc);
+  }
+
+  function newEmptyJournal(ownerDisplayName) {
+    return {
+      schemaVersion: 1,
+      ownerDisplayName: ownerDisplayName || 'Your journal',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      sections: {}   // { sectionId: { fields: {...}, repeats: {...} } }
+    };
+  }
+
+  function getJournal(){ return _journal; }
+  function setSectionField(sectionId, fieldId, value){
+    if (!_journal.sections[sectionId]) _journal.sections[sectionId] = { fields:{}, repeats:{} };
+    _journal.sections[sectionId].fields[fieldId] = value;
+  }
+  function getSectionField(sectionId, fieldId){
+    return (_journal.sections[sectionId]?.fields||{})[fieldId] ?? '';
+  }
+  function getRepeatList(sectionId, repeatId){
+    if (!_journal.sections[sectionId]) _journal.sections[sectionId] = { fields:{}, repeats:{} };
+    if (!_journal.sections[sectionId].repeats[repeatId]) _journal.sections[sectionId].repeats[repeatId] = [];
+    return _journal.sections[sectionId].repeats[repeatId];
+  }
+  function setRepeatList(sectionId, repeatId, list){
+    if (!_journal.sections[sectionId]) _journal.sections[sectionId] = { fields:{}, repeats:{} };
+    _journal.sections[sectionId].repeats[repeatId] = list;
+  }
+
+  async function exportEncryptedBlob(){
+    const meta = await STORAGE.get('meta');
+    const journal = await STORAGE.get('journal');
+    const payload = { app:'when-im-gone', version:1, exportedAt:new Date().toISOString(), meta, journal };
+    return new Blob([JSON.stringify(payload, null, 2)], { type:'application/octet-stream' });
+  }
+
+  async function importEncryptedBlob(text){
+    const data = JSON.parse(text);
+    if (data.app !== 'when-im-gone') throw new Error('Not a When I\'m gone backup.');
+    if (!data.meta || !data.journal) throw new Error('Backup file is incomplete.');
+    await STORAGE.set('meta', data.meta);
+    await STORAGE.set('journal', data.journal);
+    _dataKey = null; _journal = null;
+  }
+
+  function isUnlocked(){ return !!_dataKey; }
+  function lock(){ _dataKey = null; _journal = null; }
+
+  async function wipe(){ await STORAGE.clearAll(); _dataKey=null; _journal=null; }
+
+  return {
+    exists, create, unlockWithPw, unlockWithRecovery,
+    save, getJournal, setSectionField, getSectionField,
+    getRepeatList, setRepeatList,
+    exportEncryptedBlob, importEncryptedBlob,
+    isUnlocked, lock, wipe
+  };
+})();
+
+/* ==========================================================================
+   SECTION DEFINITIONS
+   ========================================================================== */
+const SECTIONS = [
+  { id:'me',         nm:'All about me',           dc:'Names, address, family' },
+  { id:'docs',       nm:'Important documents',    dc:'Will, passport, certificates' },
+  { id:'medical',    nm:'Medical information',    dc:'GP, conditions, medication' },
+  { id:'contacts',   nm:'Key contacts',           dc:'Executor, advisor, insurer' },
+  { id:'dependants', nm:'My dependants',          dc:'Children, parents, others' },
+  { id:'pets',       nm:'Pets',                   dc:'Vet, insurance, care wishes' },
+  { id:'financial',  nm:'Financial information',  dc:'Banks, cards, debts (pointers only)' },
+  { id:'insurances', nm:'Insurances',             dc:'Life, home, health, vehicle' },
+  { id:'business',   nm:'Business details',       dc:'Company, shareholdings' },
+  { id:'property',   nm:'Personal property',      dc:'Residence, heirlooms, vehicles' },
+  { id:'pay',        nm:'What to pay and when',   dc:'Bills, subscriptions, charities' },
+  { id:'access',     nm:'Access & location',      dc:'Safe deposit, keys' },
+  { id:'digital',    nm:'Digital assets',         dc:'Email, accounts (pointers only)' },
+  { id:'funeral',    nm:'Funeral wishes',         dc:'Burial, service, music, readings' },
+  { id:'passing',    nm:'At the time of passing', dc:'People and orgs to contact' },
+  { id:'beneficiaries',nm:'What beneficiaries can expect', dc:'Life insurance, pension' },
+  { id:'recommend',  nm:'Recommendations',        dc:'Things I loved, places, people' },
+  { id:'gratitude',  nm:'Expression of gratitude',dc:'A final message' },
+];
+
+// Field definitions per section. Simple schema: each card has fields (text/date/textarea/select/radio)
+// plus optional repeating items.
+const FIELDS = {
+  me: [
+    { title:'Personal information', hint:'The basics anyone looking for information will need.', fields:[
+      { id:'title', label:'Title', kind:'select', options:['','Mrs','Mr','Miss','Mx','Dr'], half:true },
+      { id:'pronouns', label:'Preferred pronouns', half:true },
+      { id:'first', label:'First name', half:true },
+      { id:'middle', label:'Middle name', half:true },
+      { id:'last', label:'Surname', half:true },
+      { id:'nicknames', label:'Nicknames', half:true },
+      { id:'dob', label:'Date of birth', kind:'date', half:true },
+      { id:'pob', label:'Place of birth', half:true },
+      { id:'priorName', label:'Legally known by a different name?', placeholder:'e.g. maiden name', full:true },
+      { id:'ethnicity', label:'Ethnicity (optional)', half:true },
+      { id:'religion', label:'Religion (optional)', half:true },
+      { id:'ninssn', label:'National Insurance / Social Security Number', full:true },
+    ]},
+    { title:'Most recent address', fields:[
+      { id:'address', label:'Street address', kind:'textarea', full:true },
+      { id:'postcode', label:'Postcode / ZIP', half:true },
+      { id:'country', label:'Country', half:true },
+      { id:'homePhone', label:'Home phone', kind:'tel', half:true },
+      { id:'mobile', label:'Mobile', kind:'tel', half:true },
+    ]},
+    { title:'My family', hint:'Spouse, children, parents, siblings.', fields:[
+      { id:'maritalStatus', label:'Marital status', kind:'chips', options:['Single','Married','Partnered','Divorced','Widowed'], full:true },
+      { id:'spouseName', label:'Current spouse / partner', half:true },
+      { id:'spousePhone', label:'Their phone', kind:'tel', half:true },
+    ], repeats:[
+      { id:'children', label:'Children', item:'Child', fields:[
+        { id:'name', label:'Name' }, { id:'phone', label:'Phone', kind:'tel' }, { id:'relation', label:'Relationship', placeholder:'biological / step / adopted' }
+      ]},
+      { id:'siblings', label:'Siblings & close family', item:'Person', fields:[
+        { id:'name', label:'Name' }, { id:'relation', label:'Relationship' }, { id:'phone', label:'Phone', kind:'tel' }
+      ]},
+    ]},
+  ],
+
+  financial: [
+    { kind:'callout', class:'warn', label:'Important:', text:'Do not enter passwords, PINs, CVVs, or balances. This journal tells your family where to look — it is not a password vault. Use the Digital section to tell them how to reach your password manager.' },
+    { title:'Power of attorney', fields:[
+      { id:'poaName', label:'I have given power of attorney to', placeholder:'e.g. Paul Martin — financial & welfare', full:true },
+      { id:'poaLocation', label:'Where the document is kept', full:true },
+    ]},
+    { title:'Will', fields:[
+      { id:'willHolder', label:'Will is held with', placeholder:'Solicitor name, or "filed privately"', full:true },
+      { id:'willCopyAt', label:'Where a copy can be found at home', full:true },
+    ]},
+    { title:'Banks & accounts', hint:'Add each account your family should know about. Include the purpose (current, savings, ISA…).', fields:[], repeats:[
+      { id:'accounts', label:'', item:'Account', fields:[
+        { id:'purpose', label:'Account purpose', placeholder:'e.g. Main current account' },
+        { id:'bank', label:'Bank' },
+        { id:'last4', label:'Account number (last 4 only)', placeholder:'•••• 4471' },
+        { id:'sort', label:'Sort code / routing' },
+        { id:'joint', label:'Joint with', placeholder:'leave empty if not joint' },
+        { id:'papers', label:'Where paperwork lives' },
+      ]},
+    ]},
+    { title:'Cards', hint:'Credit and debit cards. Last 4 digits only — never full numbers.', fields:[], repeats:[
+      { id:'cards', label:'', item:'Card', fields:[
+        { id:'type', label:'Type', placeholder:'Credit / Debit' },
+        { id:'bank', label:'Issuer' },
+        { id:'last4', label:'Last 4 digits', placeholder:'•••• 8830' },
+        { id:'notes', label:'Notes', placeholder:'e.g. household spending' },
+      ]},
+    ]},
+    { title:'Mortgage & debts', fields:[
+      { id:'mortgageLender', label:'Mortgage held with', half:true },
+      { id:'mortgageRef', label:'Mortgage reference', half:true },
+      { id:'otherDebts', label:'Any other debts or loans', kind:'textarea', full:true },
+      { id:'owed', label:'What I am owed', kind:'textarea', placeholder:'e.g. a personal loan to a friend', full:true },
+    ]},
+  ],
+
+  digital: [
+    { kind:'callout', class:'info', label:'Golden rule:', text:'Never write full passwords here. Use a password manager (1Password, Bitwarden…) and tell your family which manager you use and how your trusted person is set up as recovery contact.' },
+    { title:'Password manager', fields:[
+      { id:'pm', label:'Which manager', placeholder:'e.g. 1Password' },
+      { id:'pmRecovery', label:'Emergency Kit / recovery sheet location' },
+      { id:'pmContact', label:'Recovery contact', placeholder:'Who is set up to recover your vault' },
+    ]},
+    { title:'Email accounts', fields:[], repeats:[
+      { id:'emails', label:'', item:'Account', fields:[
+        { id:'addr', label:'Email address' },
+        { id:'kind', label:'What it\u2019s used for', placeholder:'primary / work / backup' },
+        { id:'recovery', label:'Provider recovery path', placeholder:'e.g. Google Inactive Account Manager' },
+      ]}
+    ]},
+    { title:'Social & subscription accounts', hint:'What should happen to each — memorialise, delete, transfer?', fields:[], repeats:[
+      { id:'accounts', label:'', item:'Account', fields:[
+        { id:'service', label:'Service' },
+        { id:'wish', label:'Wish', placeholder:'memorialise / delete / transfer' },
+        { id:'notes', label:'Notes' },
+      ]}
+    ]},
+  ],
+
+  funeral: [
+    { kind:'callout', class:'info', label:'Not legally binding.', text:'These wishes guide your loved ones but don\u2019t replace a Will. Skip anything you\u2019d rather leave to them.' },
+    { title:'Burial or cremation', fields:[
+      { id:'choice', label:'Preference', kind:'chips', options:['Cremation','Cemetery burial','Natural woodland','At sea','Other'], full:true },
+      { id:'location', label:'Preferred location (crematorium / cemetery / other)', full:true },
+      { id:'ashes', label:'Ashes — what should happen', kind:'select', options:['','Scattered at a meaningful place','Kept by a relative','Buried in a family plot'], half:true },
+      { id:'ashesWhere', label:'Where exactly?', placeholder:'a meaningful place', half:true },
+    ]},
+    { title:'The service', fields:[
+      { id:'religious', label:'Style', kind:'chips', options:['Secular','Religious'], full:true },
+      { id:'coffin', label:'Coffin during service', kind:'chips', options:['Closed','Open'], full:true },
+      { id:'readings', label:'Readings I\u2019d like', kind:'textarea', full:true },
+      { id:'music', label:'Music', kind:'textarea', full:true },
+      { id:'dress', label:'Dress code', placeholder:'e.g. bright colours — no black', half:true },
+      { id:'flowers', label:'Flowers', kind:'select', options:['','Family flowers only','Family and close friends only','No flowers — donations instead'], half:true },
+    ]},
+    { title:'After the service', fields:[
+      { id:'gathering', label:'Gathering venue / style', full:true },
+      { id:'charities', label:'Preferred charities for donations', kind:'textarea', full:true },
+    ]},
+    { title:'A message to my loved ones', fields:[
+      { id:'message', label:'(optional)', kind:'textarea', full:true, placeholder:'A short note to accompany these wishes.' },
+    ]},
+  ],
+};
+
+// sections without FIELDS[] shown as a stub
+function sectionIntro(id){
+  return {
+    me:        'The basics anyone looking for information will need.',
+    docs:      'Where your Will and key documents are kept.',
+    medical:   'Medical history and contacts.',
+    contacts:  'The people your family should call first.',
+    dependants:'Information about people who rely on you.',
+    pets:      'Everything your pets will need.',
+    financial: 'Pointers to your accounts. Never passwords or PINs.',
+    insurances:'Your active policies and where to claim.',
+    business:  'If you own or direct a business.',
+    property:  'Real estate, heirlooms, vehicles.',
+    pay:       'Recurring bills, subscriptions and donations.',
+    access:    'Safe deposit box, house keys, spare-key locations.',
+    digital:   'Email and online accounts. List them; don\'t store passwords.',
+    funeral:   'Your wishes so your family don\'t have to guess.',
+    passing:   'People and organisations to contact first.',
+    beneficiaries:'What your beneficiaries can expect.',
+    recommend: 'Songs, books, places, people worth knowing.',
+    gratitude: 'A final note of thanks.'
+  }[id] || '';
+}
+
+/* ==========================================================================
+   APP STATE + ROUTER
+   ========================================================================== */
+let state = { currentSection:'me', mode:'owner', recoveryCodeAfterSetup:null };
+
+function show(scrId){
+  ['scrSetup','scrLock','scrApp','envelope'].forEach(id=>{
+    document.getElementById(id).classList.toggle('on', id===scrId);
+  });
+}
+
+async function boot(){
+  const has = await VAULT.exists();
+  if (!has) startSetup();
+  else showLock();
+}
+
+/* ==========================================================================
+   SETUP WIZARD
+   ========================================================================== */
+let setupState = { step:1, name:'', password:'', recoveryCode:null };
+
+function setSetupDots(step){
+  const dots = document.querySelectorAll('#setupDots span');
+  dots.forEach((d,i)=>{
+    d.classList.toggle('done', i+1 < step);
+    d.classList.toggle('on', i+1 === step);
+  });
+}
+
+function startSetup(){
+  setupState = { step:1, name:'', password:'', recoveryCode:null };
+  show('scrSetup');
+  renderSetup();
+}
+
+function renderSetup(){
+  setSetupDots(setupState.step);
+  const body = document.getElementById('setupBody');
+  if (setupState.step === 1) {
+    body.innerHTML = `
+      <h1 style="text-align:center;">Welcome</h1>
+      <p class="muted" style="text-align:center;">A calm place to gather what your family will need — one day, not today.</p>
+      <div class="callout info" style="margin:18px 0;"><strong>Pointers, not a vault.</strong> This journal stores <em>where</em> things live (which bank, where the Will is, who the executor is) — never passwords, PINs, or account numbers.</div>
+      <p class="muted">Everything you enter stays on this device, encrypted. There's no account to create and no server to reach.</p>
+      <div class="btnrow" style="margin-top:18px; justify-content:flex-end;">
+        <button class="btn big" onclick="setupNext(1)">Begin →</button>
+      </div>
+    `;
+  }
+  else if (setupState.step === 2) {
+    body.innerHTML = `
+      <h1>What should we call you?</h1>
+      <p class="muted">This name appears at the top of your journal and on your loved-ones' read-only view.</p>
+      <div class="field">
+        <label>Your name</label>
+        <input id="sName" type="text" value="${escapeAttr(setupState.name)}" placeholder="e.g. Eleanor Martin" autofocus/>
+      </div>
+      <div class="btnrow" style="margin-top:8px; justify-content:space-between;">
+        <button class="btn ghost" onclick="setupPrev()">← Back</button>
+        <button class="btn" onclick="setupNextName()">Continue →</button>
+      </div>
+    `;
+  }
+  else if (setupState.step === 3) {
+    body.innerHTML = `
+      <h1>Choose a master password</h1>
+      <p class="muted">You'll type this to open the journal. If you forget it, the only way back in is the recovery code we'll generate next — we cannot reset it for you.</p>
+      <div class="field">
+        <label>Master password (minimum 10 characters)</label>
+        <input id="sPw1" type="password" autofocus oninput="checkPwStrength()"/>
+      </div>
+      <div class="field">
+        <label>Confirm</label>
+        <input id="sPw2" type="password"/>
+      </div>
+      <div id="pwHelp" class="muted"></div>
+      <div id="pwErr" class="callout danger hide" style="margin-top:10px;"></div>
+      <div class="btnrow" style="margin-top:14px; justify-content:space-between;">
+        <button class="btn ghost" onclick="setupPrev()">← Back</button>
+        <button class="btn" onclick="setupCreate()">Create journal →</button>
+      </div>
+    `;
+  }
+  else if (setupState.step === 4) {
+    body.innerHTML = `
+      <h1>Your recovery code</h1>
+      <p>This 12-character code is the only other way into your journal. Write it down, print it, and store it somewhere only a trusted person would find it.</p>
+      <div class="recovery-code" id="rcDisplay">${setupState.recoveryCode}</div>
+      <div class="callout warn"><strong>This is shown once.</strong> If you close this screen without saving it, you'll be prompted to print the sealed envelope before you can continue.</div>
+      <div class="btnrow" style="margin-top:16px; justify-content:space-between;">
+        <button class="btn ghost" onclick="printEnvelopeFromSetup()">🖨️ Print sealed envelope</button>
+        <button class="btn" onclick="finishSetup()">I've saved it — open my journal</button>
+      </div>
+    `;
+  }
+}
+
+function setupNext(fromStep){
+  setupState.step = fromStep + 1;
+  renderSetup();
+}
+function setupPrev(){
+  setupState.step = Math.max(1, setupState.step - 1);
+  renderSetup();
+}
+function setupNextName(){
+  const v = document.getElementById('sName').value.trim();
+  if (!v) { alert('Please enter a name — you can change it later.'); return; }
+  setupState.name = v;
+  setupNext(2);
+}
+function checkPwStrength(){
+  const v = document.getElementById('sPw1').value;
+  const help = document.getElementById('pwHelp');
+  const len = v.length;
+  if (len === 0) help.textContent = '';
+  else if (len < 10) help.textContent = `Keep going — ${10-len} more character${10-len===1?'':'s'}.`;
+  else help.textContent = '✓ Good length. Consider a short phrase you won\'t forget.';
+}
+async function setupCreate(){
+  const p1 = document.getElementById('sPw1').value;
+  const p2 = document.getElementById('sPw2').value;
+  const err = document.getElementById('pwErr');
+  err.classList.add('hide');
+  if (p1.length < 10) { err.classList.remove('hide'); err.textContent='Password must be at least 10 characters.'; return; }
+  if (p1 !== p2)      { err.classList.remove('hide'); err.textContent='Passwords don\'t match.'; return; }
+
+  // show "creating" state
+  const body = document.getElementById('setupBody');
+  body.innerHTML = '<h1>Creating your journal…</h1><p class="muted">Generating encryption keys. This can take a few seconds on older devices.</p>';
+  try {
+    const { recoveryCode } = await VAULT.create({ password:p1, ownerDisplayName:setupState.name });
+    setupState.recoveryCode = recoveryCode;
+    setupState.step = 4;
+    renderSetup();
+  } catch(e) {
+    alert('Something went wrong creating the journal: ' + e.message);
+    setupState.step = 3; renderSetup();
+  }
+}
+function printEnvelopeFromSetup(){
+  document.getElementById('envCode').textContent = setupState.recoveryCode;
+  document.getElementById('envOwnerName').textContent = setupState.name;
+  show('envelope');
+}
+function finishSetup(){
+  // Clear recovery code from memory after setup is done.
+  setupState.recoveryCode = null;
+  show('scrApp');
+  afterUnlock();
+}
+
+/* ==========================================================================
+   LOCK SCREEN
+   ========================================================================== */
+function showLock(){
+  show('scrLock');
+  document.getElementById('lockErr').classList.add('hide');
+  document.getElementById('lockPw').value = '';
+  document.getElementById('lockTag').textContent = 'Welcome back';
+  document.getElementById('lockBody').innerHTML = lockBodyPassword();
+  setTimeout(()=>document.getElementById('lockPw').focus(), 50);
+}
+function lockBodyPassword(){
+  return `
+    <div style="text-align:left;">
+      <label for="lockPw">Master password</label>
+      <input id="lockPw" type="password" onkeydown="if(event.key==='Enter') unlockWithPassword()"/>
+      <div id="lockErr" class="callout danger hide" style="margin-top:10px;"></div>
+    </div>
+    <div class="btnrow" style="margin-top:16px; justify-content:center;">
+      <button class="btn big" onclick="unlockWithPassword()">Unlock</button>
+      <button class="btn ghost" onclick="showLockRecovery()">Use recovery code</button>
+    </div>
+    <div class="muted" style="margin-top:16px;">No password reset. If you've lost it, use the 12-character code from your sealed envelope.</div>
+  `;
+}
+function showLockRecovery(){
+  document.getElementById('lockBody').innerHTML = `
+    <div style="text-align:left;">
+      <label for="lockRc">Recovery code</label>
+      <input id="lockRc" type="text" placeholder="XXXX-XXXX-XXXX" autofocus onkeydown="if(event.key==='Enter') unlockWithRecovery()"/>
+      <div id="lockErr" class="callout danger hide" style="margin-top:10px;"></div>
+    </div>
+    <div class="btnrow" style="margin-top:16px; justify-content:center;">
+      <button class="btn big" onclick="unlockWithRecovery()">Unlock</button>
+      <button class="btn ghost" onclick="showLock()">← Use password instead</button>
+    </div>
+  `;
+}
+async function unlockWithPassword(){
+  const pw = document.getElementById('lockPw').value;
+  const err = document.getElementById('lockErr');
+  err.classList.add('hide');
+  if (!pw) return;
+  try { await VAULT.unlockWithPw(pw); show('scrApp'); afterUnlock(); }
+  catch(e) { err.classList.remove('hide'); err.textContent = e.message; }
+}
+async function unlockWithRecovery(){
+  const code = document.getElementById('lockRc').value;
+  const err = document.getElementById('lockErr');
+  err.classList.add('hide');
+  if (!code) return;
+  try { await VAULT.unlockWithRecovery(code); show('scrApp'); afterUnlock(); }
+  catch(e) { err.classList.remove('hide'); err.textContent = e.message; }
+}
+function lockApp(){ VAULT.lock(); showLock(); }
+
+/* ==========================================================================
+   AFTER UNLOCK — render the app
+   ========================================================================== */
+function afterUnlock(){
+  const j = VAULT.getJournal();
+  document.getElementById('ownerName').textContent = j.ownerDisplayName || 'Your journal';
+  document.getElementById('svOwnerName').textContent = j.ownerDisplayName || 'Your journal';
+  document.getElementById('svUpdatedAt').textContent = 'Last updated ' + formatDate(j.updatedAt) + ' · Read-only view';
+  buildNav();
+  showSection('me');
+  updateProgress();
+}
+
+function formatDate(iso){
+  try { return new Date(iso).toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'}); }
+  catch(e){ return ''; }
+}
+
+function sectionStatus(id){
+  const s = VAULT.getJournal().sections[id];
+  if (!s) return 'empty';
+  const fieldCount = Object.values(s.fields||{}).filter(v=>v && String(v).trim()).length;
+  const repeatCount = Object.values(s.repeats||{}).reduce((n,a)=>n+a.length,0);
+  if (fieldCount === 0 && repeatCount === 0) return 'empty';
+  // "done" heuristic: at least 3 filled fields or 1 repeat
+  if (fieldCount >= 3 || repeatCount >= 1) return 'done';
+  return 'part';
+}
+
+function buildNav(){
+  document.getElementById('navList').innerHTML = SECTIONS.map(s=>{
+    const status = sectionStatus(s.id);
+    return `<li><a class="${state.currentSection===s.id?'active':''}" onclick="showSection('${s.id}')">
+      <span class="dot ${status==='done'?'done':status==='part'?'part':''}"></span>
+      <span>${s.nm}</span>
+    </a></li>`;
+  }).join('');
+}
+
+function updateProgress(){
+  const done = SECTIONS.filter(s=>sectionStatus(s.id)==='done').length;
+  const part = SECTIONS.filter(s=>sectionStatus(s.id)==='part').length;
+  const score = done + part*0.4;
+  const pct = Math.round(100 * score / SECTIONS.length);
+  document.getElementById('progPct').textContent = pct + '%';
+  document.getElementById('progBar').style.width = pct + '%';
+  const updated = VAULT.getJournal().updatedAt;
+  document.getElementById('lastSaved').textContent = updated ? ('Last saved ' + relTime(updated)) : 'No changes yet';
+}
+function relTime(iso){
+  const d = new Date(iso).getTime(); const diff = Date.now() - d;
+  if (diff < 15000) return 'just now';
+  if (diff < 60000) return 'less than a minute ago';
+  if (diff < 3600000) return Math.floor(diff/60000) + ' minutes ago';
+  return formatDate(iso);
+}
+
+function showSection(id){
+  state.currentSection = id;
+  buildNav();
+  const meta = SECTIONS.find(s=>s.id===id);
+  const status = sectionStatus(id);
+  const statusLabel = status==='done'?'✓ Complete' : status==='part'?'◐ In progress' : '○ Not started';
+  let html = `
+    <div class="crumbs">Journal &nbsp;›&nbsp; ${meta.nm}</div>
+    <div class="section-head">
+      <div><h1>${meta.nm}</h1><p>${sectionIntro(id)}</p></div>
+      <span class="pillstatus">${statusLabel}</span>
+    </div>
+  `;
+  if (FIELDS[id]) html += renderSectionCards(id, FIELDS[id]);
+  else html += renderStub(meta.nm);
+  document.getElementById('mainPanel').innerHTML = html;
+  window.scrollTo({top:0});
+}
+
+function renderStub(name){
+  return `<div class="card" style="text-align:center; padding:40px; background:#FCFAF5;">
+    <h3 style="margin-bottom:6px;">${name}</h3>
+    <p class="muted" style="margin-bottom:10px;">This section isn't built in v0 yet. Four representative sections are fully working: <strong>All about me</strong>, <strong>Financial</strong>, <strong>Digital</strong>, <strong>Funeral wishes</strong>.</p>
+    <p class="muted" style="font-size:13px;">Your notes from here will be preserved when we add the remaining sections.</p>
+  </div>`;
+}
+
+function renderSectionCards(sectionId, blocks){
+  return blocks.map((b,idx)=>{
+    if (b.kind==='callout') {
+      return `<div class="callout ${b.class||''}"><strong>${b.label}</strong> ${b.text}</div><div style="height:14px;"></div>`;
+    }
+    const fieldHTML = (b.fields||[]).map(f=>renderField(sectionId, f)).join('');
+    const wrap = fieldHTML ? `<div class="grid2">${fieldHTML}</div>` : '';
+    const repeats = (b.repeats||[]).map(r=>renderRepeatBlock(sectionId, r)).join('');
+    return `<div class="card">
+      <h3>${b.title||''}</h3>
+      ${b.hint?`<div class="hint">${b.hint}</div>`:''}
+      ${wrap}
+      ${repeats}
+    </div>`;
+  }).join('');
+}
+
+function renderField(sectionId, f){
+  const cls = f.full ? 'field full' : 'field';
+  const val = VAULT.getSectionField(sectionId, f.id);
+  const ph = f.placeholder ? ` placeholder="${escapeAttr(f.placeholder)}"` : '';
+  const oninput = `oninput="saveField('${sectionId}','${f.id}', this.value)"`;
+  let input = '';
+  if (f.kind === 'textarea') {
+    input = `<textarea ${oninput}${ph}>${escapeHTML(val)}</textarea>`;
+  } else if (f.kind === 'select') {
+    input = `<select ${oninput}>${(f.options||[]).map(o=>`<option ${o===val?'selected':''}>${escapeHTML(o)}</option>`).join('')}</select>`;
+  } else if (f.kind === 'chips') {
+    input = `<div class="chips">` + (f.options||[]).map(o=>{
+      const on = (o===val);
+      return `<label class="chip ${on?'on':''}"><input type="radio" name="${sectionId}_${f.id}" ${on?'checked':''} onchange="saveField('${sectionId}','${f.id}','${escapeAttr(o)}')"/>${escapeHTML(o)}</label>`;
+    }).join('') + `</div>`;
+  } else {
+    const type = f.kind || 'text';
+    input = `<input type="${type}" value="${escapeAttr(val)}" ${ph} ${oninput}/>`;
+  }
+  return `<div class="${cls}"><label>${escapeHTML(f.label)}</label>${input}</div>`;
+}
+
+function renderRepeatBlock(sectionId, r){
+  const items = VAULT.getRepeatList(sectionId, r.id);
+  const rows = items.map((it,idx)=>{
+    const inputs = r.fields.map(f=>{
+      const val = it[f.id] ?? '';
+      const ph = f.placeholder ? ` placeholder="${escapeAttr(f.placeholder)}"` : '';
+      const type = f.kind || 'text';
+      return `<div class="field">
+        <label>${escapeHTML(f.label)}</label>
+        <input type="${type}" value="${escapeAttr(val)}" ${ph}
+               oninput="saveRepeatField('${sectionId}','${r.id}',${idx},'${f.id}', this.value)"/>
+      </div>`;
+    }).join('');
+    return `<div class="repeat-item">
+      <button class="rm" title="Remove" onclick="removeRepeat('${sectionId}','${r.id}',${idx})">×</button>
+      <div class="grid2">${inputs}</div>
+    </div>`;
+  }).join('');
+  return `${r.label?`<div style="margin-top:14px;"><strong>${r.label}</strong></div>`:''}
+    ${rows}
+    <button class="addmore" onclick="addRepeat('${sectionId}','${r.id}')">＋ Add ${r.item || 'item'}</button>`;
+}
+
+/* ---- Save wiring ---- */
+let saveTimer = null;
+function markSaving(){
+  const el = document.getElementById('saveInd');
+  el.textContent = 'Saving…'; el.classList.add('saving');
+}
+function markSaved(){
+  const el = document.getElementById('saveInd');
+  el.textContent = 'Saved'; el.classList.remove('saving');
+  updateProgress(); buildNav();
+  setTimeout(()=>{ if (el.textContent==='Saved') el.textContent='·'; }, 2000);
+}
+function scheduleSave(){
+  markSaving();
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{ await VAULT.save(); markSaved(); }, 400);
+}
+
+window.saveField = function(sectionId, fieldId, value){
+  VAULT.setSectionField(sectionId, fieldId, value);
+  scheduleSave();
+};
+window.saveRepeatField = function(sectionId, repeatId, idx, fieldId, value){
+  const list = VAULT.getRepeatList(sectionId, repeatId);
+  if (!list[idx]) list[idx] = {};
+  list[idx][fieldId] = value;
+  VAULT.setRepeatList(sectionId, repeatId, list);
+  scheduleSave();
+};
+window.addRepeat = function(sectionId, repeatId){
+  const list = VAULT.getRepeatList(sectionId, repeatId);
+  list.push({});
+  VAULT.setRepeatList(sectionId, repeatId, list);
+  scheduleSave();
+  showSection(state.currentSection);
+};
+window.removeRepeat = function(sectionId, repeatId, idx){
+  const list = VAULT.getRepeatList(sectionId, repeatId);
+  list.splice(idx,1);
+  VAULT.setRepeatList(sectionId, repeatId, list);
+  scheduleSave();
+  showSection(state.currentSection);
+};
+
+/* ==========================================================================
+   SURVIVOR PREVIEW
+   ========================================================================== */
+function setMode(m){
+  state.mode = m;
+  document.getElementById('modeOwner').classList.toggle('on', m==='owner');
+  document.getElementById('modeSurvivor').classList.toggle('on', m==='survivor');
+  document.getElementById('ownerView').classList.toggle('hide', m!=='owner');
+  document.getElementById('survivorView').classList.toggle('hide', m!=='survivor');
+  if (m==='survivor') buildSurvivor();
+}
+
+function buildSurvivor(){
+  svBack();
+  const triage = document.getElementById('svTriage');
+  triage.innerHTML = `
+    <div class="triage-card">
+      <div class="urg">First few hours</div>
+      <h3>People to tell</h3>
+      <p class="muted" style="font-size:14px;">Key contacts — executor, GP, funeral director, closest family.</p>
+      <div class="btnrow" style="margin-top:10px;"><button class="btn ghost" onclick="svOpen('passing')">Open list →</button></div>
+    </div>
+    <div class="triage-card">
+      <div class="urg">First week</div>
+      <h3>Funeral wishes</h3>
+      <p class="muted" style="font-size:14px;">Burial or cremation, service, music, readings.</p>
+      <div class="btnrow" style="margin-top:10px;"><button class="btn ghost" onclick="svOpen('funeral')">Open wishes →</button></div>
+    </div>
+    <div class="triage-card">
+      <div class="urg">First month</div>
+      <h3>Money &amp; paperwork</h3>
+      <p class="muted" style="font-size:14px;">Will, bank accounts, insurance, pension.</p>
+      <div class="btnrow" style="margin-top:10px;"><button class="btn ghost" onclick="svOpen('financial')">Open details →</button></div>
+    </div>
+  `;
+  document.getElementById('svSectionsGrid').innerHTML = SECTIONS.map(s=>`
+    <div class="sv-sec" onclick="svOpen('${s.id}')">
+      <div class="nm">${s.nm}</div>
+      <div class="dc">${s.dc}</div>
+    </div>
+  `).join('');
+}
+
+function svBack(){
+  document.getElementById('svHome').classList.remove('hide');
+  document.getElementById('svDetail').classList.add('hide');
+  window.scrollTo({top:0});
+}
+function svOpen(id){
+  document.getElementById('svHome').classList.add('hide');
+  document.getElementById('svDetail').classList.remove('hide');
+  document.getElementById('svDetailBody').innerHTML = svDetailHTML(id);
+  window.scrollTo({top:0});
+}
+function svRow(k,v,empty){
+  return `<div class="sv-row"><div class="k">${k}</div><div class="v" style="${empty?'color:#aaa; font-style:italic;':''}">${empty?'(not filled in)':escapeHTML(v)}</div></div>`;
+}
+function svDetailHTML(id){
+  const meta = SECTIONS.find(s=>s.id===id);
+  const title = `<h1>${meta.nm}</h1><p class="muted">${sectionIntro(id)}</p><div style="height:14px;"></div>`;
+  const j = VAULT.getJournal();
+  const s = j.sections[id];
+  if (!s || (Object.keys(s.fields||{}).length===0 && Object.values(s.repeats||{}).every(a=>!a.length))) {
+    return title + `<div class="card" style="text-align:center; padding:36px;"><p class="muted">Nothing recorded in this section yet.</p></div>`;
+  }
+  // render whatever fields + repeats are filled
+  let body = '';
+  if (FIELDS[id]) {
+    FIELDS[id].forEach(block=>{
+      if (block.kind==='callout') return;
+      let rows = '';
+      (block.fields||[]).forEach(f=>{
+        const v = (s.fields||{})[f.id];
+        if (v && String(v).trim()) rows += svRow(f.label, v);
+      });
+      (block.repeats||[]).forEach(r=>{
+        const list = (s.repeats||{})[r.id] || [];
+        list.forEach((item,idx)=>{
+          const label = (r.item||'Item') + ' ' + (idx+1);
+          const parts = r.fields.map(f=>item[f.id]).filter(x=>x && String(x).trim()).join(' · ');
+          if (parts) rows += svRow(label, parts);
+        });
+      });
+      if (rows) body += `<div class="card"><h3>${block.title||''}</h3>${rows}</div>`;
+    });
+  } else {
+    // fallback: dump raw
+    Object.entries(s.fields||{}).forEach(([k,v])=>{ if (v) body += svRow(k, v); });
+    body = `<div class="card">${body}</div>`;
+  }
+  return title + (body || `<div class="card" style="text-align:center;"><p class="muted">Nothing to show yet.</p></div>`);
+}
+
+/* ==========================================================================
+   ENVELOPE / EXPORT / IMPORT / WIPE
+   ========================================================================== */
+function printEnvelope(){
+  // In normal operation the recovery code isn't known to the app after unlock.
+  // So we show a message telling the user they can only print at setup time or
+  // after rotating the code (v1 feature).
+  document.getElementById('envCode').textContent = '— not available —';
+  document.getElementById('envOwnerName').textContent = VAULT.getJournal().ownerDisplayName;
+  // Replace code block with a note
+  const sheet = document.querySelector('.env-sheet');
+  const codeEl = document.getElementById('envCode');
+  codeEl.innerHTML = `<span style="font-size:14px; letter-spacing:normal; color:var(--ink-soft);">For your security, the recovery code can only be printed at setup time. A "rotate recovery code" feature will be added in v1 — until then, keep the sheet you printed during setup.</span>`;
+  show('envelope');
+}
+function closeEnvelope(){ show('scrApp'); }
+
+async function exportEncrypted(){
+  const blob = await VAULT.exportEncryptedBlob();
+  const a = document.createElement('a');
+  const name = (VAULT.getJournal().ownerDisplayName||'journal').replace(/[^a-z0-9]+/gi,'-').toLowerCase();
+  const stamp = new Date().toISOString().slice(0,10);
+  a.href = URL.createObjectURL(blob);
+  a.download = `when-im-gone-${name}-${stamp}.wig`;
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+}
+function triggerImport(){
+  confirmModal(
+    'Import backup?',
+    'Importing an encrypted backup will replace the journal on this device. Make sure you have the password or recovery code that belongs to the backup file.',
+    ()=> document.getElementById('importFile').click()
+  );
+}
+async function handleImportFile(ev){
+  const file = ev.target.files[0];
+  ev.target.value = '';
+  if (!file) return;
+  try {
+    const text = await file.text();
+    await VAULT.importEncryptedBlob(text);
+    alert("Backup imported. You'll need to unlock with the password or recovery code from that backup.");
+    showLock();
+  } catch(e) { alert('Could not import: ' + e.message); }
+}
+
+function confirmReset(){
+  confirmModal(
+    'Wipe this device?',
+    'This permanently deletes the journal from this device. If you do not have an exported backup and the recovery code, this cannot be undone.',
+    async ()=>{ await VAULT.wipe(); location.reload(); }
+  );
+}
+
+/* ---- Menu + modal helpers ---- */
+function toggleMenu(){ document.getElementById('menuPanel').classList.toggle('on'); }
+function closeMenu(){ document.getElementById('menuPanel').classList.remove('on'); }
+document.addEventListener('click',(e)=>{
+  const m = document.querySelector('.menu');
+  if (m && !m.contains(e.target)) closeMenu();
+});
+
+function confirmModal(title, msg, onOk){
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  const ok = document.getElementById('confirmOk');
+  const newOk = ok.cloneNode(true);
+  ok.parentNode.replaceChild(newOk, ok);
+  newOk.addEventListener('click', ()=>{ closeConfirm(); onOk(); });
+  document.getElementById('confirmModal').classList.add('on');
+}
+function closeConfirm(){ document.getElementById('confirmModal').classList.remove('on'); }
+
+/* ---- Escaping helpers ---- */
+function escapeHTML(s){ return String(s ?? '').replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function escapeAttr(s){ return escapeHTML(s).replace(/'/g,'&#39;'); }
+
+/* ==========================================================================
+   GO
+   ========================================================================== */
+boot();
+</script>
+</body>
+</html>

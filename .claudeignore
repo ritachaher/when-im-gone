@@ -1,0 +1,6 @@
+node_modules/
+dist/
+dist-mobile-check/
+.git/
+tsconfig.tsbuildinfo
+vite.config.ts.timestamp-*

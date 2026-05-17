@@ -88,6 +88,24 @@ p { margin: 0 0 .9em; }
   overflow-y: auto;
 }
 
+/* App top bar — logo linking to home, shown on lock/setup/survivor screens */
+.app-top-bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  background: var(--navy);
+  padding: 12px 24px;
+  display: flex; align-items: center;
+  border-bottom: 1px solid rgba(255,255,255,.10);
+}
+.app-top-brand {
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+  color: #F4EEE2;
+  font-family: Georgia, serif; font-size: 1.1rem;
+}
+.app-top-brand:hover { opacity: 0.85; }
+/* Push centre screens below the fixed header */
+.app-top-bar + .centre { padding-top: 80px; }
+
 /* Mobile top bar (hidden on desktop) */
 .mobile-topbar { display: none; }
 .sidebar-close { display: none; }

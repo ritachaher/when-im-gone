@@ -7,6 +7,22 @@ import { Survivor } from './ui/Survivor';
 
 type Screen = 'boot' | 'setup' | 'lock' | 'owner' | 'survivor';
 
+function AppHeader() {
+  return (
+    <header className="app-top-bar">
+      <a href="https://www.whenimgone.life/" className="app-top-brand" aria-label="When I'm Gone – home">
+        <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="28" height="28">
+          <g transform="translate(4 1)">
+            <path d="M12 1.5 C 20 6 22 16 16 25 C 13 29 9 29 6 26 C 2 22 2 14 6 8 C 8 5 10 3 12 1.5 Z" fill="#F4EEE2"/>
+            <path d="M12 3 C 11 10 10 18 7.5 25.5" stroke="#3A4D70" strokeWidth="0.9" strokeLinecap="round" opacity="0.55" fill="none"/>
+          </g>
+        </svg>
+        When I'm Gone
+      </a>
+    </header>
+  );
+}
+
 // Auto-lock thresholds. Idle is the most common case - the user walks
 // away from the laptop. Hidden-tab is a separate, shorter timer because
 // "tab switched away" is a stronger signal of "not actively using".
@@ -71,12 +87,12 @@ export function App() {
     };
   }, [unlocked]);
 
-  if (screen === 'boot') return <div className="centre muted">Loading…</div>;
+  if (screen === 'boot') return <><AppHeader /><div className="centre muted">Loading…</div></>;
 
-  if (screen === 'setup') return <Setup onDone={() => setScreen('owner')} />;
+  if (screen === 'setup') return <><AppHeader /><Setup onDone={() => setScreen('owner')} /></>;
 
   if (screen === 'lock')
-    return <Lock onSurvivor={() => setScreen('survivor')} />;
+    return <><AppHeader /><Lock onSurvivor={() => setScreen('survivor')} /></>;
 
   if (screen === 'owner')
     return (
@@ -89,7 +105,7 @@ export function App() {
     );
 
   if (screen === 'survivor')
-    return <Survivor onBack={() => setScreen('lock')} />;
+    return <><AppHeader /><Survivor onBack={() => setScreen('lock')} /></>;
 
   return null;
 }
