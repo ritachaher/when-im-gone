@@ -457,6 +457,15 @@ function SingleCard({
   );
 }
 
+function isUnder18(dobStr: unknown): boolean {
+  if (!dobStr || typeof dobStr !== 'string') return false;
+  const dob = new Date(dobStr);
+  if (isNaN(dob.getTime())) return false;
+  const today = new Date();
+  const eighteenth = new Date(dob.getFullYear() + 18, dob.getMonth(), dob.getDate());
+  return today < eighteenth;
+}
+
 function RepeatingCard({
   slug,
   cardIndex,
@@ -512,16 +521,19 @@ function RepeatingCard({
             {t('remove_btn', 'Remove')}
           </button>
           <div className="grid2">
-            {card.fields.map((f) => (
-              <FieldInput
-                key={f.id}
-                slug={slug}
-                field={f}
-                value={it[f.id]}
-                onChange={(v) => change(it.id as string, f.id, v)}
-                inputId={`${slug}-c${cardIndex}-${it.id}-${f.id}`}
-              />
-            ))}
+            {card.fields.map((f) => {
+              if (f.conditionalUnder18 && !isUnder18(it.dob)) return null;
+              return (
+                <FieldInput
+                  key={f.id}
+                  slug={slug}
+                  field={f}
+                  value={it[f.id]}
+                  onChange={(v) => change(it.id as string, f.id, v)}
+                  inputId={`${slug}-c${cardIndex}-${it.id}-${f.id}`}
+                />
+              );
+            })}
           </div>
         </div>
       ))}

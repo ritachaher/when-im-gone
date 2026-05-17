@@ -47,7 +47,6 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
     <div className={`field ${field.full ? 'full' : ''}`}>
       <label htmlFor={domId}>
         {label}
-        {field.optional && <span className="optional">(optional)</span>}
       </label>
       {field.type === 'textarea' ? (
         <textarea {...common} />
@@ -84,6 +83,20 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
               </label>
             );
           })}
+        </div>
+      ) : field.type === 'slider' ? (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          <input
+            type="range"
+            id={domId}
+            min="0"
+            max="100"
+            step="10"
+            value={str || '0'}
+            onChange={(e) => onChange(e.target.value)}
+            style={{ flex: 1 }}
+          />
+          <span style={{ fontWeight: 600, minWidth: 70, fontSize: 14 }}>{str || '0'}% trusted</span>
         </div>
       ) : (
         <input type={field.type} {...common} />
