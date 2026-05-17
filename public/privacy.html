@@ -41,7 +41,7 @@
       not under legal pressure. This notice spells out exactly how that works, what we do see, and
       what your rights are.
     </p>
-    <p class="muted">Last updated: 10 May 2026</p>
+    <p class="muted">Last updated: 17 May 2026</p>
 
     <div class="callout">
       <strong>The one-line version.</strong> Everything you type into your journal is encrypted on
@@ -99,16 +99,31 @@
       </li>
       <li>
         <strong>Payment information.</strong> When you pay £7.95, our payment processor
-        (when we add one) will see the standard card details required to process the payment.
-        We will not store your card number. We will only know that a payment was made.
+        handles the transaction. They see the card details required to process the payment;
+        we do not store your card number. We receive confirmation that a payment was made,
+        and the email address associated with the transaction. That payment record is kept
+        separate from your journal — there is no technical link between what you paid and
+        what you write.
       </li>
     </ul>
 
     <h2>Cookies and local storage</h2>
     <p>
       We don't use tracking cookies. We don't use Google Analytics or any other behaviour-
-      tracking tool. The app uses your browser's local storage and IndexedDB to keep your
-      encrypted journal on your device - that's the journal itself, not tracking data.
+      tracking tool. The app uses your browser's local storage and IndexedDB for three things:
+    </p>
+    <ul>
+      <li><strong>Your encrypted journal.</strong> The journal itself is stored in IndexedDB, encrypted on your device. This is not tracking data — it is your content.</li>
+      <li><strong>Your language preference.</strong> If you switch the journal language, we save your choice in local storage under the key <code>wig-lang</code>. This is a single word (e.g. <code>fr</code> for French) and stays on your device only.</li>
+      <li><strong>Your theme preference.</strong> Light or dark mode, if you change it.</li>
+    </ul>
+    <p>None of these values are sent to us or to any third party.</p>
+
+    <h2>Sample journal pages</h2>
+    <p>
+      The <a href="/sample.html">sample pages</a> on this site show fictional journal entries to
+      help people understand what the product looks like before they buy. Those pages contain no
+      forms and collect no data. All names and details shown are invented.
     </p>
 
     <h2>Your rights under UK GDPR</h2>
@@ -124,6 +139,22 @@
     <p>
       To exercise any of these, email <a href="mailto:info@whenimgone.life">info@whenimgone.life</a>.
       Because we hold so little data, most requests are quick - typically resolved within a week.
+    </p>
+
+    <h2>What we cannot link together</h2>
+    <p>
+      There is no way for us to connect a payment record to a specific journal. The Firebase
+      anonymous user ID, the encrypted vault document, and any payment record are three
+      separate, unlinked identifiers. This is intentional: it means that even if we were asked
+      to identify which journal belongs to a specific person, we could not do so.
+    </p>
+
+    <h2>Languages</h2>
+    <p>
+      The journal is available in eleven languages: English, German, Spanish, French, Italian,
+      Portuguese, Dutch, Polish, Arabic, Chinese, and Hindi. Switching language stores a single
+      preference code on your device (see <em>Cookies and local storage</em> above). No language
+      data is sent to us.
     </p>
 
     <h2>Children</h2>

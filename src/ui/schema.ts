@@ -366,7 +366,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         kind: 'single',
         title: 'Healthcare providers',
         fields: [
-          { id: 'nhsNumber', label: 'NHS number / unique patient identifier', type: 'text', full: true, callout: { type: 'info', text: 'Your NHS number is a unique 10-digit number printed on any NHS letter, prescription or test result. It can also be found in the NHS app.' } },
+          { id: 'nhsNumber', label: 'Unique patient identifier', type: 'text', full: true, placeholder: 'e.g. NHS number (UK), Medicare number (AU), Social Security Number (US)', callout: { type: 'info', text: 'This is your unique ID number with your national health service. In the UK this is your NHS number — a 10-digit number found on any NHS letter, prescription, or in the NHS app.' } },
           { id: 'gp', label: 'GP practice', type: 'text', placeholder: 'Name & location' },
           { id: 'gpPhone', label: 'GP phone', type: 'tel' },
           { id: 'hospital', label: 'Regular hospital / specialist', type: 'text', optional: true, placeholder: 'e.g. Royal Marsden NHS Trust' },
@@ -759,7 +759,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
       },
       {
         kind: 'single',
-        title: 'Practical first steps',
+        title: 'Death certificate & first steps',
         fields: [
           { id: 'deathCert', label: 'Get death certificate from', type: 'text', full: true, placeholder: 'Hospital, GP, or registrar' },
           { id: 'documents', label: 'Important documents location', type: 'text', full: true, placeholder: 'Where Will & other docs are kept (see Docs section)' },

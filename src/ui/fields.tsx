@@ -1,6 +1,7 @@
 // Generic form renderers that walk a SectionSchema.
 // These are dumb components - they read values from props and call onChange.
 
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { Field } from './schema';
 
@@ -13,6 +14,94 @@ export function Callout({
 }) {
   return <div className={`callout ${type === 'accent' ? '' : type}`}>{children}</div>;
 }
+
+// ─── Custom select dropdown ───────────────────────────────────────────────────
+function CustomSelect({
+  id,
+  options,
+  value,
+  onChange,
+}: {
+  id: string;
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onOutside(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setOpen(false);
+    }
+    document.addEventListener('mousedown', onOutside);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onOutside);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const displayValue = value || '—';
+
+  return (
+    <div ref={ref} className={`csel${open ? ' csel--open' : ''}`}>
+      <button
+        type="button"
+        id={id}
+        className="csel__trigger"
+        onClick={() => setOpen((o) => !o)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+      >
+        <span className={value ? '' : 'csel__placeholder'}>{displayValue}</span>
+        <svg
+          className="csel__chevron"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <polyline points="6 9 12 15 18 9" />
+        </svg>
+      </button>
+
+      {open && (
+        <div className="csel__menu" role="listbox">
+          <div
+            className="csel__option"
+            role="option"
+            aria-selected={value === ''}
+            onClick={() => { onChange(''); setOpen(false); }}
+          >
+            —
+          </div>
+          {options.map((o) => (
+            <div
+              key={o}
+              className={`csel__option${value === o ? ' csel__option--selected' : ''}`}
+              role="option"
+              aria-selected={value === o}
+              onClick={() => { onChange(o); setOpen(false); }}
+            >
+              {o}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 type FieldProps = {
   slug: string;
@@ -28,13 +117,11 @@ type FieldProps = {
 export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps) {
   const { t } = useTranslation();
   const str = (value as string | undefined) ?? '';
-  // Fall back to field.id for legacy callers, but every Owner.tsx call site
-  // now passes a unique inputId scoped to slug/card/item.
   const domId = inputId ?? field.id;
   const common = {
     id: domId,
     value: str,
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       onChange(e.target.value),
     placeholder: field.placeholder ? t(`sch_${slug}_f_${field.id}_placeholder`, field.placeholder) : undefined,
   };
@@ -51,18 +138,12 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
       {field.type === 'textarea' ? (
         <textarea {...common} />
       ) : field.type === 'select' ? (
-        <select {...common}>
-          <option value="">-</option>
-          {field.options?.map((o) => {
-            const normalized = o.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
-            const translated = t(`opt_${normalized}`, o);
-            return (
-              <option key={o} value={o}>
-                {translated}
-              </option>
-            );
-          })}
-        </select>
+        <CustomSelect
+          id={domId}
+          options={field.options ?? []}
+          value={str}
+          onChange={onChange}
+        />
       ) : field.type === 'chips' ? (
         <div className="chips">
           {field.options?.map((o) => {
@@ -72,9 +153,6 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
               <label key={o} className={`chip ${str === o ? 'on' : ''}`}>
                 <input
                   type="radio"
-                  // Scope the radio group to this specific input - without
-                  // this, repeated chip fields share one group across rows
-                  // and selecting in row 2 deselects row 1.
                   name={domId}
                   checked={str === o}
                   onChange={() => onChange(o)}
@@ -85,7 +163,7 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
           })}
         </div>
       ) : field.type === 'slider' ? (
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+        <div className="trust-slider">
           <input
             type="range"
             id={domId}
@@ -94,9 +172,10 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
             step="10"
             value={str || '0'}
             onChange={(e) => onChange(e.target.value)}
-            style={{ flex: 1 }}
+            className="trust-range"
+            style={{ '--val': str || '0' } as React.CSSProperties}
           />
-          <span style={{ fontWeight: 600, minWidth: 70, fontSize: 14 }}>{str || '0'}% trusted</span>
+          <span className="trust-value">{str || '0'}%</span>
         </div>
       ) : (
         <input type={field.type} {...common} />
