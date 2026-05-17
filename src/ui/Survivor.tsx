@@ -26,7 +26,7 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
       // Expected failure: WebCrypto's OperationError when the AES-GCM
       // auth tag doesn't validate (i.e. wrong password/code). Anything
       // else is an infrastructure problem the survivor shouldn't be
-      // blamed for — show a different message.
+      // blamed for - show a different message.
       const name =
         e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
       // Log only the error class so the secret can never end up in
@@ -152,7 +152,7 @@ function SurvivorHome({ onBack }: { onBack: () => void }) {
 
       <h2 style={{ margin: '28px 0 10px' }}>{t('browse_everything', 'Browse everything')}</h2>
       <p className="muted" style={{ fontSize: 14, marginBottom: 16 }}>
-        {t('browse_hint', 'Each section is a set of pointers — where to find things, not passwords or balances.')}
+        {t('browse_hint', 'Each section is a set of pointers - where to find things, not passwords or balances.')}
       </p>
 
       <div className="sv-sections">

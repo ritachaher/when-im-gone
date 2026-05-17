@@ -1,6 +1,6 @@
 /* Shared styles for the inner pages (privacy, terms, about, etc.).
  * Mirrors the design tokens used in the v2 landing inline styles so
- * inner pages look like the same site. Kept small on purpose — the
+ * inner pages look like the same site. Kept small on purpose - the
  * landing has its own richer styles; these pages just need readable
  * prose, the same header, and the same footer. */
 
@@ -23,7 +23,7 @@
   --sans:  'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 
   --radius: 12px;
-  --w: 760px;            /* narrower than landing — these are reading pages */
+  --w: 760px;            /* narrower than landing - these are reading pages */
 }
 
 * { box-sizing: border-box; }

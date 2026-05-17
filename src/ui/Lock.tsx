@@ -24,7 +24,7 @@ function writeFails(count: number, at: number) {
   try {
     localStorage.setItem(FAIL_KEY, String(count));
     localStorage.setItem(FAIL_AT_KEY, String(at));
-  } catch { /* ignore — private mode etc. */ }
+  } catch { /* ignore - private mode etc. */ }
 }
 
 function clearFails() {
@@ -48,7 +48,7 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
 
   async function submit() {
     setErr(null);
-    // Throttle check — refuse if we're inside the cooldown window from
+    // Throttle check - refuse if we're inside the cooldown window from
     // recent failures. The window grows exponentially after 3 attempts.
     const { count, lastAt } = readFails();
     const wait = backoffMs(count) - (Date.now() - lastAt);
@@ -63,17 +63,17 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
     try {
       if (mode === 'pw') await unlockWithPassword(value);
       else await unlockWithRecovery(value);
-      // Successful unlock — reset the failure counter so the next
+      // Successful unlock - reset the failure counter so the next
       // device-locked-up event starts fresh.
       clearFails();
     } catch (e) {
       // Distinguish a wrong password/code (the expected, common failure)
       // from infrastructure errors (IndexedDB quota, corrupted store,
       // WebCrypto unavailable, etc). WebCrypto throws OperationError when
-      // the AES-GCM auth tag fails — that's the wrong-secret signature.
+      // the AES-GCM auth tag fails - that's the wrong-secret signature.
       const name =
         e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
-      // Log only the error class — never the exception object, which
+      // Log only the error class - never the exception object, which
       // can carry the attempted secret in some browser builds and would
       // leak into DevTools / screen recordings.
       console.error('Unlock failed:', name || 'unknown');

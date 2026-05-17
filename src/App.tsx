@@ -7,7 +7,7 @@ import { Survivor } from './ui/Survivor';
 
 type Screen = 'boot' | 'setup' | 'lock' | 'owner' | 'survivor';
 
-// Auto-lock thresholds. Idle is the most common case — the user walks
+// Auto-lock thresholds. Idle is the most common case - the user walks
 // away from the laptop. Hidden-tab is a separate, shorter timer because
 // "tab switched away" is a stronger signal of "not actively using".
 const IDLE_LOCK_MS = 15 * 60 * 1000;
@@ -33,7 +33,7 @@ export function App() {
   }, [unlocked]);
 
   // Idle / hidden-tab auto-lock. Active only while the vault is
-  // unlocked — locking again is a no-op so we don't bother running the
+  // unlocked - locking again is a no-op so we don't bother running the
   // timers when there's nothing to lock.
   useEffect(() => {
     if (!unlocked) return;

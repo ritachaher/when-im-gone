@@ -1,5 +1,5 @@
 // Generic form renderers that walk a SectionSchema.
-// These are dumb components — they read values from props and call onChange.
+// These are dumb components - they read values from props and call onChange.
 
 import { useTranslation } from 'react-i18next';
 import type { Field } from './schema';
@@ -53,7 +53,7 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
         <textarea {...common} />
       ) : field.type === 'select' ? (
         <select {...common}>
-          <option value="">—</option>
+          <option value="">-</option>
           {field.options?.map((o) => {
             const normalized = o.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/_+$/, '');
             const translated = t(`opt_${normalized}`, o);
@@ -73,7 +73,7 @@ export function FieldInput({ slug, field, value, onChange, inputId }: FieldProps
               <label key={o} className={`chip ${str === o ? 'on' : ''}`}>
                 <input
                   type="radio"
-                  // Scope the radio group to this specific input — without
+                  // Scope the radio group to this specific input - without
                   // this, repeated chip fields share one group across rows
                   // and selecting in row 2 deselects row 1.
                   name={domId}

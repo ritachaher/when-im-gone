@@ -3,7 +3,7 @@
 // Cloud backup stores one document per vault, keyed by a hash derived
 // from the user's recovery code (see crypto/deriveVaultCloudId). This
 // makes the cloud document "the same" across every device that holds
-// the recovery code — that's what enables phone ↔ PC sync.
+// the recovery code - that's what enables phone ↔ PC sync.
 //
 // The document body is the encrypted .wig export (AES-GCM-256,
 // unreadable without the user's password or recovery code). Firestore

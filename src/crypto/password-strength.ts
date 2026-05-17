@@ -3,19 +3,19 @@
 // We do two things:
 //   1. Local rule check (length, character classes, symbol).
 //   2. k-anonymity lookup against Have I Been Pwned. Only the first
-//      5 hex chars of SHA-1(password) leave the device — neither the
+//      5 hex chars of SHA-1(password) leave the device - neither the
 //      password nor the full hash. HIBP returns ~500 candidate
 //      suffixes; we look for an exact match in-process.
 //
 // HIBP is an opt-in network call. If the network is unavailable we
 // allow the password through with a soft warning rather than blocking
-// setup — being unable to talk to a third party shouldn't lock people
+// setup - being unable to talk to a third party shouldn't lock people
 // out of their own journal.
 
 const HIBP_RANGE_URL = 'https://api.pwnedpasswords.com/range/';
 
 export type LocalRules = {
-  len: boolean;       // ≥ 14 chars
+  len: boolean;       // ≥ 8 chars
   letter: boolean;    // any letter
   number: boolean;    // any digit
   symbol: boolean;    // any non-alphanum
@@ -24,7 +24,7 @@ export type LocalRules = {
 
 export function checkLocalRules(pw: string): LocalRules {
   return {
-    len: pw.length >= 14,
+    len: pw.length >= 8,
     letter: /[A-Za-z]/.test(pw),
     number: /\d/.test(pw),
     symbol: /[^A-Za-z0-9]/.test(pw),

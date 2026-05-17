@@ -62,7 +62,7 @@ export function Owner({ onLock }: { onLock: () => void }) {
   const [cloudStatus, setCloudStatus] = useState<BackupStatus>('idle');
   const [lastCloudPushAt, setLastCloudPushAt] = useState<number | null>(null);
   // Audit log viewer state. Lazy-loaded only when the user opens the
-  // panel — no point decrypting 50 records on every render.
+  // panel - no point decrypting 50 records on every render.
   const [showAudit, setShowAudit] = useState(false);
   const [auditEvents, setAuditEvents] = useState<AuditEvent[] | null>(null);
   useEffect(() => {
@@ -114,7 +114,7 @@ export function Owner({ onLock }: { onLock: () => void }) {
 
   return (
     <div className="owner-shell">
-      {/* Mobile top bar — only visible ≤720px */}
+      {/* Mobile top bar - only visible ≤720px */}
       <div className="mobile-topbar">
         <button
           className="mt-hamburger"
@@ -209,11 +209,11 @@ export function Owner({ onLock }: { onLock: () => void }) {
               </button>
               <span className="footer-hint">
                 {isCloudStale
-                  ? t('cloud_push_hint_stale', 'Your cloud copy is out of date — save now')
+                  ? t('cloud_push_hint_stale', 'Your cloud copy is out of date - save now')
                   : t('cloud_push_hint', 'Keeps a safe backup in case this device is lost')}
               </span>
               {cloudStatus === 'done' && <span className="footer-hint" style={{ color: 'var(--ok)' }}>{t('cloud_done', '\u2713 Saved')}</span>}
-              {cloudStatus === 'error' && <span className="footer-hint" style={{ color: 'var(--danger)' }}>{t('cloud_error', 'Could not save — please try again')}</span>}
+              {cloudStatus === 'error' && <span className="footer-hint" style={{ color: 'var(--danger)' }}>{t('cloud_error', 'Could not save - please try again')}</span>}
             </div>
           )}
           <div className="footer-action">
@@ -224,12 +224,23 @@ export function Owner({ onLock }: { onLock: () => void }) {
             <button onClick={() => setConfirmAction('wipe')}>{t('wipe_btn', 'Wipe everything')}</button>
             <span className="footer-hint">{t('wipe_hint', 'Permanently deletes all data on this device')}</span>
           </div>
-          {/* Encrypted audit log — shows the user every time their
+          {/* Encrypted audit log - shows the user every time their
               journal has been unlocked, exported, or synced. Helps
               spot "who else has been in here". */}
           <div className="footer-action">
             <button onClick={() => setShowAudit(true)}>{t('audit_btn', 'Recent activity')}</button>
             <span className="footer-hint">{t('audit_hint', 'See unlocks, exports and cloud syncs')}</span>
+          </div>
+          <div className="footer-action">
+            <a
+              href="https://amzn.eu/d/02TZ0FVb"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="footer-link-btn"
+            >
+              {t('book_btn', 'Order the printed book')}
+            </a>
+            <span className="footer-hint">{t('book_hint', 'A paper companion you can keep on a shelf')}</span>
           </div>
           <div className="toggle-wrap">
             <button

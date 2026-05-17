@@ -18,9 +18,9 @@ const LOCALE_LOADERS: Record<string, () => Promise<{ default: Record<string, str
 
 // Translation status per locale. Set honestly so the language selector
 // can tell a user what they'll actually get before they switch:
-//   complete — every string translated (currently: English, the source)
-//   mostly   — ~90% translated; one section (Digital) still in English
-//   partial  — ~50% translated; a significant portion falls back to English
+//   complete - every string translated (currently: English, the source)
+//   mostly   - ~90% translated; one section (Digital) still in English
+//   partial  - ~50% translated; a significant portion falls back to English
 // When the Digital section is translated, promote de/es/fr to 'complete'.
 // When another language is properly translated end-to-end, promote it.
 export type TranslationStatus = 'complete' | 'mostly' | 'partial';

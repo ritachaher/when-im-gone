@@ -113,7 +113,7 @@ describe('vault: recovery round trip', () => {
     await create({ password: 'test-pw', ownerDisplayName: 'Eleanor' });
     const exportedText = await (await exportEncryptedBlob()).text();
 
-    // @ts-expect-error — intentionally omitting the required flag
+    // @ts-expect-error - intentionally omitting the required flag
     await expect(importEncryptedBlob(exportedText, {})).rejects.toThrow(
       /confirmedReplace/,
     );

@@ -1,4 +1,4 @@
-// WebCrypto wrapper — PBKDF2 (SHA-256, 600k) + AES-GCM-256.
+// WebCrypto wrapper - PBKDF2 (SHA-256, 600k) + AES-GCM-256.
 // Ported from the v0 single-file prototype. Keep the algorithm constants here
 // so a future migration to Argon2id touches only this module.
 
@@ -120,7 +120,7 @@ export function normaliseRecoveryCode(input: string): string {
  *
  * Threat model: anyone holding the recovery code can already decrypt
  * the journal, so gating the cloud document by "know the recovery code"
- * adds no weakness — it's precisely the right level. The context prefix
+ * adds no weakness - it's precisely the right level. The context prefix
  * prevents the hash from being confused with any other hash of the same
  * input (e.g. the wrap-key derivation path).
  *

@@ -1,4 +1,4 @@
-// Section schemas — declarative description of every field in the four rich
+// Section schemas - declarative description of every field in the four rich
 // sections ported from the v0 mockup. The generic form renderer in fields.tsx
 // walks these schemas so we don't hand-build 100+ JSX inputs.
 
@@ -52,12 +52,12 @@ export type SectionSchema = {
 
 export const SCHEMAS: Record<string, SectionSchema> = {
   me: {
-    intro: 'Your basic identity — names, dates, family. The first thing anyone looking for information will need.',
+    intro: 'Your basic identity - names, dates, family. The first thing anyone looking for information will need.',
     cards: [
       {
         kind: 'single',
         title: 'Personal information',
-        hint: 'Start here — the basics everyone will need.',
+        hint: 'Start here - the basics everyone will need.',
         fields: [
           { id: 'title', label: 'Title', type: 'select', options: ['Mrs', 'Mr', 'Miss', 'Mx', 'Dr'] },
           { id: 'pronouns', label: 'Preferred pronouns', type: 'text' },
@@ -110,10 +110,10 @@ export const SCHEMAS: Record<string, SectionSchema> = {
   },
 
   financial: {
-    intro: 'Pointers to your accounts. Never write full passwords or PINs here — this tells survivors where to go.',
+    intro: 'Pointers to your accounts. Never write full passwords or PINs here - this tells survivors where to go.',
     rootCallout: {
       type: 'warn',
-      text: 'Important: Do NOT enter passwords, PINs, CVVs or account balances. This book tells your family where to look — it is not a password vault. For logins, use a password manager and leave access instructions in the Digital section.',
+      text: 'Important: Do NOT enter passwords, PINs, CVVs or account balances. This book tells your family where to look - it is not a password vault. For logins, use a password manager and leave access instructions in the Digital section.',
     },
     cards: [
       {
@@ -246,7 +246,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         fields: [
           { id: 'preference', label: 'Preference', type: 'chips', options: ['Cemetery burial', 'Cremation', 'Natural woodland', 'At sea', 'Other'], full: true },
           { id: 'crematorium', label: 'Preferred crematorium / site', type: 'text' },
-          { id: 'ashes', label: 'Ashes — what should happen', type: 'select', options: ['Scattered at a meaningful place', 'Kept by a relative', 'Buried in a family plot'] },
+          { id: 'ashes', label: 'Ashes - what should happen', type: 'select', options: ['Scattered at a meaningful place', 'Kept by a relative', 'Buried in a family plot'] },
           { id: 'ashesWhere', label: 'Where exactly?', type: 'text', full: true, placeholder: 'A place that means something to you' },
         ],
       },
@@ -259,7 +259,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
           { id: 'readings', label: 'Readings I\u2019d like', type: 'textarea', full: true },
           { id: 'music', label: 'Music', type: 'textarea', full: true },
           { id: 'dressCode', label: 'Dress code', type: 'text' },
-          { id: 'flowers', label: 'Flowers', type: 'select', options: ['Family flowers only', 'Family and close friends', 'No flowers — donations instead'] },
+          { id: 'flowers', label: 'Flowers', type: 'select', options: ['Family flowers only', 'Family and close friends', 'No flowers - donations instead'] },
         ],
       },
       {
@@ -339,7 +339,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         title: 'End-of-life wishes',
         fields: [
           { id: 'organDonation', label: 'Organ donation', type: 'chips', options: ['Register interest', 'Do not donate', 'Discussed with family'], optional: true },
-          { id: 'bodyDonation', label: 'Body donation to science', type: 'chips', options: ['Yes', 'No', 'Maybe — discuss with family'], optional: true },
+          { id: 'bodyDonation', label: 'Body donation to science', type: 'chips', options: ['Yes', 'No', 'Maybe - discuss with family'], optional: true },
           { id: 'dnr', label: 'Do Not Resuscitate wishes', type: 'textarea', full: true, optional: true, placeholder: 'Your preferences for end-of-life care' },
         ],
       },
@@ -417,7 +417,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         title: 'Individual pets',
         listId: 'pets',
         addLabel: '＋ Add a pet',
-        hint: 'Food preferences, medication, insurance, routines — everything a new owner needs.',
+        hint: 'Food preferences, medication, insurance, routines - everything a new owner needs.',
         maxItems: 20,
         fields: [
           { id: 'name', label: 'Pet name', type: 'text' },
@@ -433,7 +433,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
   },
 
   insurances: {
-    intro: 'All your insurance policies in one place — life, home, health, vehicle and travel.',
+    intro: 'All your insurance policies in one place - life, home, health, vehicle and travel.',
     rootCallout: {
       type: 'warn',
       text: 'Do not store policy numbers in full. Record only enough to identify the policy. Store actual policy documents separately in a safe location.',
@@ -444,7 +444,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         title: 'Insurance policies',
         listId: 'insurances',
         addLabel: '＋ Add a policy',
-        hint: 'Life, home, contents, health, car, travel — whoever manages these will need this information.',
+        hint: 'Life, home, contents, health, car, travel - whoever manages these will need this information.',
         maxItems: 20,
         fields: [
           { id: 'type', label: 'Type', type: 'select', options: ['Life', 'Home', 'Home contents', 'Health', 'Car', 'Travel', 'Pet', 'Other'] },
@@ -503,7 +503,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
           { id: 'homeAddress', label: 'Property address', type: 'textarea', full: true },
           { id: 'ownership', label: 'Ownership', type: 'text', placeholder: 'Sole, joint, mortgaged' },
           { id: 'mortgage', label: 'Mortgage details', type: 'text', full: true, optional: true, placeholder: 'Lender & reference number' },
-          { id: 'homeTo', label: 'Should go to', type: 'text', full: true, optional: true, placeholder: 'Name(s) — let your will be the legal authority' },
+          { id: 'homeTo', label: 'Should go to', type: 'text', full: true, optional: true, placeholder: 'Name(s) - let your will be the legal authority' },
         ],
       },
       {
@@ -511,7 +511,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         title: 'Vehicles',
         listId: 'vehicles',
         addLabel: '＋ Add a vehicle',
-        hint: 'Cars, motorcycles, boats, caravans — any registered vehicles.',
+        hint: 'Cars, motorcycles, boats, caravans - any registered vehicles.',
         maxItems: 10,
         fields: [
           { id: 'type', label: 'Type', type: 'text', placeholder: 'e.g. Car, motorcycle, boat' },
@@ -551,7 +551,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         title: 'Regular payments',
         listId: 'payments',
         addLabel: '＋ Add a payment',
-        hint: 'Mortgage or rent, utilities, subscriptions, charity donations — everything that comes out monthly.',
+        hint: 'Mortgage or rent, utilities, subscriptions, charity donations - everything that comes out monthly.',
         maxItems: 25,
         fields: [
           { id: 'payee', label: 'Payment to', type: 'text', placeholder: 'e.g. Tesco Bank, Oxfam' },
@@ -665,7 +665,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         kind: 'single',
         title: 'Trusts, bequests & estate',
         fields: [
-          { id: 'trusts', label: 'Trust details', type: 'textarea', full: true, optional: true, placeholder: 'Any trusts set up — refer to Will' },
+          { id: 'trusts', label: 'Trust details', type: 'textarea', full: true, optional: true, placeholder: 'Any trusts set up - refer to Will' },
           { id: 'majorBequests', label: 'Major bequests from Will', type: 'textarea', full: true, optional: true, placeholder: 'E.g. House to spouse, art collection to sibling, charity donation' },
           { id: 'executorName', label: 'Executor(s) of your Will', type: 'text', full: true, optional: true },
           { id: 'executorContact', label: 'Executor contact details', type: 'text', full: true, optional: true },
@@ -675,7 +675,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
   },
 
   recommend: {
-    intro: 'Things you love — places, people, books, films, experiences. A bit of you that lives on.',
+    intro: 'Things you love - places, people, books, films, experiences. A bit of you that lives on.',
     rootCallout: {
       type: 'info',
       text: 'This is the lighter section. Share what brings you joy so loved ones feel connected to you.',
@@ -703,7 +703,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
         kind: 'single',
         title: 'People & tradespeople',
         fields: [
-          { id: 'tradespeople', label: 'Good tradespeople to know', type: 'textarea', full: true, optional: true, placeholder: 'Plumber, electrician, mechanic — trustworthy people who do good work' },
+          { id: 'tradespeople', label: 'Good tradespeople to know', type: 'textarea', full: true, optional: true, placeholder: 'Plumber, electrician, mechanic - trustworthy people who do good work' },
           { id: 'professionals', label: 'Professional recommendations', type: 'textarea', full: true, optional: true, placeholder: 'Good lawyers, doctors, advisers in your area' },
           { id: 'other', label: 'Other recommendations', type: 'textarea', full: true, optional: true, placeholder: 'Anything else you want to share' },
         ],
@@ -734,7 +734,7 @@ export const SCHEMAS: Record<string, SectionSchema> = {
   },
 };
 
-// Count fields filled across a section — used for progress + status dots.
+// Count fields filled across a section - used for progress + status dots.
 export function countFilled(
   schema: SectionSchema,
   fields: Record<string, unknown> | undefined,

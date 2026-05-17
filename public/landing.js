@@ -1,6 +1,6 @@
 // Landing page carousel. Extracted from index.html so the page can ship
 // under a strict Content-Security-Policy without 'unsafe-inline' for
-// scripts. Plain ES5 — runs without a build step.
+// scripts. Plain ES5 - runs without a build step.
 (function () {
   var track = document.getElementById('carouselTrack');
   var dots = document.querySelectorAll('.carousel-dot');

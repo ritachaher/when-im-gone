@@ -658,6 +658,57 @@ section { padding: 90px 0; }
   margin-bottom: 16px;
   max-width: 60ch;
 }
+.book {
+  background: var(--cream-warm);
+  padding: 80px 0;
+}
+.book-grid {
+  display: grid; grid-template-columns: 240px 1fr; gap: 56px;
+  align-items: center;
+  max-width: 980px; margin: 0 auto;
+}
+@media (max-width: 720px) {
+  .book-grid { grid-template-columns: 1fr; gap: 28px; }
+  .book-cover { max-width: 220px; margin: 0 auto; }
+}
+.book-cover {
+  display: block;
+  aspect-ratio: 2/3;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--cream);
+  border: 1px solid var(--cream-line);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+  transition: transform 0.2s ease;
+}
+.book-cover:hover { transform: translateY(-2px); }
+.book-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.book-cover.no-image {
+  background: linear-gradient(135deg, var(--navy), var(--navy-deep));
+  display: flex; align-items: center; justify-content: center;
+}
+.book-cover.no-image::after {
+  content: 'When I\'m Gone';
+  color: var(--on-navy);
+  font-family: var(--serif);
+  font-size: 22px;
+  text-align: center;
+  padding: 0 18px;
+}
+.book h2 { margin-bottom: 16px; }
+.book p {
+  color: var(--ink-soft);
+  font-size: 19px;
+  margin-bottom: 16px;
+  max-width: 56ch;
+}
+.book-tagline {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink) !important;
+  margin-bottom: 24px !important;
+}
+
 .founder .sig {
   font-family: var(--serif);
   font-style: italic;
@@ -862,7 +913,7 @@ footer {
         <a class="btn btn-ghost" href="#how">How it works</a>
       </div>
       <div class="cta-fineprint">
-        <span><a href="#sample" style="color: rgb(183, 192, 210); text-decoration: underline; text-underline-offset: 3px;">Stays on your device</a></span>
+        <span><a href="#sample" style="color: rgb(183, 192, 210); text-decoration: none;">Stays on your device</a></span>
         <span class="dot" aria-hidden="true"></span>
         <span style="">No subscription, ever</span>
         <span class="dot" aria-hidden="true"></span>
@@ -1096,6 +1147,24 @@ footer {
   </div>
 </section>
 
+<!-- ============ BOOK ============ -->
+<section class="book" aria-labelledby="book-h">
+  <div class="wrap">
+    <div class="book-grid">
+      <a class="book-cover" href="https://amzn.eu/d/02TZ0FVb" target="_blank" rel="noopener" aria-label="Buy When I'm Gone on Amazon">
+        <img src="/images/book-cover.jpg" alt="When I'm Gone book cover" onerror="this.style.display='none'; this.parentElement.classList.add('no-image');" />
+      </a>
+      <div>
+        <div class="eyebrow" style="color: var(--coral-deep); margin-bottom: 14px;">The companion book</div>
+        <h2 id="book-h">Prefer pen and paper?</h2>
+        <p>When I'm Gone is also a printed journal you can keep on a shelf. Same guided questions, same calm, written by hand. A practical gift for parents, partners and anyone planning ahead.</p>
+        <p class="book-tagline">"A journal that solves your loved ones' problems."</p>
+        <a class="btn btn-primary" href="https://amzn.eu/d/02TZ0FVb" target="_blank" rel="noopener">Order the book on Amazon</a>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ============ FAQ ============ -->
 <section class="faq" id="faq" aria-labelledby="faq-h">
   <div class="wrap">
@@ -1123,7 +1192,7 @@ footer {
       </details>
       <details class="faq-item">
         <summary>What happens to my journal if your company closes? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Your journal works without us. Because everything is encrypted on your device, it doesn't depend on our servers being online. You can also export your journal as a PDF at any time — so you'll always have a copy you can hold in your hand.</div>
+        <div class="answer">Your journal works without us. Because everything is encrypted on your device, it doesn't depend on our servers being online. You can also export your journal as a PDF at any time - so you'll always have a copy you can hold in your hand.</div>
       </details>
       <details class="faq-item">
         <summary>Is my information really private? <span class="plus" aria-hidden="true">+</span></summary>
@@ -1237,7 +1306,7 @@ footer {
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 When I'm Gone Ltd · Registered in England</span>
+      <span>© 2026 White Woodlands Ltd · Registered in England</span>
       <span class="made">
 </span>
     </div>

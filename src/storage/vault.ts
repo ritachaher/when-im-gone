@@ -117,7 +117,7 @@ async function unlockWith(secret: string, which: 'pw' | 'rc'): Promise<void> {
 //
 // Successful security-relevant events (unlock, export, cloud push/pull,
 // wipe) are recorded as small JSON blobs encrypted with the data key.
-// Failed unlocks are deliberately NOT recorded here — they're tracked
+// Failed unlocks are deliberately NOT recorded here - they're tracked
 // by the throttle counter in the Lock UI, which doesn't need the data
 // key. Storing failure attempts encrypted would also leak that the
 // vault was probed even after the actual records can't be read.
@@ -167,7 +167,7 @@ export async function readAudit(limit = 50): Promise<AuditEvent[]> {
     try {
       out.push(await decryptJSON<AuditEvent>(dataKey, r.blob));
     } catch {
-      // Old or corrupted record — skip rather than fail the whole list.
+      // Old or corrupted record - skip rather than fail the whole list.
     }
   }
   return out;
@@ -251,7 +251,7 @@ export async function getLastCloudPushAt(): Promise<number | null> {
 /**
  * Reads the stable cloud document ID for this vault. Returns null if
  * missing (pre-sync-era vaults that haven't been unlocked with the
- * recovery code yet — the backfill runs there).
+ * recovery code yet - the backfill runs there).
  */
 export async function getVaultCloudId(): Promise<string | null> {
   const meta = await db.meta.get('meta');
@@ -267,7 +267,7 @@ export async function markCloudPushed(at: number = Date.now()): Promise<void> {
 // ===== Encrypted backup (.wig) =====
 //
 // Exports the IndexedDB contents to a self-contained blob. The recipient needs
-// the password or recovery code to decrypt — nothing sensitive leaks.
+// the password or recovery code to decrypt - nothing sensitive leaks.
 
 type ExportPayload = {
   format: 'wig/1';

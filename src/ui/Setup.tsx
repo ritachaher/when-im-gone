@@ -50,7 +50,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
     try {
       // HIBP k-anonymity check. Only the first 5 hex chars of SHA-1 leave
       // the device. Network failures are treated as a soft 'unknown' and
-      // do not block setup — being offline shouldn't stop someone making
+      // do not block setup - being offline shouldn't stop someone making
       // a journal.
       if (!breachAck) {
         const breach = await checkBreached(pw1);
@@ -58,11 +58,11 @@ export function Setup({ onDone }: { onDone: () => void }) {
           setBusy(false);
           // i18next typings expect a numeric `count`; pass it raw and
           // let the formatter render it. We don't bother with locale
-          // grouping here — the warning value is the message itself.
+          // grouping here - the warning value is the message itself.
           setErr(
             t(
               'pw_breached',
-              'This password has appeared in {{count}} known data breaches. Please pick a different one — or click Create again to use it anyway.',
+              'This password has appeared in {{count}} known data breaches. Please pick a different one - or click Create again to use it anyway.',
               { count: breach.count },
             ),
           );
@@ -102,7 +102,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
     } catch (e) {
       // OperationError means the code is wrong (the downloaded blob's
       // auth tag didn't validate against this code). Any other error is
-      // network/storage/Firebase — treat differently.
+      // network/storage/Firebase - treat differently.
       const name =
         e && typeof e === 'object' && 'name' in e ? String(e.name) : '';
       if (name === 'OperationError') {
@@ -113,7 +113,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
           ),
         );
       } else {
-        // Log only the error class — never the exception object — so
+        // Log only the error class - never the exception object - so
         // the recovery code can't leak via DevTools or screen capture.
         console.error('Pair failed:', name || 'unknown');
         setErr(
@@ -186,6 +186,22 @@ export function Setup({ onDone }: { onDone: () => void }) {
                   {t('trust_loved')}
                 </li>
               </ul>
+              <a
+                className="setup-book-card"
+                href="https://amzn.eu/d/02TZ0FVb"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="setup-book-icon" aria-hidden>
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                  </svg>
+                </div>
+                <div className="setup-book-body">
+                  <strong>{t('setup_book_title', 'Prefer pen and paper?')}</strong>
+                  <span>{t('setup_book_hint', 'The printed companion journal is on Amazon.')}</span>
+                </div>
+              </a>
             </div>
           </>
         )}
@@ -231,7 +247,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
 
         {step === 'disclaimer' && (
           <>
-            <h2>{t('disclaimer_title', 'Before you begin — what we promise and what we don\u2019t')}</h2>
+            <h2>{t('disclaimer_title', 'Before you begin - what we promise and what we don\u2019t')}</h2>
             <p>
               {t(
                 'disclaimer_p1',
@@ -247,7 +263,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
             <p className="muted">
               {t(
                 'disclaimer_p3',
-                'There is no back door. If both the password and the recovery code are lost, nobody can recover what\u2019s inside — not even us. That\u2019s the price of real privacy. At the end of setup we\u2019ll help you print a sealed-envelope recovery sheet — keep it somewhere your trusted person can find it.',
+                'There is no back door. If both the password and the recovery code are lost, nobody can recover what\u2019s inside - not even us. That\u2019s the price of real privacy. At the end of setup we\u2019ll help you print a sealed-envelope recovery sheet - keep it somewhere your trusted person can find it.',
               )}
             </p>
             <div className="btnrow">
@@ -286,7 +302,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
             <label>{t('pw_label')}</label>
             <input className="setup-input" type="password" value={pw1} onChange={(e) => { setPw1(e.target.value); setBreachAck(false); }} autoFocus />
             <ul className="pw-rules">
-              <li className={rules.len ? 'ok' : ''}>{rules.len ? '\u2713' : '\u2022'} {t('pw_rule_length', 'At least 14 characters')}</li>
+              <li className={rules.len ? 'ok' : ''}>{rules.len ? '\u2713' : '\u2022'} {t('pw_rule_length', 'At least 8 characters')}</li>
               <li className={rules.mixed ? 'ok' : ''}>{rules.mixed ? '\u2713' : '\u2022'} {t('pw_rule_mixed')}</li>
               <li className={rules.number ? 'ok' : ''}>{rules.number ? '\u2713' : '\u2022'} {t('pw_rule_number')}</li>
               <li className={rules.symbol ? 'ok' : ''}>{rules.symbol ? '\u2713' : '\u2022'} {t('pw_rule_symbol', 'At least one symbol (! ? # etc.)')}</li>
@@ -331,7 +347,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
             <div className="callout warn" style={{ fontSize: 13 }}>
               {t(
                 'recovery_screenshot_warn',
-                'Please don’t screenshot this — phone screenshots get backed up to iCloud or Google Photos automatically and stay there forever. Print it or write it down on paper instead.',
+                'Please don’t screenshot this - phone screenshots get backed up to iCloud or Google Photos automatically and stay there forever. Print it or write it down on paper instead.',
               )}
             </div>
             <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start', margin: '12px 0', fontSize: 14 }}>
