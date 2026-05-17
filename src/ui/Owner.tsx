@@ -293,7 +293,7 @@ export function Owner({ onLock }: { onLock: () => void }) {
         </div>
 
         {schema ? (
-          <SchemaEditor slug={section.slug} />
+          <SchemaEditor slug={section.slug} onNavigate={pickSection} />
         ) : (
           <div className="stub">
             <em>{t(`sec_${section.slug}_title`, section.title)}</em>
@@ -392,7 +392,7 @@ function statusLabel(slug: string, journal: { sections: Record<string, { fields:
   return `\u25D0 ${t('in_progress', 'In progress')}`;
 }
 
-function SchemaEditor({ slug }: { slug: string }) {
+function SchemaEditor({ slug, onNavigate }: { slug: string; onNavigate?: (slug: string) => void }) {
   const { t } = useTranslation();
   const journal = useVault((s) => s.journal);
   const schema = SCHEMAS[slug]!;
@@ -413,6 +413,7 @@ function SchemaEditor({ slug }: { slug: string }) {
             cardIndex={i}
             card={card}
             items={(data?.items?.[card.listId] as RepeatingItem[] | undefined) ?? []}
+            onNavigate={onNavigate}
           />
         ),
       )}
@@ -471,11 +472,13 @@ function RepeatingCard({
   cardIndex,
   card,
   items,
+  onNavigate,
 }: {
   slug: string;
   cardIndex: number;
   card: Extract<Card, { kind: 'repeat' }>;
   items: RepeatingItem[];
+  onNavigate?: (slug: string) => void;
 }) {
   const { t } = useTranslation();
   const [removeId, setRemoveId] = useState<string | null>(null);
@@ -535,6 +538,35 @@ function RepeatingCard({
               );
             })}
           </div>
+          {it.addedToWill === 'No' && (
+            <div className="callout warn" style={{ marginTop: 8 }}>
+              ⚠️ This person is not named in a will. This record has no legal standing on its own — we strongly recommend adding them to a formal will.
+              {onNavigate && (
+                <div style={{ marginTop: 6 }}>
+                  <button
+                    className="btn"
+                    style={{ fontSize: 13, padding: '4px 10px' }}
+                    onClick={() => onNavigate('financial')}
+                  >
+                    Go to Financial Information — Will &amp; Solicitors →
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+          {it.addedToWill === 'Yes' && (
+            <div className="callout" style={{ marginTop: 8 }}>
+              ✓ Added to will.
+              {onNavigate && (
+                <button
+                  style={{ marginLeft: 10, fontSize: 13, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', color: 'inherit', padding: 0 }}
+                  onClick={() => onNavigate('financial')}
+                >
+                  View Will &amp; Solicitor details →
+                </button>
+              )}
+            </div>
+          )}
         </div>
       ))}
 
