@@ -454,7 +454,7 @@ function EmailStep({
           {t('email_skip', 'Skip')}
         </button>
         <button className="btn" disabled={busy || !valid} onClick={submit}>
-          {busy ? t('email_busy', 'Saving…') : t('email_submit', 'Keep me updated')}
+          {busy ? t('email_busy', 'Saving…') : t('email_submit', 'Agree')}
         </button>
       </div>
     </>
