@@ -26,6 +26,8 @@ import {
   type User,
 } from 'firebase/auth';
 import {
+  addDoc,
+  collection,
   doc,
   getDoc,
   getFirestore,
@@ -152,4 +154,22 @@ export async function pairViaRecoveryCode(
 
 export function isFirebaseConfigured(): boolean {
   return db !== null;
+}
+
+/**
+ * Optionally store an email address in the subscribers collection.
+ * This is completely unlinked from any vault ID or anonymous user UID —
+ * it is purely a marketing opt-in. The user must explicitly choose to
+ * submit; there is always a visible Skip option in the UI.
+ *
+ * Does nothing silently if Firebase is not configured.
+ */
+export async function subscribeEmail(email: string): Promise<void> {
+  if (!db) return;
+  await ensureAnonUser();
+  await addDoc(collection(db, 'subscribers'), {
+    email: email.trim().toLowerCase(),
+    subscribedAt: serverTimestamp(),
+    source: 'setup',
+  });
 }

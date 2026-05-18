@@ -67,6 +67,21 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    // ── Subscribers ──────────────────────────────────────────────────────
+    // Optional email capture at end of setup. Documents are write-once
+    // from anonymous authenticated clients. No client reads or deletes
+    // ever. Shape and size validated here; deduplication handled
+    // server-side if needed.
+    match /subscribers/{docId} {
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasOnly(['email', 'subscribedAt', 'source'])
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() > 3
+                    && request.resource.data.email.size() < 320
+                    && request.resource.data.source is string;
+      allow read, update, delete: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { create, unlockWithRecovery } from '../storage/vault';
-import { isFirebaseConfigured, pairViaRecoveryCode } from '../storage/firebase';
+import { isFirebaseConfigured, pairViaRecoveryCode, subscribeEmail } from '../storage/firebase';
 import { checkBreached, checkLocalRules, localRulesPass } from '../crypto/password-strength';
 
-type Step = 'welcome' | 'disclaimer' | 'name' | 'password' | 'recovery' | 'pair';
+type Step = 'welcome' | 'disclaimer' | 'name' | 'password' | 'recovery' | 'email' | 'pair';
 
 export function Setup({ onDone }: { onDone: () => void }) {
   const { t } = useTranslation();
@@ -366,11 +367,96 @@ export function Setup({ onDone }: { onDone: () => void }) {
             </label>
             <div className="btnrow">
               <button className="btn ghost" onClick={() => window.print()}>{t('print')}</button>
-              <button className="btn" disabled={!storedAck} onClick={onDone}>{t('recovery_done')}</button>
+              <button className="btn" disabled={!storedAck} onClick={() => setStep('email')}>{t('recovery_done')}</button>
             </div>
           </>
         )}
+
+        {step === 'email' && (
+          <EmailStep
+            t={t}
+            onDone={onDone}
+          />
+        )}
       </div>
     </div>
+  );
+}
+
+// ── Email capture step ────────────────────────────────────────────────────────
+// Separate component so it has its own state and doesn't re-render the
+// parent Setup on every keystroke.
+function EmailStep({
+  t,
+  onDone,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: TFunction<any>;
+  onDone: () => void;
+}) {
+  const [email, setEmail] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const valid = email.trim().includes('@') && email.trim().length > 4;
+
+  async function submit() {
+    if (!valid || busy) return;
+    setBusy(true);
+    setErr(null);
+    try {
+      await subscribeEmail(email);
+    } catch {
+      // Don't block the user from entering the app if this fails —
+      // network errors or Firebase being unconfigured are both fine.
+    } finally {
+      setBusy(false);
+      onDone();
+    }
+  }
+
+  return (
+    <>
+      <div style={{ textAlign: 'center', marginBottom: 8 }}>
+        <svg width="56" height="56" viewBox="0 0 56 56" fill="none" aria-hidden="true" style={{ margin: '0 auto 16px' }}>
+          <circle cx="28" cy="28" r="28" fill="var(--page-alt)" />
+          <rect x="12" y="18" width="32" height="22" rx="4" fill="none" stroke="var(--navy-soft)" strokeWidth="2" />
+          <path d="M12 22l16 11 16-11" stroke="var(--navy-soft)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </div>
+      <h2 style={{ textAlign: 'center' }}>
+        {t('email_title', 'One last thing')}
+      </h2>
+      <p className="muted" style={{ textAlign: 'center' }}>
+        {t(
+          'email_hint',
+          "Would you like occasional updates about When I'm Gone? New features, guides, that kind of thing. No spam, ever.",
+        )}
+      </p>
+      <label>{t('email_label', 'Your email address')}</label>
+      <input
+        className="setup-input"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder={t('email_placeholder', 'e.g. hello@example.com')}
+        autoFocus
+        onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
+      />
+      <p style={{ fontSize: 13, color: 'var(--ink-soft)', marginTop: 4, marginBottom: 0 }}>
+        {t('email_fine', 'We never share your email. Unsubscribe any time by emailing us.')}
+      </p>
+      {err && <p className="pw-error">{err}</p>}
+      <div className="btnrow" style={{ marginTop: 20 }}>
+        <button className="btn ghost" onClick={onDone} disabled={busy}>
+          {t('email_skip', 'Skip')}
+        </button>
+        <button className="btn" disabled={busy || !valid} onClick={submit}>
+          {busy ? t('email_busy', 'Saving…') : t('email_submit', 'Keep me updated')}
+        </button>
+      </div>
+    </>
   );
 }
