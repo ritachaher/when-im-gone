@@ -872,7 +872,110 @@ footer {
 /* Tiny visually-hidden util */
 .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 </style>
-<style></style></head>
+<style>
+/* ---------- Sample journals ---------- */
+.samples {
+  background: var(--cream);
+  border-top: 1px solid var(--cream-line);
+}
+.picker-row {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+  margin-bottom: 48px;
+}
+.picker-btn {
+  display: flex; align-items: center; gap: 9px;
+  padding: 10px 20px; border-radius: 99px;
+  border: 1.5px solid var(--cream-line);
+  background: white; cursor: pointer;
+  font-family: var(--sans); font-size: 16px; font-weight: 600;
+  color: var(--ink-soft); transition: all .18s;
+  white-space: nowrap;
+}
+.picker-btn:hover { border-color: var(--navy); color: var(--navy); }
+.picker-btn.active {
+  background: var(--navy); border-color: var(--navy);
+  color: white; box-shadow: 0 4px 12px rgba(44,62,93,.25);
+}
+.picker-btn .avatar-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0; line-height: 1;
+}
+.journal-pane { display: none; }
+.journal-pane.visible { display: block; animation: jfadein .3s ease; }
+@keyframes jfadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.journal-header {
+  background: var(--navy-deep);
+  border-radius: var(--radius-l);
+  padding: 32px 36px;
+  margin-bottom: 24px;
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+  border: 1px solid rgba(255,255,255,.07);
+}
+.jh-label {
+  font-size: 12px; font-weight: 700; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--coral); margin-bottom: 8px;
+}
+.jh-name {
+  font-family: var(--serif); font-size: clamp(24px, 3vw, 36px);
+  font-weight: 600; color: var(--on-navy); margin-bottom: 4px;
+}
+.jh-meta { font-size: 14px; color: var(--on-navy-mute); }
+.jh-right { display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+.jh-tag {
+  font-size: 12px; font-weight: 700; letter-spacing: .1em;
+  text-transform: uppercase; padding: 5px 12px; border-radius: 99px;
+  background: rgba(217,125,92,.18); color: var(--coral);
+}
+.jh-progress { font-size: 14px; color: var(--on-navy-mute); text-align: right; }
+.journal-header .progress-bar { width: 120px; height: 5px; margin-top: 5px; }
+.sections-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px;
+}
+@media (max-width: 720px) { .sections-grid { grid-template-columns: 1fr; } }
+.s-card {
+  background: white; border: 1px solid var(--cream-line);
+  border-radius: var(--radius-l); overflow: hidden;
+}
+.s-card.full { grid-column: 1 / -1; }
+.s-card-head {
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid var(--cream-line);
+  display: flex; align-items: center; gap: 12px;
+}
+.s-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--cream-warm); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--coral-deep);
+}
+.s-icon svg { width: 18px; height: 18px; }
+.s-title { font-family: var(--serif); font-size: 17px; font-weight: 600; color: var(--ink); }
+.s-card-body { padding: 18px 24px 20px; }
+.field-row { display: flex; flex-direction: column; gap: 1px; margin-bottom: 14px; }
+.field-row:last-child { margin-bottom: 0; }
+.field-label {
+  font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--ink-mute); margin-bottom: 3px;
+}
+.field-value { font-size: 16px; color: var(--ink); line-height: 1.45; }
+.field-value.long { color: var(--ink-soft); font-size: 15.5px; line-height: 1.6; }
+.s-divider { height: 1px; background: var(--cream-line); margin: 14px 0; }
+.sub-item {
+  background: var(--cream-warm); border: 1px solid var(--cream-line);
+  border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
+}
+.sub-item:last-child { margin-bottom: 0; }
+.sub-item .si-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--ink); }
+.sub-item .si-detail { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+.callout-note {
+  background: #EEF3FA; border-left: 3px solid var(--navy);
+  border-radius: 0 8px 8px 0; padding: 12px 14px;
+  font-size: 15px; color: var(--ink-soft); line-height: 1.5; margin-top: 10px;
+  font-style: italic;
+}
+</style></head>
 
 <body style="" data-new-gr-c-s-check-loaded="14.1290.0" data-gr-ext-installed="" data-new-gr-c-s-loaded="14.1290.0">
 <a class="skip" href="#main">Skip to main content</a>
@@ -887,6 +990,7 @@ footer {
     </a>
     <nav class="top-nav" aria-label="Primary">
       <a href="#how" class="nav-link">How it works</a>
+      <a href="#sample" class="nav-link">Examples</a>
       <a href="#faq" class="nav-link">Questions</a>
       <a href="#pricing" class="nav-link">Pricing</a>
       <a href="https://www.whenimgone.life/app.html" class="btn-login">Log in</a>
@@ -1126,6 +1230,555 @@ footer {
   </div>
 </section>
 
+<!-- ============ SAMPLE JOURNALS ============ -->
+<section class="samples" id="sample" aria-labelledby="sample-h">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Real examples</div>
+      <h2 id="sample-h">See exactly what your family would find.</h2>
+      <p>Seven fictional journals — filled the way real people would. Pick a name and browse as their family would see it.</p>
+    </div>
+
+    <div class="picker-row">
+      <button class="picker-btn active" data-person="maureen">
+        <span class="avatar-dot" style="background:#EEF3FA;color:#2C3E5D">M</span>
+        Maureen
+      </button>
+      <button class="picker-btn" data-person="hillary">
+        <span class="avatar-dot" style="background:#FBF0EA;color:#C0664A">H</span>
+        Hillary
+      </button>
+      <button class="picker-btn" data-person="teresa">
+        <span class="avatar-dot" style="background:#F0EDF7;color:#5B3FA0">T</span>
+        Teresa
+      </button>
+      <button class="picker-btn" data-person="gloria">
+        <span class="avatar-dot" style="background:#FAEEF0;color:#A03F50">G</span>
+        Gloria
+      </button>
+      <button class="picker-btn" data-person="edna">
+        <span class="avatar-dot" style="background:#EDF6F0;color:#3F7A55">E</span>
+        Edna
+      </button>
+      <button class="picker-btn" data-person="elke">
+        <span class="avatar-dot" style="background:#F6F3EC;color:#7A6A3F">El</span>
+        Elke
+      </button>
+      <button class="picker-btn" data-person="kevin">
+        <span class="avatar-dot" style="background:#EEF4F9;color:#3F5E7A">K</span>
+        Kevin
+      </button>
+    </div>
+
+    <!-- ── MAUREEN ── -->
+    <div class="journal-pane visible" id="pane-maureen">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Maureen's journal</div>
+          <div class="jh-meta">Last updated 3 March 2026 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">14 of 18 sections filled
+            <div class="progress-bar"><span style="width:78%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Maureen Patricia Holloway</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">14 February 1951</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">12 Larkspur Lane, Bath, BA1 4RQ</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Nationality</div><div class="field-value">British</div></div>
+            <div class="field-row"><div class="field-label">Unique patient identifier</div><div class="field-value">489 362 7015</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
+            <span class="s-title">Financial pointers</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">Lloyds Bank — current account</div><div class="si-detail">Sort code 30-96-22 · Account 41820073<br>Branch: Bath city centre</div></div>
+            <div class="sub-item"><div class="si-name">Premium Bonds — NS&amp;I</div><div class="si-detail">Holder number RE 847291 B<br>Documents in the green box on the study shelf</div></div>
+            <div class="sub-item"><div class="si-name">Teachers' Pension Scheme</div><div class="si-detail">Member number 4829301 · Contact: 0345 606 6166</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <span class="s-title">Important documents</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Will</div><div class="field-value">Held by Hartley &amp; Compton Solicitors, 4 Milsom Street, Bath</div></div>
+            <div class="field-row"><div class="field-label">Solicitor</div><div class="field-value">Diana Hartley · 01225 481 200</div></div>
+            <div class="field-row"><div class="field-label">Lasting Power of Attorney</div><div class="field-value">Both health &amp; financial. Attorney: my son Robert Holloway. Registered with OPG.</div></div>
+            <div class="field-row"><div class="field-label">Passport</div><div class="field-value">UK — expires August 2029. Top drawer of the dressing table.</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Burial. Church of St Mary the Virgin, Bathwick.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Church of England. Please ask Reverend Susan Bates — she knows me well.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">Jerusalem · How Great Thou Art · Something from the Radio 2 era</div></div>
+            <div class="callout-note">"No black. I'd like people to wear something with a bit of colour in it. And please have a proper tea afterwards with sandwiches."</div>
+          </div>
+        </div>
+        <div class="s-card full">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2.08"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M18 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/></svg></span>
+            <span class="s-title">Key contacts</span>
+          </div>
+          <div class="s-card-body">
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="sub-item"><div class="si-name">Robert Holloway</div><div class="si-detail">Son · 07831 220 044<br>robert.holloway@gmail.com · Lives in Bristol</div></div>
+              <div class="sub-item"><div class="si-name">Janet Holloway</div><div class="si-detail">Daughter · 07956 114 882<br>Lives in Edinburgh · janet.holloway@hotmail.co.uk</div></div>
+              <div class="sub-item"><div class="si-name">Dr Amir Patel</div><div class="si-detail">GP · Bathwick Health Centre<br>01225 463 920 · Knows my full history</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HILLARY ── -->
+    <div class="journal-pane" id="pane-hillary">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Hillary's journal</div>
+          <div class="jh-meta">Last updated 12 April 2026 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">16 of 18 sections filled
+            <div class="progress-bar"><span style="width:89%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Hillary Jane Okafor-Smith</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">7 September 1970</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">Flat 4, Pemberton House, Islington, London N1 9RW</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Nationality</div><div class="field-value">British / Nigerian dual nationality</div></div>
+            <div class="field-row"><div class="field-label">Marital status</div><div class="field-value">Divorced (2019)</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
+            <span class="s-title">Financial pointers</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">HSBC Premier — current account</div><div class="si-detail">Sort code 40-05-31 · Account 72039184<br>Also linked to HSBC savings ISA</div></div>
+            <div class="sub-item"><div class="si-name">Vanguard SIPP pension</div><div class="si-detail">Reference VG-829-001-UK · Approx value £218,000 as of Jan 2026<br>Named beneficiary: daughter Amara</div></div>
+            <div class="sub-item"><div class="si-name">BlackRock investment portfolio</div><div class="si-detail">Held via Hargreaves Lansdown · Account HL-44-29831</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+            <span class="s-title">Personal property</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">Flat — Islington (primary residence)</div><div class="si-detail">Owned outright. Purchased 2021 for £685,000<br>Deeds held by McCarthy &amp; Hobbs Solicitors</div></div>
+            <div class="sub-item"><div class="si-name">Holiday apartment — Lisbon</div><div class="si-detail">Rua da Madalena 41, 2°, Lisbon · Let via Airbnb<br>Keys: with neighbour Carla Mendes</div></div>
+            <div class="sub-item"><div class="si-name">Mercedes EQC (2023)</div><div class="si-detail">Registration: YK23 BVP · Insured: Admiral · policy ADM-339921</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Cremation. Wherever is easiest for Amara and James.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Non-religious. Humanist celebrant. Keep it short — under an hour.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">Livin' for the City — Stevie Wonder · Blackbird — The Beatles · anything by Fela Kuti at the end</div></div>
+            <div class="callout-note">"I want a party, not a wake. Take the money from the Barclays current account and book somewhere decent. I mean it."</div>
+          </div>
+        </div>
+        <div class="s-card full">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2.08"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M18 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/></svg></span>
+            <span class="s-title">Key contacts</span>
+          </div>
+          <div class="s-card-body">
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="sub-item"><div class="si-name">Amara Okafor-Smith</div><div class="si-detail">Daughter · 07922 881 400<br>amara.okafor@gmail.com · Next of kin. Lives in Manchester.</div></div>
+              <div class="sub-item"><div class="si-name">James Okafor-Smith</div><div class="si-detail">Son · 07810 334 112 · 22 years old · Lives in London<br>james.osmith@outlook.com</div></div>
+              <div class="sub-item"><div class="si-name">Priya Sharma</div><div class="si-detail">Solicitor · McCarthy &amp; Hobbs · 020 7284 9930<br>Holds the will and property deeds</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TERESA ── -->
+    <div class="journal-pane" id="pane-teresa">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Teresa's journal</div>
+          <div class="jh-meta">Last updated 18 January 2026 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">12 of 18 sections filled
+            <div class="progress-bar"><span style="width:67%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Teresa Ann Griffiths (née Morgan)</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">22 October 1958</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">18 Heol yr Eglwys, Llandaff, Cardiff, CF5 2DW</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Nationality</div><div class="field-value">British (Welsh)</div></div>
+            <div class="field-row"><div class="field-label">Marital status</div><div class="field-value">Married — Gareth Griffiths (50 years this June)</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <span class="s-title">Important documents</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Will</div><div class="field-value">Last updated 2023. Brown envelope in the bureau in the front room. Copy with solicitor.</div></div>
+            <div class="field-row"><div class="field-label">Solicitor</div><div class="field-value">Owain Davies · Watkins &amp; Davies Solicitors, Cardiff · 029 2039 5510</div></div>
+            <div class="field-row"><div class="field-label">LPA — health &amp; welfare</div><div class="field-value">Registered. Attorney: Gareth (husband). Backup: daughter Sioned.</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Burial. St Michael &amp; All Angels, Llandaff. Next to Mam if possible.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Catholic Mass. Father Benedict at Llandaff Cathedral if available.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">Calon Lân · Abide With Me · Ave Maria</div></div>
+            <div class="callout-note">"Please arrange for the grandchildren to carry flowers. And a proper meal afterwards at the house."</div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M9 8h6M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></span>
+            <span class="s-title">Medical information</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">GP</div><div class="field-value">Dr Bethan Rees · Llandaff North Medical Centre · 029 2056 8800</div></div>
+            <div class="field-row"><div class="field-label">Conditions</div><div class="field-value">Type 2 diabetes (controlled). Mild atrial fibrillation. Osteoarthritis — right hip.</div></div>
+            <div class="sub-item" style="margin-top:10px"><div class="si-name">Metformin 1000mg</div><div class="si-detail">Twice daily with meals · repeat prescription · Llandaff Pharmacy</div></div>
+            <div class="sub-item"><div class="si-name">Apixaban 5mg</div><div class="si-detail">Twice daily · anticoagulant for AF · do not stop suddenly</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GLORIA ── -->
+    <div class="journal-pane" id="pane-gloria">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Gloria's journal</div>
+          <div class="jh-meta">Last updated 28 February 2026 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">15 of 18 sections filled
+            <div class="progress-bar"><span style="width:83%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Gloria Elaine Washington-Dunne</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">3 April 1962</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">Flat 9, The Granary, Hackney, London E8 3BT</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Nationality</div><div class="field-value">American (US passport) · UK indefinite leave to remain since 1997</div></div>
+            <div class="field-row"><div class="field-label">Marital status</div><div class="field-value">Widowed — Marcus Dunne (died 2021)</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></span>
+            <span class="s-title">Business details</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">Gloria Sounds Ltd</div><div class="si-detail">Music production &amp; artist management<br>Company no. 08341920 · VAT no. 182 4419 01<br>Accountant: Tunde Adeyemi · 020 7247 8800</div></div>
+            <div class="callout-note">"Please contact Tunde immediately — there are two ongoing artist contracts that will need to be novated or wound down."</div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Cremation. Scatter ashes in the sea off Montego Bay, Jamaica.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Gospel celebration. Lots of singing. St Paul's Hackney choir.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">I'll Fly Away · This Little Light of Mine · Purple Rain (end of service, loud, no apology)</div></div>
+            <div class="callout-note">"Wear what you feel. Just bring your voice."</div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12h6M9 16h6M9 8h6M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg></span>
+            <span class="s-title">Digital assets</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Instagram — @gloriasounds</div><div class="field-value">48k followers. Post a final message (drafted in Notes app, title: "Final post"). Then close the account.</div></div>
+            <div class="field-row"><div class="field-label">Spotify for Artists</div><div class="field-value">Contact Spotify to add a memorial flag. Don't remove the music.</div></div>
+            <div class="field-row"><div class="field-label">SoundCloud archive</div><div class="field-value">Leave it up. It's part of the work.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── EDNA ── -->
+    <div class="journal-pane" id="pane-edna">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Edna's journal</div>
+          <div class="jh-meta">Last updated 9 November 2025 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">9 of 18 sections filled
+            <div class="progress-bar"><span style="width:50%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Edna Rose Butterworth (née Clarke)</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">6 June 1937</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">Room 12, Meadowbrook Care Home, 40 Park Road, Harrogate, HG1 5PQ</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Marital status</div><div class="field-value">Widowed — Bernard Butterworth (died 2018, 62 years married)</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <span class="s-title">Important documents</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Will</div><div class="field-value">With Pickard &amp; Co Solicitors, Harrogate. Updated 2022. Ask for Mr Pickard.</div></div>
+            <div class="field-row"><div class="field-label">Solicitor</div><div class="field-value">Geoffrey Pickard · 01423 563 200</div></div>
+            <div class="field-row"><div class="field-label">LPA</div><div class="field-value">Both health and property. Attorney: daughter Patricia Fothergill. Already registered.</div></div>
+            <div class="field-row"><div class="field-label">Birth &amp; marriage certificates</div><div class="field-value">In the biscuit tin on the top shelf in the wardrobe. Blue tin with flowers on.</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
+            <span class="s-title">Financial pointers</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">Halifax current account</div><div class="si-detail">Sort code 11-03-38 · Patricia has the details<br>State pension paid in monthly</div></div>
+            <div class="sub-item"><div class="si-name">Post Office savings book</div><div class="si-detail">In the biscuit tin. About £3,400 in it last I checked.</div></div>
+            <div class="sub-item"><div class="si-name">Bernard's pension</div><div class="si-detail">Survivor's pension from his British Rail pension. Patricia has the paperwork.</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Burial, next to Bernard. St Wilfrid's, Harrogate. I've spoken to the vicar.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Church of England. Short. No fuss.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">The Lord's My Shepherd · All Things Bright and Beautiful</div></div>
+            <div class="callout-note">"I've pre-paid with Co-op Funeralcare in Harrogate. The reference number is with Mr Pickard. Patricia knows."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ELKE ── -->
+    <div class="journal-pane" id="pane-elke">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Elke's journal</div>
+          <div class="jh-meta">Last updated 5 April 2026 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">17 of 18 sections filled
+            <div class="progress-bar"><span style="width:94%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Elke Margit Brandt-Fairfax</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">29 November 1968</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">21 Norham Gardens, Oxford, OX2 6PS</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Nationality</div><div class="field-value">German / British dual national</div></div>
+            <div class="field-row"><div class="field-label">Languages</div><div class="field-value">German (native) · English · French · reading Italian</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></span>
+            <span class="s-title">Important documents</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Will</div><div class="field-value">UK will with Lawrence Graham LLP, Oxford. German will (Erbvertrag) lodged with Amtsgericht Berlin-Mitte — relevant to the Berlin apartment.</div></div>
+            <div class="field-row"><div class="field-label">Solicitor (UK)</div><div class="field-value">Dr Sarah Fellowes · 01865 248 607</div></div>
+            <div class="field-row"><div class="field-label">Notar (Germany)</div><div class="field-value">Notar Klaus Weidemann, Berlin-Mitte · +49 30 283 9210</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
+            <span class="s-title">Financial pointers</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">Barclays — current &amp; savings</div><div class="si-detail">Sort code 20-49-11 · Account 83721044<br>ISA also held here (reference ISA-992-31)</div></div>
+            <div class="sub-item"><div class="si-name">Deutsche Bank — German account</div><div class="si-detail">IBAN DE89 1007 0000 0291 8400 00<br>Linked to the Berlin apartment rental income</div></div>
+            <div class="sub-item"><div class="si-name">Oxford University Staff Pension</div><div class="si-detail">USS scheme. Member reference USS-EB-44921. Nominated beneficiary: daughter Maja.</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Cremation. Small ceremony in Oxford. Ashes divided — half scattered in the Havel river near Berlin, half wherever Maja and Thomas decide.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Non-religious. Keep it small. If Thomas wants to speak, let him.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">Bach Cello Suite No. 1 · Schubert's Winterreise (a few songs) · something by Nils Frahm</div></div>
+          </div>
+        </div>
+        <div class="s-card full">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/></svg></span>
+            <span class="s-title">A letter of gratitude</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-value long">"Maja, Thomas — I have spent a great deal of time thinking about what to write here and I am not sure I have the right words even now. What I want you to know is that everything I have done — the hours, the work, the choices — was organised around you, even when it did not feel like it. The house in Oxford smells of books and coffee and that is deliberate. Please keep it that way for a while. There is a folder on my desk labelled <em>For afterwards</em>. Everything practical is in it. The complicated things are in this journal. The things that cannot be written down, you already know. Mit der allergrößten Liebe — Mama."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── KEVIN ── -->
+    <div class="journal-pane" id="pane-kevin">
+      <div class="journal-header">
+        <div class="jh-left">
+          <div class="jh-label">Survivor view · read-only</div>
+          <div class="jh-name">Kevin's journal</div>
+          <div class="jh-meta">Last updated 1 May 2026 · Unlocked with recovery card</div>
+        </div>
+        <div class="jh-right">
+          <span class="jh-tag">Read-only</span>
+          <div class="jh-progress">11 of 18 sections filled
+            <div class="progress-bar"><span style="width:61%"></span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sections-grid">
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+            <span class="s-title">All about me</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Full name</div><div class="field-value">Kevin James Ashworth</div></div>
+            <div class="field-row"><div class="field-label">Date of birth</div><div class="field-value">14 March 1981</div></div>
+            <div class="field-row"><div class="field-label">Address</div><div class="field-value">47 Chestnut Avenue, Sheffield, S11 8PT</div></div>
+            <div class="s-divider"></div>
+            <div class="field-row"><div class="field-label">Marital status</div><div class="field-value">Divorced (2022) — Sarah Ashworth (née Pearce)</div></div>
+            <div class="field-row"><div class="field-label">Children</div><div class="field-value">Finn Ashworth (born 2012) · Rosie Ashworth (born 2015)<br>Currently live with Sarah · every other weekend with me</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg></span>
+            <span class="s-title">Financial pointers</span>
+          </div>
+          <div class="s-card-body">
+            <div class="sub-item"><div class="si-name">Monzo — main current account</div><div class="si-detail">Salary paid here on the 25th<br>Sarah's maintenance goes out by standing order on the 1st</div></div>
+            <div class="sub-item"><div class="si-name">Nest workplace pension</div><div class="si-detail">Through Barton &amp; Associates (employer)<br>Nominated beneficiary: equally to Finn and Rosie</div></div>
+            <div class="sub-item"><div class="si-name">Premium Bonds</div><div class="si-detail">NS&amp;I holder no. AX 7714 29 H · Worth about £2,000. Meant for the kids eventually.</div></div>
+          </div>
+        </div>
+        <div class="s-card">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <span class="s-title">Funeral wishes</span>
+          </div>
+          <div class="s-card-body">
+            <div class="field-row"><div class="field-label">Preference</div><div class="field-value">Cremation. Don't make a big deal of it.</div></div>
+            <div class="field-row"><div class="field-label">Service</div><div class="field-value">Humanist, keep it short. My mum will want something so do whatever she needs.</div></div>
+            <div class="field-row"><div class="field-label">Music</div><div class="field-value">Mr Brightside — The Killers (yes, seriously) · Fix You — Coldplay</div></div>
+            <div class="callout-note">"If Finn and Rosie are old enough to understand, please tell them I thought about them every single day."</div>
+          </div>
+        </div>
+        <div class="s-card full">
+          <div class="s-card-head">
+            <span class="s-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2.08"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M18 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/></svg></span>
+            <span class="s-title">Key contacts</span>
+          </div>
+          <div class="s-card-body">
+            <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+              <div class="sub-item"><div class="si-name">Sarah Ashworth</div><div class="si-detail">Ex-wife · 07741 221 083 · sarah.pearce@gmail.com<br>Has the children. First call.</div></div>
+              <div class="sub-item"><div class="si-name">Linda Ashworth</div><div class="si-detail">My mum · 07812 445 009 · Sheffield.<br>She'll want to help. Let her.</div></div>
+              <div class="sub-item"><div class="si-name">Dan Whitmore</div><div class="si-detail">Best mate · 07939 882 211<br>He knows where the important stuff is. He has a spare key.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
 <!-- testimonials section removed pending real customer quotes -->
 
 <!-- ============ FOUNDER ============ -->
@@ -1204,7 +1857,7 @@ footer {
       </details>
       <details class="faq-item">
         <summary>Can I see what it looks like before I pay? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Yes. We have <a href="/sample.html">a few sample pages</a> on this site so you can see how the journal looks and what kind of questions it asks. £7.95 buys you the full thing once you're ready.</div>
+        <div class="answer">Yes. There are <a href="#sample">sample journals</a> on this page so you can see how it looks and what kind of questions it asks. £7.95 buys you the full thing once you're ready.</div>
       </details>
     </div>
   </div>
@@ -1239,7 +1892,7 @@ footer {
         Start your journal · £7.95
       </a>
       <div class="try-free">
-        Want to look before you buy? <a href="/sample.html">See a few sample pages</a>, no signup needed.
+        Want to look before you buy? <a href="#sample">See sample journals on this page</a>, no signup needed.
       </div>
     </div>
   </div>
@@ -1255,7 +1908,7 @@ footer {
       <span class="price">£7.95 one-off</span>
     </a>
     <div class="reassurances">
-      <a href="/sample.html" style="color:inherit;text-decoration:none"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> See sample pages</a>
+      <a href="#sample" style="color:inherit;text-decoration:none"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> See sample journals</a>
       <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> No subscription</span>
       <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Encrypted on your device</span>
       <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Made in the UK</span>
@@ -1315,4 +1968,21 @@ footer {
 
 
 
+
+<script>
+(function () {
+  var pickerRow = document.querySelector('.samples .picker-row');
+  if (!pickerRow) return;
+  pickerRow.addEventListener('click', function (e) {
+    var btn = e.target.closest('.picker-btn');
+    if (!btn) return;
+    var person = btn.dataset.person;
+    document.querySelectorAll('.journal-pane').forEach(function (p) { p.classList.remove('visible'); });
+    document.querySelectorAll('.picker-btn').forEach(function (b) { b.classList.remove('active'); });
+    var pane = document.getElementById('pane-' + person);
+    if (pane) pane.classList.add('visible');
+    btn.classList.add('active');
+  });
+})();
+</script>
 </body></html>

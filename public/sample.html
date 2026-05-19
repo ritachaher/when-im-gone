@@ -344,31 +344,31 @@ footer a:hover { color: var(--on-navy); }
       <p>Pick a person below and browse their journal as their family would see it.</p>
     </div>
     <div class="picker-row">
-      <button class="picker-btn active" data-person="maureen" onclick="show('maureen', this)">
+      <button class="picker-btn active" data-person="maureen">
         <span class="avatar-dot" style="background:#EEF3FA;color:#2C3E5D">M</span>
         Maureen
       </button>
-      <button class="picker-btn" data-person="hillary" onclick="show('hillary', this)">
+      <button class="picker-btn" data-person="hillary">
         <span class="avatar-dot" style="background:#FBF0EA;color:#C0664A">H</span>
         Hillary
       </button>
-      <button class="picker-btn" data-person="teresa" onclick="show('teresa', this)">
+      <button class="picker-btn" data-person="teresa">
         <span class="avatar-dot" style="background:#F0EDF7;color:#5B3FA0">T</span>
         Teresa
       </button>
-      <button class="picker-btn" data-person="gloria" onclick="show('gloria', this)">
+      <button class="picker-btn" data-person="gloria">
         <span class="avatar-dot" style="background:#FAEEF0;color:#A03F50">G</span>
         Gloria
       </button>
-      <button class="picker-btn" data-person="edna" onclick="show('edna', this)">
+      <button class="picker-btn" data-person="edna">
         <span class="avatar-dot" style="background:#EDF6F0;color:#3F7A55">E</span>
         Edna
       </button>
-      <button class="picker-btn" data-person="elke" onclick="show('elke', this)">
+      <button class="picker-btn" data-person="elke">
         <span class="avatar-dot" style="background:#F6F3EC;color:#7A6A3F">El</span>
         Elke
       </button>
-      <button class="picker-btn" data-person="kevin" onclick="show('kevin', this)">
+      <button class="picker-btn" data-person="kevin">
         <span class="avatar-dot" style="background:#EEF4F9;color:#3F5E7A">K</span>
         Kevin
       </button>
@@ -1285,17 +1285,21 @@ footer a:hover { color: var(--on-navy); }
 </footer>
 
 <script>
-function show(person, btn) {
-  document.querySelectorAll('.journal-pane').forEach(function(p) {
-    p.classList.remove('visible');
+(function () {
+  var pickerRow = document.querySelector('.picker-row');
+  if (!pickerRow) return;
+  pickerRow.addEventListener('click', function (e) {
+    var btn = e.target.closest('.picker-btn');
+    if (!btn) return;
+    var person = btn.dataset.person;
+    document.querySelectorAll('.journal-pane').forEach(function (p) { p.classList.remove('visible'); });
+    document.querySelectorAll('.picker-btn').forEach(function (b) { b.classList.remove('active'); });
+    var pane = document.getElementById('pane-' + person);
+    if (pane) pane.classList.add('visible');
+    btn.classList.add('active');
+    document.getElementById('samples').scrollIntoView({ behavior: 'smooth', block: 'start' });
   });
-  document.querySelectorAll('.picker-btn').forEach(function(b) {
-    b.classList.remove('active');
-  });
-  document.getElementById('pane-' + person).classList.add('visible');
-  btn.classList.add('active');
-  document.getElementById('samples').scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+})();
 </script>
 </body>
 </html>
