@@ -877,14 +877,14 @@ footer {
 .lang-btn {
   display: flex; align-items: center; gap: 6px;
   background: transparent;
-  border: 1.5px solid rgba(255,255,255,0.45);
-  padding: 9px 14px; border-radius: 8px;
+  border: none;
+  padding: 9px 14px;
   color: var(--on-navy);
   cursor: pointer;
   font-family: var(--sans); font-size: 15px; font-weight: 600;
   white-space: nowrap; line-height: 1;
 }
-.lang-btn:hover { border-color: rgba(255,255,255,0.75); }
+.lang-btn:hover { opacity: 0.8; }
 .lang-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
 .lang-dropdown {
   display: none;
@@ -1032,7 +1032,6 @@ footer {
       <a href="#sample" class="nav-link" data-i18n="nav_examples">Examples</a>
       <a href="#faq" class="nav-link" data-i18n="nav_questions">Questions</a>
       <a href="#pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
-      <a href="https://www.whenimgone.life/app.html" class="btn-login" data-i18n="nav_login">Log in</a>
       <div class="lang-wrap">
         <button class="lang-btn" id="lang-btn" aria-label="Select language" aria-haspopup="listbox" aria-expanded="false">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
@@ -1040,6 +1039,7 @@ footer {
         </button>
         <div class="lang-dropdown" id="lang-dropdown" role="listbox"></div>
       </div>
+      <a href="https://www.whenimgone.life/app.html" class="btn-login" data-i18n="nav_login">Log in</a>
     </nav>
   </div>
 </header>
