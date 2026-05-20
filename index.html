@@ -871,6 +871,45 @@ footer {
 
 /* Tiny visually-hidden util */
 .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+/* ---------- Language switcher ---------- */
+.lang-wrap { position: relative; }
+.lang-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent;
+  border: 1.5px solid rgba(255,255,255,0.45);
+  padding: 9px 14px; border-radius: 8px;
+  color: var(--on-navy);
+  cursor: pointer;
+  font-family: var(--sans); font-size: 15px; font-weight: 600;
+  white-space: nowrap; line-height: 1;
+}
+.lang-btn:hover { border-color: rgba(255,255,255,0.75); }
+.lang-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.lang-dropdown {
+  display: none;
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: white; border: 1px solid var(--cream-line);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+  min-width: 190px; padding: 6px; z-index: 200;
+}
+.lang-dropdown.open { display: block; }
+.lang-opt {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 12px; border-radius: 8px;
+  cursor: pointer; font-size: 15px; color: var(--ink); gap: 8px;
+  white-space: nowrap;
+}
+.lang-opt:hover { background: var(--cream-warm); }
+.lang-opt.active { font-weight: 700; color: var(--navy); }
+.lang-opt .check { color: var(--coral); font-size: 13px; flex-shrink: 0; }
+.lang-opt .badge-sm {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--ink-mute);
+  background: var(--cream-warm); border-radius: 4px;
+  padding: 2px 5px; flex-shrink: 0;
+}
 </style>
 <style>
 /* ---------- Sample journals ---------- */
@@ -989,11 +1028,18 @@ footer {
       <span>When I'm Gone</span>
     </a>
     <nav class="top-nav" aria-label="Primary">
-      <a href="#how" class="nav-link">How it works</a>
-      <a href="#sample" class="nav-link">Examples</a>
-      <a href="#faq" class="nav-link">Questions</a>
-      <a href="#pricing" class="nav-link">Pricing</a>
-      <a href="https://www.whenimgone.life/app.html" class="btn-login">Log in</a>
+      <a href="#how" class="nav-link" data-i18n="nav_how">How it works</a>
+      <a href="#sample" class="nav-link" data-i18n="nav_examples">Examples</a>
+      <a href="#faq" class="nav-link" data-i18n="nav_questions">Questions</a>
+      <a href="#pricing" class="nav-link" data-i18n="nav_pricing">Pricing</a>
+      <a href="https://www.whenimgone.life/app.html" class="btn-login" data-i18n="nav_login">Log in</a>
+      <div class="lang-wrap">
+        <button class="lang-btn" id="lang-btn" aria-label="Select language" aria-haspopup="listbox" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="lang-label">EN</span>
+        </button>
+        <div class="lang-dropdown" id="lang-dropdown" role="listbox"></div>
+      </div>
     </nav>
   </div>
 </header>
@@ -1004,24 +1050,24 @@ footer {
 <section class="hero" aria-labelledby="h1">
   <div class="wrap hero-inner">
     <div>
-      <div class="eyebrow" style="">A guide for your family, not to your passwords</div>
-      <h1 id="h1">Everything your family will need, <em style="">in one safe place.</em></h1>
-      <p class="hero-sub">
+      <div class="eyebrow" style="" data-i18n="hero_eyebrow">A guide for your family, not to your passwords</div>
+      <h1 id="h1" data-i18n-html="hero_h1">Everything your family will need, <em style="">in one safe place.</em></h1>
+      <p class="hero-sub" data-i18n="hero_sub">
         When I'm Gone is a private, encrypted journal of the practical things your family will need when you're no longer here. Where the will is. Who to call. What you wanted. No searching. No guessing.
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="https://www.whenimgone.life/app.html">
-          Start your journal
+          <span data-i18n="hero_btn">Start your journal</span>
           <span class="price">£7.95 one-off</span>
         </a>
-        <a class="btn btn-ghost" href="#how">How it works</a>
+        <a class="btn btn-ghost" href="#how" data-i18n="hero_how">How it works</a>
       </div>
       <div class="cta-fineprint">
-        <span><a href="#sample" style="color: rgb(183, 192, 210); text-decoration: none;">Stays on your device</a></span>
+        <span><a href="#sample" style="color: rgb(183, 192, 210); text-decoration: none;" data-i18n="trust1">Stays on your device</a></span>
         <span class="dot" aria-hidden="true"></span>
-        <span style="">No subscription, ever</span>
+        <span style="" data-i18n="trust2">No subscription, ever</span>
         <span class="dot" aria-hidden="true"></span>
-        <span>Free updates for life</span>
+        <span data-i18n="trust3">Free updates for life</span>
       </div>
     </div>
 
@@ -1066,9 +1112,9 @@ footer {
 <section class="built" aria-labelledby="built-h">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Built for people, not tech experts</div>
-      <h2 id="built-h">Simple enough for anyone. Secure enough for everyone.</h2>
-      <p>If you can write a letter, you can do this. We've kept the buttons big, the words plain, and the choices few.</p>
+      <div class="eyebrow" data-i18n="built_eyebrow">Built for people, not tech experts</div>
+      <h2 id="built-h" data-i18n="built_h2">Simple enough for anyone. Secure enough for everyone.</h2>
+      <p data-i18n="built_p">If you can write a letter, you can do this. We've kept the buttons big, the words plain, and the choices few.</p>
     </div>
 
     <div class="built-grid">
@@ -1076,24 +1122,24 @@ footer {
         <div class="icon" aria-hidden="true">
           <svg class="i" viewBox="0 0 24 24"><path d="M4 7h16M4 12h10M4 17h16"></path></svg>
         </div>
-        <h3>Large, clear text</h3>
-        <p>Designed for readers of all ages. No tiny fonts. No confusing menus. No jargon, ever.</p>
+        <h3 data-i18n="card1_h3">Large, clear text</h3>
+        <p data-i18n="card1_p">Designed for readers of all ages. No tiny fonts. No confusing menus. No jargon, ever.</p>
       </article>
 
       <article class="built-card">
         <div class="icon" aria-hidden="true">
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"></path></svg>
         </div>
-        <h3>Available in 11 languages</h3>
-        <p>English, Spanish, French, German, Italian, Portuguese, Dutch, Polish, Arabic, Chinese and Hindi.</p>
+        <h3 data-i18n="card2_h3">Available in 11 languages</h3>
+        <p data-i18n="card2_p">English, Spanish, French, German, Italian, Portuguese, Dutch, Polish, Arabic, Chinese and Hindi.</p>
       </article>
 
       <article class="built-card">
         <div class="icon" aria-hidden="true">
           <svg class="i" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5L19 19M5 19l1.5-1.5M17.5 6.5L19 5"></path></svg>
         </div>
-        <h3>Light &amp; dark mode</h3>
-        <p>Easy on the eyes, day or night. Switches automatically with your device, or change it with one tap.</p>
+        <h3 data-i18n="card3_h3">Light &amp; dark mode</h3>
+        <p data-i18n="card3_p">Easy on the eyes, day or night. Switches automatically with your device, or change it with one tap.</p>
       </article>
     </div>
   </div>
@@ -1102,21 +1148,21 @@ footer {
 <!-- ============ PAIN ============ -->
 <section class="pain" aria-labelledby="pain-h">
   <div class="wrap">
-    <h2 id="pain-h">When someone dies, the hardest part after the grief is not knowing where anything is.</h2>
-    <p class="lede">Most families spend weeks piecing together paperwork. It doesn't have to be that way.</p>
+    <h2 id="pain-h" data-i18n="pain_h2">When someone dies, the hardest part after the grief is not knowing where anything is.</h2>
+    <p class="lede" data-i18n="pain_lede">Most families spend weeks piecing together paperwork. It doesn't have to be that way.</p>
 
     <div class="quotes">
       <article class="quote">
-        <h3 style="color: rgb(217, 125, 92);">"Where's the will?"</h3>
-        <p spellcheck="false" style="">Your family shouldn't have to hunt for a solicitor's name during the worst week of their lives.</p>
+        <h3 style="color: rgb(217, 125, 92);" data-i18n="q1_h3">"Where's the will?"</h3>
+        <p spellcheck="false" style="" data-i18n="q1_p">Your family shouldn't have to hunt for a solicitor's name during the worst week of their lives.</p>
       </article>
       <article class="quote">
-        <h3 style="color: rgb(217, 125, 92);">"Which accounts exist?"</h3>
-        <p>Bank accounts, pensions, insurance policies. Most families miss at least one. Some never find them.</p>
+        <h3 style="color: rgb(217, 125, 92);" data-i18n="q2_h3">"Which accounts exist?"</h3>
+        <p data-i18n="q2_p">Bank accounts, pensions, insurance policies. Most families miss at least one. Some never find them.</p>
       </article>
       <article class="quote">
-        <h3 style="color: rgb(217, 125, 92);">"What did they want?"</h3>
-        <p>Burial or cremation? Which music? Who to call first? Don't leave them guessing when it matters most.</p>
+        <h3 style="color: rgb(217, 125, 92);" data-i18n="q3_h3">"What did they want?"</h3>
+        <p data-i18n="q3_p">Burial or cremation? Which music? Who to call first? Don't leave them guessing when it matters most.</p>
       </article>
     </div>
   </div>
@@ -1126,21 +1172,21 @@ footer {
 <section class="how" id="how" aria-labelledby="how-h">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">How it works</div>
-      <h2 id="how-h">Three simple steps. No tech skills needed.</h2>
-      <p>Take your time. Fill in what you can today, the rest another day. There's no rush.</p>
+      <div class="eyebrow" data-i18n="how_eyebrow">How it works</div>
+      <h2 id="how-h" data-i18n="how_h2">Three simple steps. No tech skills needed.</h2>
+      <p data-i18n="how_p">Take your time. Fill in what you can today, the rest another day. There's no rush.</p>
     </div>
 
     <div class="steps">
       <!-- Step 1 -->
       <div class="step">
         <div>
-          <div class="step-num">Step 1</div>
-          <h3>Answer simple questions, section by section</h3>
-          <p>18 guided sections cover everything, from your GP's name to your funeral wishes. Fill in what you can, skip what you like, come back any time.</p>
+          <div class="step-num" data-i18n="step1">Step 1</div>
+          <h3 data-i18n="step1_h3">Answer simple questions, section by section</h3>
+          <p data-i18n="step1_p">18 guided sections cover everything, from your GP's name to your funeral wishes. Fill in what you can, skip what you like, come back any time.</p>
           <div class="reassure">
             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l4 4L19 6"></path></svg>
-            <div>Nothing is mandatory. You're never asked for passwords.</div>
+            <div data-i18n="step1_r">Nothing is mandatory. You're never asked for passwords.</div>
           </div>
         </div>
         <div class="mock" aria-hidden="true">
@@ -1160,12 +1206,12 @@ footer {
       <!-- Step 2 -->
       <div class="step flip">
         <div>
-          <div class="step-num">Step 2</div>
-          <h3>Everything is encrypted on your device</h3>
-          <p spellcheck="false" style="">Your journal is locked with a password only you know. Your information stays private. Nobody can read it, not even us.</p>
+          <div class="step-num" data-i18n="step2">Step 2</div>
+          <h3 data-i18n="step2_h3">Everything is encrypted on your device</h3>
+          <p spellcheck="false" style="" data-i18n="step2_p">Your journal is locked with a password only you know. Your information stays private. Nobody can read it, not even us.</p>
           <div class="reassure">
             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
-            <div spellcheck="false" style="">If our company ever closed, your journal still works as a PDF. It doesn't depend on us.</div>
+            <div spellcheck="false" style="" data-i18n="step2_r">If our company ever closed, your journal still works as a PDF. It doesn't depend on us.</div>
           </div>
         </div>
         <div class="mock mock-lock" aria-hidden="true">
@@ -1179,9 +1225,9 @@ footer {
       <!-- Step 3 -->
       <div class="step">
         <div>
-          <div class="step-num">Step 3</div>
-          <h3>Your family unlocks it with a recovery card</h3>
-          <p spellcheck="false" style="">When you finish, keep your one-time code with your will, or hand it to someone you trust. That's all they need to read your journal when the time comes.</p>
+          <div class="step-num" data-i18n="step3">Step 3</div>
+          <h3 data-i18n="step3_h3">Your family unlocks it with a recovery card</h3>
+          <p spellcheck="false" style="" data-i18n="step3_p">When you finish, keep your one-time code with your will, or hand it to someone you trust. That's all they need to read your journal when the time comes.</p>
           <div class="reassure">
             <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18v10H3zM3 11h18M7 15h4"></path></svg>
             <div style="">It's important you keep this safe. Chose someone you trust and love. Make their grief easier to bare.</div>
@@ -1202,31 +1248,31 @@ footer {
 <section class="inside" aria-labelledby="inside-h">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">What's inside</div>
-      <h2 id="inside-h">18 guided sections. Everything your family might need.</h2>
-      <p>Skip what you like. Come back any time. We never ask for passwords or login details.</p>
+      <div class="eyebrow" data-i18n="inside_eyebrow">What's inside</div>
+      <h2 id="inside-h" data-i18n="inside_h2">18 guided sections. Everything your family might need.</h2>
+      <p data-i18n="inside_p">Skip what you like. Come back any time. We never ask for passwords or login details.</p>
     </div>
     <div class="inside-grid">
-      <div class="inside-item"><span class="num">01</span> All about me</div>
-      <div class="inside-item"><span class="num">02</span> Important documents</div>
-      <div class="inside-item"><span class="num">03</span> Medical information</div>
-      <div class="inside-item"><span class="num">04</span> Key contacts</div>
-      <div class="inside-item"><span class="num">05</span> My dependants</div>
-      <div class="inside-item"><span class="num">06</span> Pets</div>
-      <div class="inside-item"><span class="num">07</span> Financial pointers</div>
-      <div class="inside-item"><span class="num">08</span> Insurances</div>
-      <div class="inside-item"><span class="num">09</span> Business details</div>
-      <div class="inside-item"><span class="num">10</span> Personal property</div>
-      <div class="inside-item"><span class="num">11</span> Bills &amp; subscriptions</div>
-      <div class="inside-item"><span class="num">12</span> Access &amp; keys</div>
-      <div class="inside-item"><span class="num">13</span> Digital assets</div>
-      <div class="inside-item"><span class="num">14</span> Funeral wishes</div>
-      <div class="inside-item"><span class="num">15</span> At the time of passing</div>
-      <div class="inside-item"><span class="num">16</span> Beneficiaries</div>
-      <div class="inside-item"><span class="num">17</span> Recommendations</div>
-      <div class="inside-item"><span class="num">18</span> A letter of gratitude</div>
+      <div class="inside-item"><span class="num">01</span> <span data-i18n="sec_01">All about me</span></div>
+      <div class="inside-item"><span class="num">02</span> <span data-i18n="sec_02">Important documents</span></div>
+      <div class="inside-item"><span class="num">03</span> <span data-i18n="sec_03">Medical information</span></div>
+      <div class="inside-item"><span class="num">04</span> <span data-i18n="sec_04">Key contacts</span></div>
+      <div class="inside-item"><span class="num">05</span> <span data-i18n="sec_05">My dependants</span></div>
+      <div class="inside-item"><span class="num">06</span> <span data-i18n="sec_06">Pets</span></div>
+      <div class="inside-item"><span class="num">07</span> <span data-i18n="sec_07">Financial pointers</span></div>
+      <div class="inside-item"><span class="num">08</span> <span data-i18n="sec_08">Insurances</span></div>
+      <div class="inside-item"><span class="num">09</span> <span data-i18n="sec_09">Business details</span></div>
+      <div class="inside-item"><span class="num">10</span> <span data-i18n="sec_10">Personal property</span></div>
+      <div class="inside-item"><span class="num">11</span> <span data-i18n="sec_11">Bills &amp; subscriptions</span></div>
+      <div class="inside-item"><span class="num">12</span> <span data-i18n="sec_12">Access &amp; keys</span></div>
+      <div class="inside-item"><span class="num">13</span> <span data-i18n="sec_13">Digital assets</span></div>
+      <div class="inside-item"><span class="num">14</span> <span data-i18n="sec_14">Funeral wishes</span></div>
+      <div class="inside-item"><span class="num">15</span> <span data-i18n="sec_15">At the time of passing</span></div>
+      <div class="inside-item"><span class="num">16</span> <span data-i18n="sec_16">Beneficiaries</span></div>
+      <div class="inside-item"><span class="num">17</span> <span data-i18n="sec_17">Recommendations</span></div>
+      <div class="inside-item"><span class="num">18</span> <span data-i18n="sec_18">A letter of gratitude</span></div>
     </div>
-    <div class="inside-foot">No question is mandatory. We never ask for passwords or PINs.</div>
+    <div class="inside-foot" data-i18n="inside_foot">No question is mandatory. We never ask for passwords or PINs.</div>
   </div>
 </section>
 
@@ -1234,9 +1280,9 @@ footer {
 <section class="samples" id="sample" aria-labelledby="sample-h">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Real examples</div>
-      <h2 id="sample-h">See exactly what your family would find.</h2>
-      <p>Seven fictional journals — filled the way real people would. Pick a name and browse as their family would see it.</p>
+      <div class="eyebrow" data-i18n="samples_eyebrow">Real examples</div>
+      <h2 id="sample-h" data-i18n="samples_h2">See exactly what your family would find.</h2>
+      <p data-i18n="samples_p">Seven fictional journals — filled the way real people would. Pick a name and browse as their family would see it.</p>
     </div>
 
     <div class="picker-row">
@@ -1789,8 +1835,8 @@ footer {
         <img src="/images/founder-leaves.svg" alt="Two leaves intertwined with a smaller leaf at the base, representing family held together" />
       </div>
       <div>
-        <div class="eyebrow" style="color: var(--coral-deep); margin-bottom: 14px;">A note from the founder</div>
-        <h2 id="founder-h">I built this because my own family didn't know where to start.</h2>
+        <div class="eyebrow" style="color: var(--coral-deep); margin-bottom: 14px;" data-i18n="founder_eyebrow">A note from the founder</div>
+        <h2 id="founder-h" data-i18n="founder_h2">I built this because my own family didn't know where to start.</h2>
         <p spellcheck="false" style="">When my grandad died, we spent weeks in his study with a cardboard box and a notebook, piecing together accounts, contacts and his wishes, most of which we only half-knew. The grief was hard enough. The hunting was cruel.</p>
         <p>When I'm Gone is the small, simple thing I wish he'd had time to do for us. It isn't a will, and it isn't clever. It's just a way to write things down before you don't have time to.</p>
         <p>If you have any questions, you can email me directly: <a href="mailto:info@whenimgone.life">info@whenimgone.life</a>. A real person will reply, usually the same day.</p>
@@ -1808,11 +1854,11 @@ footer {
         <img src="/images/book-cover.jpg" alt="When I'm Gone book cover" onerror="this.style.display='none'; this.parentElement.classList.add('no-image');" />
       </a>
       <div>
-        <div class="eyebrow" style="color: var(--coral-deep); margin-bottom: 14px;">The companion book</div>
-        <h2 id="book-h">Prefer pen and paper?</h2>
+        <div class="eyebrow" style="color: var(--coral-deep); margin-bottom: 14px;" data-i18n="book_eyebrow">The companion book</div>
+        <h2 id="book-h" data-i18n="book_h2">Prefer pen and paper?</h2>
         <p>When I'm Gone is also a printed journal you can keep on a shelf. Same guided questions, same calm, written by hand. A practical gift for parents, partners and anyone planning ahead.</p>
         <p class="book-tagline">"A journal that solves your loved ones' problems."</p>
-        <a class="btn btn-primary" href="https://amzn.eu/d/02TZ0FVb" target="_blank" rel="noopener">Order the book on Amazon</a>
+        <a class="btn btn-primary" href="https://amzn.eu/d/02TZ0FVb" target="_blank" rel="noopener" data-i18n="book_btn">Order the book on Amazon</a>
       </div>
     </div>
   </div>
@@ -1822,42 +1868,42 @@ footer {
 <section class="faq" id="faq" aria-labelledby="faq-h">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Common questions</div>
-      <h2 id="faq-h">Honest answers to the things people ask most</h2>
+      <div class="eyebrow" data-i18n="faq_eyebrow">Common questions</div>
+      <h2 id="faq-h" data-i18n="faq_h2">Honest answers to the things people ask most</h2>
     </div>
 
     <div class="faq-list">
       <details class="faq-item">
-        <summary>Is this a will? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">No. A will is a legal document about who inherits what. When I'm Gone is the practical companion to a will. It tells your family <em>where to find</em> the will, who your solicitor is, which accounts you have, who to call first, and what you wanted at your funeral.</div>
+        <summary><span data-i18n="faq_q1">Is this a will?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a1">No. A will is a legal document about who inherits what. When I'm Gone is the practical companion to a will. It tells your family where to find the will, who your solicitor is, which accounts you have, who to call first, and what you wanted at your funeral.</div>
       </details>
       <details class="faq-item">
-        <summary>Do I have to share passwords or login details? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">No. We deliberately don't ask for passwords or login credentials. Your family doesn't need to log into your accounts. They need to know which accounts exist, who to contact, and where to find the paperwork. That's what we capture.</div>
+        <summary><span data-i18n="faq_q2">Do I have to share passwords or login details?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a2">No. We deliberately don't ask for passwords or login credentials. Your family doesn't need to log into your accounts. They need to know which accounts exist, who to contact, and where to find the paperwork. That's what we capture.</div>
       </details>
       <details class="faq-item">
-        <summary>What if I forget my password? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">When you set up, you receive a one-time recovery code. Keep it with your will or with someone you trust. If you forget your password, the code lets you back in. We can't reset it for you (that's the point of the encryption), but the recovery code always will.</div>
+        <summary><span data-i18n="faq_q3">What if I forget my password?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a3">When you set up, you receive a one-time recovery code. Keep it with your will or with someone you trust. If you forget your password, the code lets you back in. We can't reset it for you (that's the point of the encryption), but the recovery code always will.</div>
       </details>
       <details class="faq-item">
-        <summary>Can my family read it without me being there? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Yes. That's the whole purpose. They use the recovery card you've left them to unlock a clear, calm, read-only view of everything you've written. No tech skills needed.</div>
+        <summary><span data-i18n="faq_q4">Can my family read it without me being there?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a4">Yes. That's the whole purpose. They use the recovery card you've left them to unlock a clear, calm, read-only view of everything you've written. No tech skills needed.</div>
       </details>
       <details class="faq-item">
-        <summary>What happens to my journal if your company closes? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Your journal works without us. Because everything is encrypted on your device, it doesn't depend on our servers being online. You can also export your journal as a PDF at any time - so you'll always have a copy you can hold in your hand.</div>
+        <summary><span data-i18n="faq_q5">What happens to my journal if your company closes?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a5">Your journal works without us. Because everything is encrypted on your device, it doesn't depend on our servers being online. You can also export your journal as a PDF at any time - so you'll always have a copy you can hold in your hand.</div>
       </details>
       <details class="faq-item">
-        <summary>Is my information really private? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Yes. Your journal is encrypted on your device with your password before anything ever leaves it. We can't read it. Our staff can't read it. If we were ever compelled to hand over data, all anyone would see is encrypted gibberish.</div>
+        <summary><span data-i18n="faq_q6">Is my information really private?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a6">Yes. Your journal is encrypted on your device with your password before anything ever leaves it. We can't read it. Our staff can't read it. If we were ever compelled to hand over data, all anyone would see is encrypted gibberish.</div>
       </details>
       <details class="faq-item">
-        <summary>Is it really a one-off payment? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Yes. £7.95 once. No subscription, no renewals, no upsells. Free updates for life. If we ever change pricing, anyone who has already paid keeps their account at no extra cost.</div>
+        <summary><span data-i18n="faq_q7">Is it really a one-off payment?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a7">Yes. £7.95 once. No subscription, no renewals, no upsells. Free updates for life. If we ever change pricing, anyone who has already paid keeps their account at no extra cost.</div>
       </details>
       <details class="faq-item">
-        <summary>Can I see what it looks like before I pay? <span class="plus" aria-hidden="true">+</span></summary>
-        <div class="answer">Yes. There are <a href="#sample">sample journals</a> on this page so you can see how it looks and what kind of questions it asks. £7.95 buys you the full thing once you're ready.</div>
+        <summary><span data-i18n="faq_q8">Can I see what it looks like before I pay?</span> <span class="plus" aria-hidden="true">+</span></summary>
+        <div class="answer" data-i18n="faq_a8">Yes. There are <a href="#sample">sample journals</a> on this page so you can see how it looks and what kind of questions it asks. £7.95 buys you the full thing once you're ready.</div>
       </details>
     </div>
   </div>
@@ -1867,13 +1913,13 @@ footer {
 <section class="pricing" id="pricing" aria-labelledby="pricing-h">
   <div class="wrap">
     <div class="section-head">
-      <div class="eyebrow">Simple pricing</div>
-      <h2 id="pricing-h">One payment. Use forever.</h2>
-      <p>No subscription. No hidden fees. No surprises.</p>
+      <div class="eyebrow" data-i18n="pricing_eyebrow">Simple pricing</div>
+      <h2 id="pricing-h" data-i18n="pricing_h2">One payment. Use forever.</h2>
+      <p data-i18n="pricing_p">No subscription. No hidden fees. No surprises.</p>
     </div>
 
     <div class="price-card">
-      <span class="badge">All-in-one</span>
+      <span class="badge" data-i18n="pricing_badge">All-in-one</span>
       <div class="num">£7<span class="pence">.95</span></div>
       <div class="terms">One-off payment · approx $9.95 USD · no subscription, ever</div>
 
@@ -1888,10 +1934,10 @@ footer {
         <li>Free updates </li>
       </ul>
 
-      <a class="btn btn-primary" href="https://www.whenimgone.life/app.html">
+      <a class="btn btn-primary" href="https://www.whenimgone.life/app.html" data-i18n="pricing_btn">
         Start your journal · £7.95
       </a>
-      <div class="try-free">
+      <div class="try-free" data-i18n-html="try_free">
         Want to look before you buy? <a href="#sample">See sample journals on this page</a>, no signup needed.
       </div>
     </div>
@@ -1901,17 +1947,17 @@ footer {
 <!-- ============ FINAL CTA ============ -->
 <section class="final" aria-labelledby="final-h">
   <div class="wrap">
-    <h2 id="final-h">A small thing today. An enormous gift later.</h2>
-    <p>An afternoon now will save your family weeks of searching, guessing and wondering at the worst time of their lives.</p>
+    <h2 id="final-h" data-i18n="final_h2">A small thing today. An enormous gift later.</h2>
+    <p data-i18n="final_p">An afternoon now will save your family weeks of searching, guessing and wondering at the worst time of their lives.</p>
     <a class="btn btn-primary" href="https://www.whenimgone.life/app.html">
-      Start your journal
+      <span data-i18n="final_btn">Start your journal</span>
       <span class="price">£7.95 one-off</span>
     </a>
     <div class="reassurances">
-      <a href="#sample" style="color:inherit;text-decoration:none"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> See sample journals</a>
-      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> No subscription</span>
-      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Encrypted on your device</span>
-      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> Made in the UK</span>
+      <a href="#sample" style="color:inherit;text-decoration:none"><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> <span data-i18n="final_sample">See sample journals</span></a>
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> <span data-i18n="final_nosub">No subscription</span></span>
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> <span data-i18n="final_enc">Encrypted on your device</span></span>
+      <span><svg class="i" viewBox="0 0 24 24"><path d="M5 12l4 4L19 6"></path></svg> <span data-i18n="final_uk">Made in the UK</span></span>
     </div>
   </div>
 </section>
@@ -1929,10 +1975,10 @@ footer {
           </span>
           When I'm Gone
         </div>
-        <p class="footer-blurb">A private, encrypted journal of the practical things your family will need when you're gone. </p>
+        <p class="footer-blurb" data-i18n="footer_blurb">A private, encrypted journal of the practical things your family will need when you're gone. </p>
       </div>
       <div>
-        <h4>Product</h4>
+        <h4 data-i18n="footer_product">Product</h4>
         <ul>
           <li><a href="#how">How it works</a></li>
           <li><a href="#pricing">Pricing</a></li>
@@ -1941,7 +1987,7 @@ footer {
         </ul>
       </div>
       <div>
-        <h4>For professionals</h4>
+        <h4 data-i18n="footer_prof">For professionals</h4>
         <ul>
           <li><a href="mailto:info@whenimgone.life">Funeral directors</a></li>
           <li><a href="mailto:info@whenimgone.life">Solicitors &amp; advisers</a></li>
@@ -1949,7 +1995,7 @@ footer {
         </ul>
       </div>
       <div>
-        <h4>Company</h4>
+        <h4 data-i18n="footer_company">Company</h4>
         <ul>
           <li><a href="/about">About us</a></li>
           <li><a href="/privacy">Privacy policy</a></li>
@@ -1959,7 +2005,7 @@ footer {
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 White Woodlands Ltd · Registered in England</span>
+      <span data-i18n="footer_copy">© 2026 White Woodlands Ltd · Registered in England</span>
       <span class="made">
 </span>
     </div>
@@ -1970,4 +2016,5 @@ footer {
 
 
 <script src="/picker.js"></script>
+<script src="/web-i18n.js"></script>
 </body></html>

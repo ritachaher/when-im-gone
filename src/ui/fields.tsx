@@ -27,8 +27,15 @@ function DateInput({
   const [mon, setMon]   = useState(init.m);
   const [year, setYear] = useState(init.y);
 
-  const monthRef = useRef<HTMLInputElement>(null);
-  const yearRef  = useRef<HTMLInputElement>(null);
+  // Mutable refs mirror state so onChange closures always read the latest
+  // value regardless of React's render batching (fixes stale-closure bug
+  // where commit() would see '' for fields typed before the current one).
+  const dayVal  = useRef(init.d);
+  const monVal  = useRef(init.m);
+  const yearVal = useRef(init.y);
+
+  const monthInputRef = useRef<HTMLInputElement>(null);
+  const yearInputRef  = useRef<HTMLInputElement>(null);
 
   // Sync when the value prop is changed externally (e.g. form clear)
   const prevValue = useRef(value);
@@ -36,6 +43,9 @@ function DateInput({
     if (prevValue.current !== value) {
       prevValue.current = value;
       const p = parse(value);
+      dayVal.current  = p.d;
+      monVal.current  = p.m;
+      yearVal.current = p.y;
       setDay(p.d);
       setMon(p.m);
       setYear(p.y);
@@ -65,14 +75,15 @@ function DateInput({
         value={day}
         onChange={e => {
           const v = digits(e.target.value, 2);
+          dayVal.current = v;
           setDay(v);
-          commit(v, mon, year);
-          if (v.length === 2) monthRef.current?.focus();
+          commit(v, monVal.current, yearVal.current);
+          if (v.length === 2) monthInputRef.current?.focus();
         }}
       />
       <span className="date-sep" aria-hidden="true">/</span>
       <input
-        ref={monthRef}
+        ref={monthInputRef}
         className="date-part"
         type="text"
         inputMode="numeric"
@@ -81,14 +92,15 @@ function DateInput({
         value={mon}
         onChange={e => {
           const v = digits(e.target.value, 2);
+          monVal.current = v;
           setMon(v);
-          commit(day, v, year);
-          if (v.length === 2) yearRef.current?.focus();
+          commit(dayVal.current, v, yearVal.current);
+          if (v.length === 2) yearInputRef.current?.focus();
         }}
       />
       <span className="date-sep" aria-hidden="true">/</span>
       <input
-        ref={yearRef}
+        ref={yearInputRef}
         className="date-part date-year"
         type="text"
         inputMode="numeric"
@@ -97,8 +109,9 @@ function DateInput({
         value={year}
         onChange={e => {
           const v = digits(e.target.value, 4);
+          yearVal.current = v;
           setYear(v);
-          commit(day, mon, v);
+          commit(dayVal.current, monVal.current, v);
         }}
       />
     </div>
