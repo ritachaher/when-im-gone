@@ -23,7 +23,23 @@ export const notifyOnSubscriber = onDocumentCreated(
     const data = event.data?.data();
     if (!data) return;
 
-    const email = (data.email as string) ?? '(unknown)';
+    const rawEmail = (data.email as string) ?? '';
+    // Defence in depth: Firestore rules already validate format, but the
+    // function must not trust input. Skip obviously invalid addresses and
+    // never inject raw input into the HTML body.
+    const isValidEmail = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(rawEmail) && rawEmail.length < 320;
+    if (!isValidEmail) {
+      console.warn('notifyOnSubscriber: skipping invalid email payload');
+      return;
+    }
+    const escapeHtml = (s: string) =>
+      s.replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    const email = rawEmail;
+    const emailHtml = escapeHtml(rawEmail);
     const subscribedAt = data.subscribedAt?.toDate?.()?.toISOString() ?? new Date().toISOString();
 
     const transporter = nodemailer.createTransport({
@@ -60,7 +76,7 @@ export const notifyOnSubscriber = onDocumentCreated(
             <table style="width: 100%; border-collapse: collapse; font-size: 15px;">
               <tr>
                 <td style="padding: 10px 0; border-bottom: 1px solid #F0EADF; color: #6B7589; width: 80px;">Email</td>
-                <td style="padding: 10px 0; border-bottom: 1px solid #F0EADF; font-weight: 600;">${email}</td>
+                <td style="padding: 10px 0; border-bottom: 1px solid #F0EADF; font-weight: 600;">${emailHtml}</td>
               </tr>
               <tr>
                 <td style="padding: 10px 0; color: #6B7589;">Time</td>

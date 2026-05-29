@@ -540,7 +540,10 @@ function RepeatingCard({
           </div>
           {it.addedToWill === 'No' && (
             <div className="callout warn" style={{ marginTop: 8 }}>
-              ⚠️ This person is not named in a will. This record has no legal standing on its own — we strongly recommend adding them to a formal will.
+              <svg className="i" viewBox="0 0 24 24" aria-hidden="true" style={{ marginRight: 6, verticalAlign: 'text-bottom' }}>
+                <path d="M12 3 2 21h20L12 3z"></path><path d="M12 10v5"></path><path d="M12 17.5h.01"></path>
+              </svg>
+              {t('will_not_named', 'This person is not named in a will. This record has no legal standing on its own — we strongly recommend adding them to a formal will.')}
               {onNavigate && (
                 <div style={{ marginTop: 6 }}>
                   <button
@@ -548,7 +551,7 @@ function RepeatingCard({
                     style={{ fontSize: 13, padding: '4px 10px' }}
                     onClick={() => onNavigate('financial')}
                   >
-                    Go to Financial Information — Will &amp; Solicitors →
+                    {t('will_goto_financial', 'Go to Financial Information — Will & Solicitors')}
                   </button>
                 </div>
               )}
@@ -556,13 +559,16 @@ function RepeatingCard({
           )}
           {it.addedToWill === 'Yes' && (
             <div className="callout" style={{ marginTop: 8 }}>
-              ✓ Added to will.
+              <svg className="i" viewBox="0 0 24 24" aria-hidden="true" style={{ marginRight: 6, verticalAlign: 'text-bottom' }}>
+                <path d="M5 12l4 4L19 6"></path>
+              </svg>
+              {t('will_added', 'Added to will.')}
               {onNavigate && (
                 <button
                   style={{ marginLeft: 10, fontSize: 13, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline', color: 'inherit', padding: 0 }}
                   onClick={() => onNavigate('financial')}
                 >
-                  View Will &amp; Solicitor details →
+                  {t('will_view_details', 'View Will & Solicitor details')}
                 </button>
               )}
             </div>

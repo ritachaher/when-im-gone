@@ -78,7 +78,10 @@ service cloud.firestore {
                     && request.resource.data.email is string
                     && request.resource.data.email.size() > 3
                     && request.resource.data.email.size() < 320
-                    && request.resource.data.source is string;
+                    && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+[.][^@\\s]+$')
+                    && request.resource.data.source is string
+                    && request.resource.data.source.size() < 64
+                    && request.resource.data.subscribedAt is timestamp;
       allow read, update, delete: if false;
     }
 

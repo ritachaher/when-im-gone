@@ -51,12 +51,37 @@ function getSavedLang(): string {
   }
 }
 
+// Right-to-left languages. Keep this list in sync with LANGUAGES above.
+const RTL_LANGS = ['ar'];
+
+// Apply text direction and lang attribute to <html>. Called both on initial
+// load and on every language change so the very first paint is correct for
+// RTL languages (previously dir was only set inside changeLanguage, so an
+// Arabic user who reloaded saw Arabic text in a left-to-right layout).
+function applyDir(code: string) {
+  document.documentElement.setAttribute('lang', code);
+  if (RTL_LANGS.includes(code)) {
+    document.documentElement.setAttribute('dir', 'rtl');
+  } else {
+    document.documentElement.removeAttribute('dir');
+  }
+}
+
+const savedLang = getSavedLang();
+
 i18n.use(initReactI18next).init({
   resources: { en: { translation: en } },
-  lng: getSavedLang(),
+  lng: savedLang,
   fallbackLng: 'en',
   interpolation: { escapeValue: false },
 });
+
+// Set direction immediately for the saved language, and make sure the saved
+// non-English bundle is actually loaded (init only ships the English bundle).
+applyDir(savedLang);
+if (savedLang !== 'en') {
+  void changeLanguage(savedLang);
+}
 
 export async function changeLanguage(code: string) {
   if (code !== 'en' && !i18n.hasResourceBundle(code, 'translation')) {
@@ -68,11 +93,7 @@ export async function changeLanguage(code: string) {
   }
   await i18n.changeLanguage(code);
   try { localStorage.setItem('wig-lang', code); } catch { /* ignore */ }
-  if (code === 'ar') {
-    document.documentElement.setAttribute('dir', 'rtl');
-  } else {
-    document.documentElement.removeAttribute('dir');
-  }
+  applyDir(code);
 }
 
 export default i18n;
