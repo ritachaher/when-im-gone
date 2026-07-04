@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import { create, unlockWithRecovery } from '../storage/vault';
@@ -28,15 +28,30 @@ export function Setup({ onDone }: { onDone: () => void }) {
   // forces a deliberate acknowledgement before they can leave the screen.
   const [revealed, setRevealed] = useState(false);
   const [storedAck, setStoredAck] = useState(false);
+  // The native print dialog blurs the window in most browsers. Without
+  // this guard the blur handler re-masks the code mid-print and the
+  // "sealed envelope" sheet comes out as dots - a permanent data-loss
+  // trap if the user later forgets their password. The printed output
+  // itself comes from a dedicated .print-only element that always
+  // contains the code, so the on-screen mask state is irrelevant to it,
+  // but we still suppress re-masking so the screen matches expectations.
+  const printingRef = useRef(false);
   useEffect(() => {
     function onVisibility() {
+      if (printingRef.current) return;
       if (document.visibilityState !== 'visible') setRevealed(false);
     }
+    function onBeforePrint() { printingRef.current = true; }
+    function onAfterPrint() { printingRef.current = false; }
     document.addEventListener('visibilitychange', onVisibility);
     window.addEventListener('blur', onVisibility);
+    window.addEventListener('beforeprint', onBeforePrint);
+    window.addEventListener('afterprint', onAfterPrint);
     return () => {
       document.removeEventListener('visibilitychange', onVisibility);
       window.removeEventListener('blur', onVisibility);
+      window.removeEventListener('beforeprint', onBeforePrint);
+      window.removeEventListener('afterprint', onAfterPrint);
     };
   }, []);
 
@@ -88,7 +103,10 @@ export function Setup({ onDone }: { onDone: () => void }) {
     setErr(null);
     setBusy(true);
     try {
-      const found = await pairViaRecoveryCode(pairCode);
+      // Safe to confirm programmatically here: pairing is only reachable
+      // on an uninitialised device (App routes to Setup only when no
+      // journal exists), so there is no local data to overwrite.
+      const found = await pairViaRecoveryCode(pairCode, { confirmedReplace: true });
       if (!found) {
         setErr(
           t(
@@ -301,7 +319,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
             <h2>{t('pw_title')}</h2>
             <p className="muted">{t('pw_hint')}</p>
             <label>{t('pw_label')}</label>
-            <input className="setup-input" type="password" value={pw1} onChange={(e) => { setPw1(e.target.value); setBreachAck(false); }} autoFocus />
+            <input className="setup-input" type="password" autoComplete="new-password" value={pw1} onChange={(e) => { setPw1(e.target.value); setBreachAck(false); }} autoFocus />
             <ul className="pw-rules">
               <li className={rules.len ? 'ok' : ''}>{rules.len ? '\u2713' : '\u2022'} {t('pw_rule_length', 'At least 8 characters')}</li>
               <li className={rules.mixed ? 'ok' : ''}>{rules.mixed ? '\u2713' : '\u2022'} {t('pw_rule_mixed')}</li>
@@ -309,7 +327,7 @@ export function Setup({ onDone }: { onDone: () => void }) {
               <li className={rules.symbol ? 'ok' : ''}>{rules.symbol ? '\u2713' : '\u2022'} {t('pw_rule_symbol', 'At least one symbol (! ? # etc.)')}</li>
             </ul>
             <label>{t('pw_confirm_label')}</label>
-            <input className="setup-input" type="password" value={pw2} onChange={(e) => setPw2(e.target.value)} />
+            <input className="setup-input" type="password" autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} />
             {pw2.length > 0 && pw1 !== pw2 && (
               <p className="pw-mismatch">{t('pw_mismatch')}</p>
             )}
@@ -332,8 +350,28 @@ export function Setup({ onDone }: { onDone: () => void }) {
                 for screen-recording / casual screenshot tools to capture
                 the code. We also nudge users explicitly away from photo
                 backups, which retain screenshots indefinitely. */}
-            <div className="recovery-code" aria-live="polite">
+            <div className="recovery-code screen-only" aria-live="polite">
               {revealed ? recoveryCode : '••••-••••-••••'}
+            </div>
+            {/* Print-only recovery sheet. ALWAYS contains the real code,
+                regardless of the on-screen mask - the printed sheet is the
+                user's last-resort recovery path and must never be dots. */}
+            <div className="recovery-print-sheet print-only" aria-hidden="true">
+              <h1>{t('app_name')}</h1>
+              <p>{t('print_sheet_subtitle', 'Recovery sheet - keep in a sealed envelope')}</p>
+              <div className="rp-code">{recoveryCode}</div>
+              <p>
+                {t(
+                  'print_sheet_line1',
+                  'This code unlocks the journal if the password is lost. Anyone holding it can read the journal.',
+                )}
+              </p>
+              <p>
+                {t(
+                  'print_sheet_line2',
+                  'Store it somewhere only your chosen person can find - a sealed envelope with your important papers, or with your will.',
+                )}
+              </p>
             </div>
             <button
               className="btn ghost"
@@ -398,7 +436,9 @@ function EmailStep({
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  const valid = email.trim().includes('@') && email.trim().length > 4;
+  // Mirrors the Firestore rule's validation (^[^@\s]+@[^@\s]+\.[^@\s]+$)
+  // so obviously-bad addresses are caught client-side first.
+  const valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim()) && email.trim().length < 320;
 
   async function submit() {
     if (!valid || busy) return;

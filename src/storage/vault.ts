@@ -190,18 +190,37 @@ export async function unlockWithRecovery(code: string): Promise<void> {
 }
 
 export function lock(): void {
-  useVault.setState({ unlocked: false, journal: null, dataKey: null });
+  useVault.setState({
+    unlocked: false,
+    ownerDisplayName: null,
+    journal: null,
+    dataKey: null,
+  });
 }
 
-export async function save(mutator: (draft: Journal) => void): Promise<void> {
-  const { journal, dataKey } = useVault.getState();
-  if (!journal || !dataKey) throw new Error('Vault is locked.');
-  const next: Journal = { ...journal, sections: { ...journal.sections } };
-  mutator(next);
-  next.updatedAt = Date.now();
-  const blob = await encryptJSON(dataKey, next);
-  await db.journal.put({ id: 'journal', blob, updatedAt: next.updatedAt });
-  useVault.setState({ journal: next });
+// Saves are serialised through this promise chain. Every keystroke
+// triggers a snapshot → encrypt → write cycle; if two of those overlap,
+// both start from the same snapshot and the later commit silently
+// clobbers the earlier field's change - the worst failure class for a
+// legacy journal. Chaining guarantees each save reads the state the
+// previous one committed.
+let saveQueue: Promise<void> = Promise.resolve();
+
+export function save(mutator: (draft: Journal) => void): Promise<void> {
+  const run = saveQueue.then(async () => {
+    const { journal, dataKey } = useVault.getState();
+    if (!journal || !dataKey) throw new Error('Vault is locked.');
+    const next: Journal = { ...journal, sections: { ...journal.sections } };
+    mutator(next);
+    next.updatedAt = Date.now();
+    const blob = await encryptJSON(dataKey, next);
+    await db.journal.put({ id: 'journal', blob, updatedAt: next.updatedAt });
+    useVault.setState({ journal: next });
+  });
+  // Keep the chain alive even if a save rejects; the caller still sees
+  // the rejection through `run`.
+  saveQueue = run.catch(() => {});
+  return run;
 }
 
 export async function setSectionField(slug: string, fieldId: string, value: string): Promise<void> {
@@ -231,9 +250,6 @@ export async function setSectionList(
 }
 
 export async function wipe(): Promise<void> {
-  // Record the wipe BEFORE actually wiping, so it lands in the audit
-  // table the user could see if they restore from a backup. Best-effort.
-  try { await writeAudit({ kind: 'wipe' }); } catch { /* noop */ }
   lock();
   await wipeLocal();
 }
@@ -282,6 +298,12 @@ type ExportPayload = {
   rcWrapped: string;
   journalBlob: string;
   updatedAt: number;
+  // Included so a restored device can keep pushing cloud backups without
+  // first unlocking with the recovery code. Deriving it requires the
+  // recovery code, which the blob already requires for decryption, so
+  // carrying it adds no new capability. Optional: pre-existing .wig
+  // files don't have it (the recovery-unlock backfill still covers those).
+  vaultCloudId?: string;
 };
 
 function b64(u: Uint8Array): string {
@@ -314,6 +336,7 @@ export async function exportEncryptedBlob(): Promise<Blob> {
     rcWrapped: b64(meta.rcWrapped),
     journalBlob: b64(journal.blob),
     updatedAt: journal.updatedAt,
+    vaultCloudId: meta.vaultCloudId,
   };
   await writeAudit({ kind: 'export' });
   return new Blob([JSON.stringify(payload)], { type: 'application/octet-stream' });
@@ -338,24 +361,58 @@ export async function importEncryptedBlob(
         'caller must pass { confirmedReplace: true } after user confirmation.',
     );
   }
-  const payload = JSON.parse(text) as ExportPayload;
-  if (payload.format !== 'wig/1') throw new Error('Unknown backup format.');
-  await db.meta.put({
-    id: 'meta',
-    ownerDisplayName: payload.ownerDisplayName,
-    createdAt: payload.createdAt,
-    schemaVersion: payload.schemaVersion,
-    pwSalt: unb64(payload.pwSalt),
-    pwIv: unb64(payload.pwIv),
-    pwWrapped: unb64(payload.pwWrapped),
-    rcSalt: unb64(payload.rcSalt),
-    rcIv: unb64(payload.rcIv),
-    rcWrapped: unb64(payload.rcWrapped),
-  });
-  await db.journal.put({
-    id: 'journal',
-    blob: unb64(payload.journalBlob),
-    updatedAt: payload.updatedAt,
+  let payload: ExportPayload;
+  try {
+    payload = JSON.parse(text) as ExportPayload;
+  } catch {
+    throw new Error('That file isn’t a valid backup.');
+  }
+  if (!payload || payload.format !== 'wig/1') throw new Error('Unknown backup format.');
+
+  // Validate and decode EVERYTHING before touching IndexedDB. A
+  // truncated or corrupted file must fail cleanly here - never after
+  // the destructive replace has begun, which would brick the local vault.
+  const B64_FIELDS = ['pwSalt', 'pwIv', 'pwWrapped', 'rcSalt', 'rcIv', 'rcWrapped', 'journalBlob'] as const;
+  const decoded = {} as Record<(typeof B64_FIELDS)[number], Uint8Array<ArrayBuffer>>;
+  for (const f of B64_FIELDS) {
+    const v = payload[f];
+    if (typeof v !== 'string' || v.length === 0) {
+      throw new Error('That backup file is incomplete or corrupted.');
+    }
+    try {
+      decoded[f] = unb64(v);
+    } catch {
+      throw new Error('That backup file is incomplete or corrupted.');
+    }
+  }
+  if (typeof payload.ownerDisplayName !== 'string' || typeof payload.createdAt !== 'number') {
+    throw new Error('That backup file is incomplete or corrupted.');
+  }
+  const vaultCloudId =
+    typeof payload.vaultCloudId === 'string' && /^[0-9a-f]{64}$/.test(payload.vaultCloudId)
+      ? payload.vaultCloudId
+      : undefined;
+
+  // Single transaction: either both rows are replaced or neither is.
+  await db.transaction('rw', db.meta, db.journal, async () => {
+    await db.meta.put({
+      id: 'meta',
+      ownerDisplayName: payload.ownerDisplayName,
+      createdAt: payload.createdAt,
+      schemaVersion: typeof payload.schemaVersion === 'number' ? payload.schemaVersion : 1,
+      pwSalt: decoded.pwSalt,
+      pwIv: decoded.pwIv,
+      pwWrapped: decoded.pwWrapped,
+      rcSalt: decoded.rcSalt,
+      rcIv: decoded.rcIv,
+      rcWrapped: decoded.rcWrapped,
+      vaultCloudId,
+    });
+    await db.journal.put({
+      id: 'journal',
+      blob: decoded.journalBlob,
+      updatedAt: typeof payload.updatedAt === 'number' ? payload.updatedAt : Date.now(),
+    });
   });
   lock();
 }

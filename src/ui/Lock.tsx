@@ -1,43 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { unlockWithPassword, unlockWithRecovery } from '../storage/vault';
-
-// Exponential-backoff throttle for unlock attempts. Persisted in
-// localStorage so an attacker can't bypass it with a page reload.
-// PBKDF2-600k is slow but not infinite; combining it with backoff
-// makes targeted brute-force impractical against a stolen device.
-const FAIL_KEY = 'wig.unlock.fails';
-const FAIL_AT_KEY = 'wig.unlock.fails.at';
-
-function readFails(): { count: number; lastAt: number } {
-  try {
-    return {
-      count: Number(localStorage.getItem(FAIL_KEY)) || 0,
-      lastAt: Number(localStorage.getItem(FAIL_AT_KEY)) || 0,
-    };
-  } catch {
-    return { count: 0, lastAt: 0 };
-  }
-}
-
-function writeFails(count: number, at: number) {
-  try {
-    localStorage.setItem(FAIL_KEY, String(count));
-    localStorage.setItem(FAIL_AT_KEY, String(at));
-  } catch { /* ignore - private mode etc. */ }
-}
-
-function clearFails() {
-  try { localStorage.removeItem(FAIL_KEY); localStorage.removeItem(FAIL_AT_KEY); } catch {}
-}
-
-// Returns ms to wait before the next attempt is allowed. After 3 free
-// tries we add 2^(n-3) seconds, capped at 5 minutes.
-function backoffMs(count: number): number {
-  if (count < 3) return 0;
-  const seconds = Math.min(300, Math.pow(2, count - 3));
-  return seconds * 1000;
-}
+import {
+  clearUnlockFailures,
+  recordUnlockFailure,
+  throttleWaitMs,
+} from './unlock-throttle';
 
 export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
   const { t } = useTranslation();
@@ -50,8 +18,7 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
     setErr(null);
     // Throttle check - refuse if we're inside the cooldown window from
     // recent failures. The window grows exponentially after 3 attempts.
-    const { count, lastAt } = readFails();
-    const wait = backoffMs(count) - (Date.now() - lastAt);
+    const wait = throttleWaitMs();
     if (wait > 0) {
       const sec = Math.ceil(wait / 1000);
       setErr(
@@ -65,7 +32,7 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
       else await unlockWithRecovery(value);
       // Successful unlock - reset the failure counter so the next
       // device-locked-up event starts fresh.
-      clearFails();
+      clearUnlockFailures();
     } catch (e) {
       // Distinguish a wrong password/code (the expected, common failure)
       // from infrastructure errors (IndexedDB quota, corrupted store,
@@ -83,8 +50,7 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
         // the backoff window. Only counts wrong-secret failures, not
         // infrastructure errors (those would punish honest users for
         // problems outside their control).
-        const next = readFails().count + 1;
-        writeFails(next, Date.now());
+        recordUnlockFailure();
         setErr(mode === 'pw' ? t('pw_wrong') : t('rc_wrong'));
       } else {
         setErr(
@@ -119,6 +85,7 @@ export function Lock({ onSurvivor }: { onSurvivor: () => void }) {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               autoFocus
+              autoComplete="current-password"
               onKeyDown={(e) => e.key === 'Enter' && submit()}
             />
           </>

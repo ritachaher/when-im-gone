@@ -3,13 +3,18 @@
     { "route": "/app", "rewrite": "/app.html" },
     { "route": "/privacy", "rewrite": "/privacy.html" },
     { "route": "/terms", "rewrite": "/terms.html" },
-    { "route": "/about", "rewrite": "/about.html" }
+    { "route": "/about", "rewrite": "/about.html" },
+    { "route": "/blog", "rewrite": "/index.html" },
+    { "route": "/blog/what-happens-when-you-die-uk", "rewrite": "/blog/what-happens-when-you-die-uk.html" },
+    { "route": "/blog/what-happens-if-you-die-without-a-will-uk", "rewrite": "/blog/what-happens-if-you-die-without-a-will-uk.html" },
+    { "route": "/blog/what-do-i-need-to-leave-my-family", "rewrite": "/blog/what-do-i-need-to-leave-my-family.html" }
   ],
   "navigationFallback": {
     "rewrite": "/app.html",
     "exclude": [
       "/assets/*",
       "/images/*",
+      "/blog/*",
       "/*.{css,js,png,svg,webmanifest,ico,txt,xml,webp,jpg,jpeg,gif,woff,woff2}",
       "/index.html",
       "/privacy.html",

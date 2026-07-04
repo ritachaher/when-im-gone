@@ -15,6 +15,43 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg'],
       disable: disablePwa,
+      // Register the SW from the app entry only (src/main.tsx). The default
+      // auto-injection also put registration on the marketing landing page,
+      // which made a scope-'/' SW answer *all* navigations with a cached
+      // index.html - breaking /app, /privacy, /terms and /blog/* for every
+      // returning visitor.
+      injectRegister: false,
+      workbox: {
+        // The PWA shell fallback is the app, not the landing page…
+        navigateFallback: '/app.html',
+        // …and never intercept marketing/legal/blog routes at all; let the
+        // server (staticwebapp.config.json rewrites) handle them.
+        navigateFallbackDenylist: [
+          /^\/$/,
+          /^\/index\.html/,
+          /^\/privacy/,
+          /^\/terms/,
+          /^\/about/,
+          /^\/sample/,
+          /^\/blog/,
+        ],
+        // Don't precache marketing + legal pages: stale pricing or stale
+        // "Last updated" legal text must never be served from cache.
+        globIgnores: [
+          '**/node_modules/**',
+          'index.html',
+          'privacy.html',
+          'terms.html',
+          'about.html',
+          'sample.html',
+          'blog/**',
+          'landing.js',
+          'landing.css',
+          'web-i18n.js',
+          'picker.js',
+          'page.css',
+        ],
+      },
       manifest: {
         name: "When I'm gone",
         short_name: "When I'm gone",

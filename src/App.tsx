@@ -46,7 +46,7 @@ export function App() {
 
   useEffect(() => {
     if (unlocked && screen === 'lock') setScreen('owner');
-  }, [unlocked]);
+  }, [unlocked, screen]);
 
   // Idle / hidden-tab auto-lock. Active only while the vault is
   // unlocked - locking again is a no-op so we don't bother running the
@@ -105,7 +105,20 @@ export function App() {
     );
 
   if (screen === 'survivor')
-    return <><AppHeader /><Survivor onBack={() => setScreen('lock')} /></>;
+    return (
+      <>
+        <AppHeader />
+        <Survivor
+          onBack={() => {
+            // Always lock when leaving the survivor view. Without this the
+            // decrypted journal stays in memory and "I'm a loved one" on the
+            // Lock screen re-enters it with no credentials.
+            lock();
+            setScreen('lock');
+          }}
+        />
+      </>
+    );
 
   return null;
 }

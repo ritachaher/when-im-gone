@@ -37,7 +37,11 @@ service cloud.firestore {
         return true;
       }
 
-      allow read: if isWellFormed() && appCheck();
+      // `get` only - never `list`. Listing the collection would let an
+      // attacker enumerate vault IDs without knowing any recovery code,
+      // which is the one thing the whole design depends on preventing.
+      allow get: if isWellFormed() && appCheck();
+      allow list: if false;
 
       // New documents (no prior `resource`) just need the right shape.
       // Updates to an existing document must carry an updatedAt that is

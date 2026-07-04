@@ -71,7 +71,11 @@ export async function unwrapDataKey(wrapped: WrappedKey, password: string): Prom
     wrappingKey,
     { name: 'AES-GCM', iv: wrapped.iv },
     { name: 'AES-GCM', length: 256 },
-    true,
+    // Non-extractable: after unlock the key is only ever used to
+    // encrypt/decrypt, never re-exported. Defence-in-depth - even code
+    // running in the page can't dump the raw key material. (Extractable
+    // is only needed at creation time, when the fresh key is wrapped.)
+    false,
     ['encrypt', 'decrypt'],
   );
 }

@@ -53,10 +53,10 @@ export function Owner({ onLock }: { onLock: () => void }) {
     return total === 0 ? 0 : Math.round((filled / total) * 100);
   }, [journal]);
 
-  if (!journal) return null;
-  const section = findSection(active);
-  const schema = SCHEMAS[section.slug];
-
+  // NOTE: all hooks must run before any conditional return. `journal`
+  // becomes null while this component is still mounted (e.g. lock()
+  // during wipe), and an early return above a hook makes React throw
+  // "Rendered fewer hooks than expected" - a white screen.
   const [confirmAction, setConfirmAction] = useState<null | 'wipe'>(null);
   const { theme, toggle: toggleTheme } = useTheme();
   const [cloudStatus, setCloudStatus] = useState<BackupStatus>('idle');
@@ -65,6 +65,16 @@ export function Owner({ onLock }: { onLock: () => void }) {
   // panel - no point decrypting 50 records on every render.
   const [showAudit, setShowAudit] = useState(false);
   const [auditEvents, setAuditEvents] = useState<AuditEvent[] | null>(null);
+  const [cloudError, setCloudError] = useState<string | null>(null);
+  // Close the audit dialog on Escape (basic keyboard accessibility).
+  useEffect(() => {
+    if (!showAudit) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setShowAudit(false);
+    }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [showAudit]);
   useEffect(() => {
     if (!showAudit) return;
     let cancelled = false;
@@ -91,8 +101,13 @@ export function Owner({ onLock }: { onLock: () => void }) {
     progress > 0 &&
     (lastCloudPushAt === null || Date.now() - lastCloudPushAt > TWO_DAYS_MS);
 
+  if (!journal) return null;
+  const section = findSection(active);
+  const schema = SCHEMAS[section.slug];
+
   async function onCloudPush() {
     setCloudStatus('pushing');
+    setCloudError(null);
     try {
       await pushBackup();
       const now = Date.now();
@@ -101,9 +116,24 @@ export function Owner({ onLock }: { onLock: () => void }) {
       setCloudStatus('done');
       setTimeout(() => setCloudStatus('idle'), 2500);
     } catch (e) {
-      console.error('Cloud push failed:', e);
+      // Log only the error class - never the exception object - per the
+      // codebase rule (nothing sensitive may reach DevTools logs).
+      const name = e && typeof e === 'object' && 'name' in e ? String(e.name) : 'unknown';
+      console.error('Cloud push failed:', name);
+      // Surface the one actionable failure specifically: a restored
+      // vault that hasn't re-learned its cloud ID yet. The generic
+      // "try again" message would leave the user stuck forever.
+      const msg = e instanceof Error ? e.message : '';
+      if (msg.includes('Cloud ID missing')) {
+        setCloudError(
+          t(
+            'cloud_error_no_id',
+            'To turn cloud backup back on after a restore, lock the journal once and unlock it with your recovery code.',
+          ),
+        );
+      }
       setCloudStatus('error');
-      setTimeout(() => setCloudStatus('idle'), 3000);
+      setTimeout(() => setCloudStatus('idle'), 6000);
     }
   }
 
@@ -185,13 +215,17 @@ export function Owner({ onLock }: { onLock: () => void }) {
                     : 'empty');
               return (
                 <li key={s.slug}>
-                  <a
-                    className={s.slug === active ? 'active' : ''}
+                  {/* button, not <a href-less>: keyboard-focusable and
+                      announced correctly by screen readers */}
+                  <button
+                    type="button"
+                    className={`nav-link${s.slug === active ? ' active' : ''}`}
+                    aria-current={s.slug === active ? 'page' : undefined}
                     onClick={() => pickSection(s.slug)}
                   >
                     <span className={`dot ${status}`} />
                     <span>{t(`sec_${s.slug}_title`, s.title)}</span>
-                  </a>
+                  </button>
                 </li>
               );
             })}
@@ -213,12 +247,18 @@ export function Owner({ onLock }: { onLock: () => void }) {
                   : t('cloud_push_hint', 'Keeps a safe backup in case this device is lost')}
               </span>
               {cloudStatus === 'done' && <span className="footer-hint" style={{ color: 'var(--ok)' }}>{t('cloud_done', '\u2713 Saved')}</span>}
-              {cloudStatus === 'error' && <span className="footer-hint" style={{ color: 'var(--danger)' }}>{t('cloud_error', 'Could not save - please try again')}</span>}
+              {cloudStatus === 'error' && (
+                <span className="footer-hint" style={{ color: 'var(--danger)' }}>
+                  {cloudError ?? t('cloud_error', 'Could not save - please try again')}
+                </span>
+              )}
             </div>
           )}
           <div className="footer-action">
             <button onClick={onLock}>{t('lock_journal', 'Lock')}</button>
-            <span className="footer-hint">{t('lock_hint', 'Hides everything behind your password')}</span>
+            {/* Distinct key from the Lock screen's 'lock_hint' - reusing it
+                showed "Unlock your journal to continue." here. */}
+            <span className="footer-hint">{t('lock_footer_hint', 'Hides everything behind your password')}</span>
           </div>
           <div className="footer-action">
             <button onClick={() => setConfirmAction('wipe')}>{t('wipe_btn', 'Wipe everything')}</button>

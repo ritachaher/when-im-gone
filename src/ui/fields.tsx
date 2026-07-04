@@ -17,6 +17,7 @@ function DateInput({
   value: string;
   onChange: (v: string) => void;
 }) {
+  const { t } = useTranslation();
   const parse = (v: string) => {
     const [y = '', m = '', d = ''] = v ? v.split('-') : [];
     return { y, m, d };
@@ -52,19 +53,55 @@ function DateInput({
     }
   }, [value]);
 
+  const [invalid, setInvalid] = useState(false);
+
+  // A date only commits when it's a real calendar date. 45/13/2020 used
+  // to be stored as "2020-13-45", which downstream logic (e.g. the
+  // under-18 conditional fields) silently treated as "no date".
+  function isRealDate(d: string, m: string, y: string): boolean {
+    const dn = Number(d), mn = Number(m), yn = Number(y);
+    if (!dn || !mn || y.length !== 4) return false;
+    const date = new Date(yn, mn - 1, dn);
+    return (
+      date.getFullYear() === yn &&
+      date.getMonth() === mn - 1 &&
+      date.getDate() === dn
+    );
+  }
+
   function commit(d: string, m: string, y: string) {
-    if (d && m && y.length === 4) {
+    if (isRealDate(d, m, y)) {
+      setInvalid(false);
       onChange(`${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`);
     } else if (!d && !m && !y) {
+      setInvalid(false);
       onChange('');
     }
-    // While partially filled, keep the last committed value intact
+    // While partially filled, keep the last committed value intact until
+    // focus leaves the group (see onBlur below).
+  }
+
+  // When focus leaves the whole group with a partial or impossible date,
+  // clear the stored value so what's persisted always matches what's on
+  // screen - previously a half-deleted date silently kept the old value.
+  function onGroupBlur(e: React.FocusEvent<HTMLDivElement>) {
+    if (e.currentTarget.contains(e.relatedTarget as Node | null)) return;
+    const d = dayVal.current, m = monVal.current, y = yearVal.current;
+    if (!d && !m && !y) { setInvalid(false); return; }
+    if (!isRealDate(d, m, y)) {
+      setInvalid(true);
+      onChange('');
+    }
   }
 
   const digits = (s: string, max: number) => s.replace(/\D/g, '').slice(0, max);
 
   return (
-    <div className="date-fields" role="group">
+    <div
+      className={`date-fields${invalid ? ' date-invalid' : ''}`}
+      role="group"
+      onBlur={onGroupBlur}
+    >
       <input
         id={id}
         className="date-part"
@@ -114,6 +151,11 @@ function DateInput({
           commit(dayVal.current, monVal.current, v);
         }}
       />
+      {invalid && (
+        <span className="date-error" role="alert">
+          {t('date_invalid', 'Please enter a real date (DD/MM/YYYY).')}
+        </span>
+      )}
     </div>
   );
 }

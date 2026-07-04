@@ -128,17 +128,24 @@ p { margin: 0 0 .9em; }
 
 .nav ul { list-style: none; margin: 10px 0; padding: 0; }
 .nav li { position: relative; }
-.nav a {
+.nav a,
+.nav .nav-link {
+  width: 100%; background: none; border: 0; font-family: inherit; text-align: left;
   display: flex; align-items: center; gap: 10px;
   padding: 9px 22px; color: rgba(255,255,255,.82);
   text-decoration: none; font-size: 13px;
   border-left: 3px solid transparent; cursor: pointer;
 }
-.nav a .dot { width: 8px; height: 8px; border-radius: 99px; background: rgba(255,255,255,.25); flex-shrink: 0; }
-.nav a .dot.done { background: var(--ok); }
-.nav a .dot.part { background: var(--warn); }
-.nav a:hover { background: rgba(255,255,255,.06); color: #fff; }
-.nav a.active { background: rgba(255,255,255,.08); color: #fff; border-left-color: var(--accent); }
+.nav a .dot,
+.nav .nav-link .dot { width: 8px; height: 8px; border-radius: 99px; background: rgba(255,255,255,.25); flex-shrink: 0; }
+.nav a .dot.done,
+.nav .nav-link .dot.done { background: var(--ok); }
+.nav a .dot.part,
+.nav .nav-link .dot.part { background: var(--warn); }
+.nav a:hover,
+.nav .nav-link:hover { background: rgba(255,255,255,.06); color: #fff; }
+.nav a.active,
+.nav .nav-link.active { background: rgba(255,255,255,.08); color: #fff; border-left-color: var(--accent); }
 .nav-footer {
   padding: 16px 22px 0; border-top: 1px solid rgba(255,255,255,.12); margin-top: 10px;
   display: flex; flex-direction: column; gap: 12px;
@@ -260,7 +267,8 @@ p { margin: 0 0 .9em; }
   body.nav-open { overflow: hidden; }
 
   /* Tap targets in drawer get a bit larger on mobile */
-  .nav a { padding: 12px 22px; font-size: 14px; }
+  .nav a,
+  .nav .nav-link { padding: 12px 22px; font-size: 14px; }
   .nav-footer button,
   .theme-toggle,
   .toggle-wrap { font-size: 14px; }
@@ -327,6 +335,14 @@ textarea { resize: vertical; min-height: 88px; }
   display: flex;
   align-items: center;
   gap: 4px;
+  flex-wrap: wrap;
+}
+.date-fields.date-invalid .date-part { border-color: var(--danger); }
+.date-error {
+  flex-basis: 100%;
+  font-size: 12px;
+  color: var(--danger);
+  margin-top: 2px;
 }
 .date-fields .date-part {
   width: 58px;
@@ -759,8 +775,27 @@ textarea { resize: vertical; min-height: 88px; }
 }
 
 /* ===== Print (sealed envelope) ===== */
+/* The recovery sheet is rendered only when printing. On screen it must
+   never be visible (the on-screen code sits behind an explicit Reveal). */
+.print-only { display: none; }
+
 @media print {
   body { background: #fff; }
   .sidebar, .demobar, .nav-footer, button { display: none !important; }
   .centre-card { box-shadow: none; border: 0; }
+  /* Print the dedicated recovery sheet and nothing else from the
+     recovery step - the on-screen code may be masked with dots, so it
+     must never be what lands on paper. */
+  .print-only { display: block !important; }
+  .screen-only { display: none !important; }
 }
+
+.recovery-print-sheet { padding: 24px 8px; }
+.recovery-print-sheet h1 { font-size: 20px; margin: 0 0 4px; }
+.recovery-print-sheet .rp-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 26px; letter-spacing: 3px; font-weight: 700;
+  margin: 18px 0; padding: 14px 0; text-align: center;
+  border: 2px dashed #444;
+}
+.recovery-print-sheet p { font-size: 13px; margin: 6px 0; }

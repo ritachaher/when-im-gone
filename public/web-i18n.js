@@ -169,11 +169,11 @@
   }
 
   function getLang() {
-    try { return localStorage.getItem('wig_lang') || 'en'; } catch(e) { return 'en'; }
+    try { return localStorage.getItem('wig-lang') || 'en'; } catch(e) { return 'en'; }
   }
 
   function setLang(code) {
-    try { localStorage.setItem('wig_lang', code); } catch(e) {}
+    try { localStorage.setItem('wig-lang', code); } catch(e) {}
   }
 
   function applyTranslations(lang) {

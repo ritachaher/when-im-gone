@@ -1,4 +1,17 @@
 (function () {
+  // Book-cover image fallback. Previously an inline onerror= attribute,
+  // which script-src 'self' (no 'unsafe-inline') silently blocks.
+  document.querySelectorAll('.book-cover img').forEach(function (img) {
+    function hide() {
+      img.style.display = 'none';
+      if (img.parentElement) img.parentElement.classList.add('no-image');
+    }
+    img.addEventListener('error', hide);
+    // The image may already have failed before this script ran
+    // (scripts load at the end of <body>).
+    if (img.complete && img.naturalWidth === 0) hide();
+  });
+
   var pickerRow = document.querySelector('.picker-row');
   if (!pickerRow) return;
   pickerRow.addEventListener('click', function (e) {

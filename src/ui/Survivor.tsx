@@ -3,6 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { unlockWithPassword, unlockWithRecovery, useVault } from '../storage/vault';
 import { SECTIONS, findSection, type SectionDef } from './sections';
 import { SCHEMAS, type Card, type Field } from './schema';
+import {
+  clearUnlockFailures,
+  recordUnlockFailure,
+  throttleWaitMs,
+} from './unlock-throttle';
 
 export function Survivor({ onBack }: { onBack: () => void }) {
   const unlocked = useVault((s) => s.unlocked);
@@ -11,6 +16,7 @@ export function Survivor({ onBack }: { onBack: () => void }) {
 }
 
 function SurvivorUnlock({ onBack }: { onBack: () => void }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<'pw' | 'rc'>('rc');
   const [value, setValue] = useState('');
   const [busy, setBusy] = useState(false);
@@ -18,10 +24,21 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
 
   async function submit() {
     setErr(null);
+    // Same shared throttle as the owner Lock screen - without this the
+    // survivor screen was an unthrottled brute-force path to the vault.
+    const wait = throttleWaitMs();
+    if (wait > 0) {
+      const sec = Math.ceil(wait / 1000);
+      setErr(
+        t('unlock_throttled', 'Too many attempts. Please wait {{sec}} seconds before trying again.', { sec }),
+      );
+      return;
+    }
     setBusy(true);
     try {
       if (mode === 'pw') await unlockWithPassword(value);
       else await unlockWithRecovery(value);
+      clearUnlockFailures();
     } catch (e) {
       // Expected failure: WebCrypto's OperationError when the AES-GCM
       // auth tag doesn't validate (i.e. wrong password/code). Anything
@@ -33,14 +50,11 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
       // DevTools logs or a screen recording.
       console.error('Unlock failed:', name || 'unknown');
       if (name === 'OperationError') {
-        setErr(
-          mode === 'pw'
-            ? 'That password doesn\u2019t match.'
-            : 'That recovery code doesn\u2019t match.',
-        );
+        recordUnlockFailure();
+        setErr(mode === 'pw' ? t('pw_wrong') : t('rc_wrong'));
       } else {
         setErr(
-          'Something went wrong opening the journal. Please try again.',
+          t('unlock_error_other', 'Something went wrong opening the journal. Please try again, or reinstall the app if the problem continues.'),
         );
       }
     } finally {
@@ -57,30 +71,30 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
             <path d="M7 11V7a5 5 0 0 1 10 0v4" />
           </svg>
         </div>
-        <h1>Welcome</h1>
-        <p className="muted">
-          A loved one left this information for you.<br />
-          Please enter the code from the sealed envelope, or the password you were told.
+        <h1>{t('survivor_title', 'Welcome')}</h1>
+        <p className="muted" style={{ whiteSpace: 'pre-line' }}>
+          {t('survivor_hint', 'A loved one left this information for you.\nPlease enter the code from the sealed envelope, or the password you were told.')}
         </p>
         {mode === 'pw' ? (
           <>
-            <label>Password</label>
+            <label>{t('pw_label', 'Password')}</label>
             <input
               type="password"
               className="setup-input unlock-input"
               value={value}
               onChange={(e) => setValue(e.target.value)}
+              autoComplete="current-password"
               onKeyDown={(e) => e.key === 'Enter' && submit()}
             />
           </>
         ) : (
           <>
-            <label>Unlock code</label>
+            <label>{t('unlock_code_label', 'Unlock code')}</label>
             <input
               className="setup-input unlock-input"
               value={value}
               onChange={(e) => setValue(e.target.value)}
-              placeholder="XXXX-XXXX-XXXX"
+              placeholder={t('unlock_code_placeholder', 'XXXX-XXXX-XXXX')}
               autoCapitalize="characters"
               autoCorrect="off"
               autoComplete="off"
@@ -92,15 +106,17 @@ function SurvivorUnlock({ onBack }: { onBack: () => void }) {
         )}
         {err && <p style={{ color: 'var(--accent-dark)' }}>{err}</p>}
         <button className="btn" style={{ width: '100%', justifyContent: 'center' }} disabled={busy} onClick={submit}>
-          {busy ? 'Unlocking\u2026' : 'Unlock'}
+          {busy ? t('unlocking', 'Unlocking\u2026') : t('unlock', 'Unlock')}
         </button>
         <button className="btn ghost" onClick={() => { setMode(mode === 'pw' ? 'rc' : 'pw'); setValue(''); setErr(null); }}>
-          {mode === 'pw' ? 'I have an unlock code instead' : 'I have a password instead'}
+          {mode === 'pw'
+            ? t('have_code_instead', 'I have an unlock code instead')
+            : t('have_pw_instead', 'I have a password instead')}
         </button>
         <p className="muted" style={{ fontSize: 12, marginTop: 10 }}>
-          This information is read-only.
+          {t('read_only_note', 'This information is read-only.')}
         </p>
-        <button className="btn ghost" onClick={onBack}>Back</button>
+        <button className="btn ghost" onClick={onBack}>{t('back', 'Back')}</button>
       </div>
     </div>
   );
@@ -181,6 +197,7 @@ function SurvivorHome({ onBack }: { onBack: () => void }) {
 function TriageCard({
   urgency, title, bullets, onOpen,
 }: { urgency: string; title: string; bullets: string[]; onOpen: () => void }) {
+  const { t } = useTranslation();
   return (
     <div className="triage-card">
       <div className="urg">{urgency}</div>
@@ -189,7 +206,7 @@ function TriageCard({
         {bullets.map((b) => <li key={b}>{b}</li>)}
       </ul>
       <div className="btnrow">
-        <button className="btn ghost" onClick={onOpen}>Open &rarr;</button>
+        <button className="btn ghost" onClick={onOpen}>{t('sv_open', 'Open')} &rarr;</button>
       </div>
     </div>
   );

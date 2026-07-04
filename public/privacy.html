@@ -99,6 +99,16 @@
         deleted.
       </li>
       <li>
+        <strong>A password-safety check (Have I Been Pwned).</strong> When you choose your
+        password at setup, the app checks it against the public database of passwords exposed
+        in past data breaches, run by the Have I Been Pwned service (hosted on Cloudflare).
+        Your password never leaves your device: the app sends only the first 5 characters of
+        a one-way fingerprint (hash) of it — enough for the service to return a list of
+        candidates, but not enough for anyone to work out your password. Like any web request,
+        the service also sees your IP address. If the check can't be reached, setup continues
+        without it.
+      </li>
+      <li>
         <strong>Payment information.</strong> When you pay £12.95, our payment processor
         handles the transaction. They see the card details required to process the payment;
         we do not store your card number. We receive confirmation that a payment was made,
@@ -151,17 +161,19 @@
     <p>If you choose to share your email:</p>
     <ul>
       <li>We store it in a separate database table (Google Firestore), with the date you signed up and the label <code>setup</code> as the source.</li>
-      <li>It is not linked to your journal, your vault, or your anonymous Firebase ID in any way. There is no technical connection between your email and what you've written.</li>
-      <li>We will only use it to send product updates and occasional news about When I'm Gone. We will never sell it, share it, or use it for anything else.</li>
+      <li>We store no link between your email and your journal, your vault, or your anonymous Firebase ID. The stored record contains only the email address, a timestamp, and the word <code>setup</code> — nothing that identifies a journal.</li>
+      <li>When you sign up, an automatic notification email is sent to us through Resend, an email delivery provider based in the United States. Resend processes your email address for the sole purpose of delivering that notification.</li>
+      <li>We will only use your email to send product updates and occasional news about When I'm Gone. We will never sell it or use it for anything else, and the only third party that processes it is the email delivery provider above.</li>
       <li>To unsubscribe or have your email deleted at any time, email <a href="mailto:info@whenimgone.life">info@whenimgone.life</a>.</li>
     </ul>
 
     <h2>What we cannot link together</h2>
     <p>
-      There is no way for us to connect a payment record to a specific journal. The Firebase
-      anonymous user ID, the encrypted vault document, and any payment record are three
-      separate, unlinked identifiers. This is intentional: it means that even if we were asked
-      to identify which journal belongs to a specific person, we could not do so.
+      We store no connection between a payment record and a specific journal. The Firebase
+      anonymous user ID, the encrypted vault document, and any payment record are stored as
+      separate identifiers with no linking field. This is intentional: we have designed the
+      system so that identifying which journal belongs to a specific person is not something
+      our stored data can answer.
     </p>
 
     <h2>Languages</h2>
@@ -185,6 +197,13 @@
       centres outside the UK. Because the blob is encrypted before it leaves your device, the
       legal exposure is limited - anyone with access to those data centres sees only encrypted
       gibberish.
+    </p>
+    <p>
+      Two other providers may process limited data outside the UK: Resend (United States)
+      delivers the notification email if you opt in to updates, and Have I Been Pwned
+      (hosted on Cloudflare's global network) receives the partial password fingerprint
+      described above during setup. Neither receives your journal contents or anything
+      capable of revealing them.
     </p>
 
     <h2>Changes to this notice</h2>

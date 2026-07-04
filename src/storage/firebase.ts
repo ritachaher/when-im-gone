@@ -19,6 +19,10 @@
 
 import { initializeApp, type FirebaseApp } from 'firebase/app';
 import {
+  initializeAppCheck,
+  ReCaptchaEnterpriseProvider,
+} from 'firebase/app-check';
+import {
   getAuth,
   onAuthStateChanged,
   signInAnonymously,
@@ -59,6 +63,18 @@ let db: Firestore | null = null;
 
 if (firebaseConfig.apiKey) {
   app = initializeApp(firebaseConfig);
+  // App Check (May 2026 audit, H1 remediation): every Firestore call
+  // carries an attestation that it came from the real app, so knowing a
+  // vault's cloud ID is useless from curl/scripts. Activates only when
+  // VITE_APPCHECK_SITE_KEY is set; after enabling it in the Firebase
+  // console, also flip appCheck() in firestore.rules to
+  // `request.app != null` and add the reCAPTCHA endpoints to the CSP.
+  if (import.meta.env.VITE_APPCHECK_SITE_KEY) {
+    initializeAppCheck(app, {
+      provider: new ReCaptchaEnterpriseProvider(import.meta.env.VITE_APPCHECK_SITE_KEY),
+      isTokenAutoRefreshEnabled: true,
+    });
+  }
   auth = getAuth(app);
   db = getFirestore(app);
 }
@@ -141,6 +157,7 @@ export async function pullBackup(opts: {
  */
 export async function pairViaRecoveryCode(
   recoveryCode: string,
+  opts: { confirmedReplace: boolean },
 ): Promise<boolean> {
   if (!db) throw new Error('Firebase not configured');
   const vaultCloudId = await deriveVaultCloudId(recoveryCode);
@@ -148,7 +165,10 @@ export async function pairViaRecoveryCode(
   const snap = await getDoc(doc(db, 'vaults', vaultCloudId));
   if (!snap.exists()) return false;
   const json = snap.data().data as string;
-  await importEncryptedBlob(json, { confirmedReplace: true });
+  // The destructive-replace confirmation is the CALLER's responsibility:
+  // pass the flag through rather than hard-coding it here, so any future
+  // "re-pair"/"sync" button can't silently overwrite a local journal.
+  await importEncryptedBlob(json, opts);
   return true;
 }
 
@@ -158,9 +178,15 @@ export function isFirebaseConfigured(): boolean {
 
 /**
  * Optionally store an email address in the subscribers collection.
- * This is completely unlinked from any vault ID or anonymous user UID —
- * it is purely a marketing opt-in. The user must explicitly choose to
- * submit; there is always a visible Skip option in the UI.
+ * Purely a marketing opt-in; the user must explicitly choose to submit
+ * and there is always a visible Skip option in the UI.
+ *
+ * Honesty note: WE store no link between the email and any vault - the
+ * document carries only email/timestamp/source. But the write is made
+ * from the same anonymous Firebase session used for vault pushes, so
+ * Google-side request logs could in principle correlate the two. Don't
+ * describe this as "unlinked in any way" in user-facing copy - say
+ * "we do not store any link".
  *
  * Does nothing silently if Firebase is not configured.
  */
