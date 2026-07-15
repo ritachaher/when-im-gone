@@ -18,6 +18,10 @@ export type RepeatingItem = { id: string } & Record<string, unknown>;
 export type SectionData = {
   fields: Record<string, unknown>;
   items?: Record<string, RepeatingItem[]>;
+  // User-set "I've finished this section" flag. Independent of how many
+  // fields are filled - the owner decides when a section is done (some
+  // sections legitimately have blanks, e.g. no pets, no business).
+  completed?: boolean;
   updatedAt: number;
 };
 
@@ -244,6 +248,17 @@ export async function setSectionList(
     d.sections[slug] = {
       fields: existing.fields,
       items: { ...(existing.items ?? {}), [listId]: items },
+      updatedAt: Date.now(),
+    };
+  });
+}
+
+export async function setSectionComplete(slug: string, done: boolean): Promise<void> {
+  await save((d) => {
+    const existing = d.sections[slug] ?? { fields: {}, updatedAt: 0 };
+    d.sections[slug] = {
+      ...existing,
+      completed: done,
       updatedAt: Date.now(),
     };
   });

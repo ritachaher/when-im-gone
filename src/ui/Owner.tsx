@@ -3,6 +3,7 @@ import {
   getLastCloudPushAt,
   markCloudPushed,
   readAudit,
+  setSectionComplete,
   setSectionField,
   setSectionList,
   useVault,
@@ -52,6 +53,18 @@ export function Owner({ onLock }: { onLock: () => void }) {
     }
     return total === 0 ? 0 : Math.round((filled / total) * 100);
   }, [journal]);
+
+  // How many sections the owner has explicitly marked "done". Separate
+  // from `progress` (which measures fields filled) so both bars can show.
+  const sectionsDone = useMemo(() => {
+    if (!journal) return 0;
+    return SECTIONS.reduce(
+      (n, s) => n + (journal.sections[s.slug]?.completed ? 1 : 0),
+      0,
+    );
+  }, [journal]);
+  const sectionsTotal = SECTIONS.length;
+  const sectionsPct = sectionsTotal === 0 ? 0 : Math.round((sectionsDone / sectionsTotal) * 100);
 
   // NOTE: all hooks must run before any conditional return. `journal`
   // becomes null while this component is still mounted (e.g. lock()
@@ -196,6 +209,12 @@ export function Owner({ onLock }: { onLock: () => void }) {
           <div className="progress">
             <div style={{ width: `${progress}%` }} />
           </div>
+          <div className="nav-overall-sections">
+            {t('sections_done', { done: sectionsDone, total: sectionsTotal })}
+          </div>
+          <div className="progress">
+            <div style={{ width: `${sectionsPct}%` }} />
+          </div>
           <div style={{ marginTop: 10, fontSize: 12, opacity: 0.7 }}>{t('auto_saved')}</div>
         </div>
         <nav className="nav">
@@ -203,7 +222,12 @@ export function Owner({ onLock }: { onLock: () => void }) {
             {SECTIONS.map((s) => {
               const sch = SCHEMAS[s.slug];
               const d = journal.sections[s.slug];
-              const status: 'empty' | 'part' | 'done' = sch
+              const done = !!d?.completed;
+              // A manual "complete" tick always wins over the auto count,
+              // so the dot goes green even if the owner left fields blank.
+              const status: 'empty' | 'part' | 'done' = done
+                ? 'done'
+                : sch
                 ? (() => {
                     const c = countFilled(sch, d?.fields, d?.items);
                     if (c.filled === 0) return 'empty';
@@ -213,8 +237,9 @@ export function Owner({ onLock }: { onLock: () => void }) {
                 : (d && (Object.keys(d.fields).length > 0 || (d.items && Object.keys(d.items).length > 0))
                     ? 'part'
                     : 'empty');
+              const secTitle = t(`sec_${s.slug}_title`, s.title);
               return (
-                <li key={s.slug}>
+                <li key={s.slug} className="nav-item">
                   {/* button, not <a href-less>: keyboard-focusable and
                       announced correctly by screen readers */}
                   <button
@@ -224,8 +249,23 @@ export function Owner({ onLock }: { onLock: () => void }) {
                     onClick={() => pickSection(s.slug)}
                   >
                     <span className={`dot ${status}`} />
-                    <span>{t(`sec_${s.slug}_title`, s.title)}</span>
+                    <span>{secTitle}</span>
                   </button>
+                  {/* Checkbox is a sibling of the button - never nested
+                      inside it (invalid + unclickable interactive-in-button). */}
+                  <label
+                    className="nav-check"
+                    title={done
+                      ? t('mark_incomplete', 'Mark as not complete')
+                      : t('mark_complete', 'Mark as complete')}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={done}
+                      onChange={(e) => setSectionComplete(s.slug, e.target.checked)}
+                      aria-label={t('mark_section_complete', 'Mark "{{name}}" complete', { name: secTitle })}
+                    />
+                  </label>
                 </li>
               );
             })}
@@ -332,6 +372,15 @@ export function Owner({ onLock }: { onLock: () => void }) {
           <span className="pillstatus">{statusLabel(section.slug, journal, t)}</span>
         </div>
 
+        <label className="mark-complete">
+          <input
+            type="checkbox"
+            checked={!!journal.sections[section.slug]?.completed}
+            onChange={(e) => setSectionComplete(section.slug, e.target.checked)}
+          />
+          <span>{t('mark_section_done', 'Mark this section as complete')}</span>
+        </label>
+
         {schema ? (
           <SchemaEditor slug={section.slug} onNavigate={pickSection} />
         ) : (
@@ -422,10 +471,12 @@ function auditLabel(kind: AuditEvent['kind'], t: any): string {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-function statusLabel(slug: string, journal: { sections: Record<string, { fields: Record<string, unknown>; items?: Record<string, RepeatingItem[]> }> }, t: any): string {
+function statusLabel(slug: string, journal: { sections: Record<string, { fields: Record<string, unknown>; items?: Record<string, RepeatingItem[]>; completed?: boolean }> }, t: any): string {
+  const d = journal.sections[slug];
+  // Manual "complete" tick wins over the auto field count.
+  if (d?.completed) return `\u2713 ${t('section_complete', 'Complete')}`;
   const sch = SCHEMAS[slug];
   if (!sch) return `\u25CB ${t('not_detailed', 'Not detailed yet')}`;
-  const d = journal.sections[slug];
   const c = countFilled(sch, d?.fields, d?.items);
   if (c.filled === 0) return `\u25CB ${t('not_started', 'Not started')}`;
   if (c.filled >= c.total) return `\u2713 ${t('section_complete', 'Complete')}`;

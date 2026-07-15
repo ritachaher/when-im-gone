@@ -125,9 +125,23 @@ p { margin: 0 0 .9em; }
   background: rgba(255,255,255,.12); border-radius: 99px; height: 6px; margin-top: 6px; overflow: hidden;
 }
 .progress > div { height: 100%; background: var(--accent); border-radius: 99px; transition: width .3s; }
+.nav-overall-sections { margin-top: 14px; }
 
 .nav ul { list-style: none; margin: 10px 0; padding: 0; }
 .nav li { position: relative; }
+/* Section row = nav button (grows) + a "done" checkbox pinned right. */
+.nav .nav-item { display: flex; align-items: stretch; }
+.nav .nav-item .nav-link { flex: 1 1 auto; min-width: 0; }
+.nav .nav-item .nav-link > span:last-child {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.nav .nav-check {
+  display: flex; align-items: center; padding: 0 18px 0 8px; cursor: pointer;
+}
+.nav .nav-check input {
+  width: 15px; height: 15px; cursor: pointer; accent-color: var(--ok);
+  margin: 0; flex-shrink: 0;
+}
 .nav a,
 .nav .nav-link {
   width: 100%; background: none; border: 0; font-family: inherit; text-align: left;
@@ -189,6 +203,17 @@ p { margin: 0 0 .9em; }
   padding: 4px 10px; border-radius: 99px; border: 1px solid var(--border); white-space: nowrap;
 }
 [data-theme="dark"] .pillstatus { color: var(--ink); }
+
+/* "Mark this section as complete" toggle on each section page. */
+.mark-complete {
+  display: inline-flex; align-items: center; gap: 9px; cursor: pointer;
+  margin: -6px 0 22px; padding: 8px 12px; font-size: 14px; color: var(--ink-soft);
+  background: var(--page-alt); border: 1px solid var(--border); border-radius: 10px;
+}
+.mark-complete input {
+  width: 17px; height: 17px; cursor: pointer; accent-color: var(--ok); margin: 0;
+}
+.mark-complete:hover { color: var(--ink); }
 
 /* ===== Cards and fields ===== */
 .card {
