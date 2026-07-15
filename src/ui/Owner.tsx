@@ -239,7 +239,7 @@ export function Owner({ onLock }: { onLock: () => void }) {
                     : 'empty');
               const secTitle = t(`sec_${s.slug}_title`, s.title);
               return (
-                <li key={s.slug} className="nav-item">
+                <li key={s.slug}>
                   {/* button, not <a href-less>: keyboard-focusable and
                       announced correctly by screen readers */}
                   <button
@@ -251,21 +251,6 @@ export function Owner({ onLock }: { onLock: () => void }) {
                     <span className={`dot ${status}`} />
                     <span>{secTitle}</span>
                   </button>
-                  {/* Checkbox is a sibling of the button - never nested
-                      inside it (invalid + unclickable interactive-in-button). */}
-                  <label
-                    className="nav-check"
-                    title={done
-                      ? t('mark_incomplete', 'Mark as not complete')
-                      : t('mark_complete', 'Mark as complete')}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={done}
-                      onChange={(e) => setSectionComplete(s.slug, e.target.checked)}
-                      aria-label={t('mark_section_complete', 'Mark "{{name}}" complete', { name: secTitle })}
-                    />
-                  </label>
                 </li>
               );
             })}
